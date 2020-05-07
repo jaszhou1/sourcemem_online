@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Prototype of the memory stimulus presentation</title>
+  </head>
+  <body>
+    <div id="container">
+    </div>
+    <script type="text/javascript">
+      // This part is outside of the main plugin function.
+      var display_element = document.getElementById('container');
+      var trial = {
+        word: 'helloworld',
+        angle: 0.4,
+        svg_size_px: 500,
+        circle_buffer_px: 10
+      };
+
+      // The following is the main plugin function.
+
+      // Here are the constants for laying out the stimuli.
+      const MIDPOINT_X = trial.svg_size_px / 2;
+      const MIDPOINT_Y = trial.svg_size_px / 2;
+      const CIRCLE_RADIUS_PX = (trial.svg_size_px / 2) - trial.circle_buffer_px;
+
+      // Construct the SVG element that will hold the stimulus.
+      var svg_namespace = 'http://www.w3.org/2000/svg';
+      var svg_element = document.createElementNS(svg_namespace, 'svg');
+      svg_element.id = 'jspsych-contmemory-present';
+
+      // Set the height and width of the SVG element.
+      svg_element.setAttribute('height', trial.svg_size_px);
+      svg_element.setAttribute('width', trial.svg_size_px);
+      svg_element.setAttribute('viewBox', '0 0 ' +
+        trial.svg_size_px.toString() + ' ' +
+        trial.svg_size_px.toString()
+      );
+
+      // Construct the circle within the stimulus.
+      var circle_element = document.createElementNS(svg_namespace, 'circle');
+      circle_element.setAttribute('cx', MIDPOINT_X);
+      circle_element.setAttribute('cy', MIDPOINT_Y);
+      circle_element.setAttribute('r', CIRCLE_RADIUS_PX)
+      svg_element.appendChild(circle_element);
+
+      // Append the SVG to the container node.
+      display_element.appendChild(svg_element);
+
+    </script>
+  </body>
+</html>
