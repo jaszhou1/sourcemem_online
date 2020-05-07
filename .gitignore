@@ -1,0 +1,17 @@
+# Ignoring swap files from emacs
+
+*~
+~*
+*#
+\#*
+.#*
+
+# Ignore R cruft
+*.Rhistory
+
+# Ignore MATLAB, Octave crashes
+octave-workspace
+
+# Ignore external files that are not categorised yet
+_extern/*
+*.pyc
