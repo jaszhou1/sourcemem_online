@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />    
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta charset="utf-8" />
     <script src="js/jspsych.js" type="text/javascript"></script>
     <script src="js/jspsych-contmemory-present.js" type="text/javascript"></script>
@@ -14,30 +14,27 @@
     </div>
     <script type="text/javascript">
 
+      // Generating Random angle between 0 and 2*pi for testing
+      function getRandomInt(max) {
+        return Math.random() * max;
+      }
       // This is the jsPsych timeline set up.
       var TIMELINE = [];
 
       TIMELINE.push({
-          type: 'contmemory-present'
+          type: 'contmemory-present',
+          stimulus: 'WORD',
+          angle: getRandomInt(2*Math.PI)
       });
-      
+
       jsPsych.init({
           timeline: TIMELINE,
           on_finish: function() {
               jsPsych.data.displayData();
           }
       });
-      
-      // This part is outside of the main plugin function.
-      var display_element = document.getElementById('container');
-      var trial = {
-          word: 'helloworld',
-          angle: 0.4
-      };
 
-      // The following is the main plugin function.
 
-      
     </script>
   </body>
 </html>
