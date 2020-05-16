@@ -35,13 +35,13 @@ jsPsych.plugins['contmemory-present'] = (function() {
             circle_buffer_px: {
                 type: jsPsych.plugins.parameterType.INT,
                 pretty_name: 'Circle radius buffer (px)',
-                default: 70, // I have made the circle smaller so the word doesn't clip the 500*500 canvas. Ask simon about size
+                default: 80, // I have made the circle smaller so the word doesn't clip the 500*500 canvas. Ask simon about size
                 description: 'The number of pixels between the circumference of the circle and the SVG canvas edge'
             },
             word_buffer_px: {
                 type: jsPsych.plugins.parameterType.INT,
                 pretty_name: 'Word display radius buffer (px)',
-                default: 10,
+                default: 20,
                 description: 'The number of pixels between the circumference of the circle and the textbox anchor'
             },
             fixation_length_px: {
@@ -122,8 +122,9 @@ jsPsych.plugins['contmemory-present'] = (function() {
         word_y = MIDPOINT_Y + (WORD_RADIUS_PX * Math.sin(trial.angle))
 
         // Set anchor point co-ordinates based on sector
+        // TO DO, offset everything by pi/8, then can have 8 equal sized sectors
 
-        if (trial.angle == 0 || trial.angle == 2*Math.PI){
+        if (0 < trial.angle && trial.angle < Math.PI/8){
           word_y = word_y + word_dims.height/4 // Move anchor down a bit
           var word_element = document.createElementNS(svg_namespace, 'text');
           word_element.innerHTML = trial.stimulus;
@@ -131,46 +132,31 @@ jsPsych.plugins['contmemory-present'] = (function() {
           word_element.setAttribute('y', word_y);
           word_element.setAttribute('text-anchor', 'start');
 
-        } else if (0 < trial.angle && trial.angle <= Math.PI/4){
-          word_y = word_y + word_dims.height/4 // Move anchor down a bit
+        } else if (Math.PI/8 < trial.angle && trial.angle <= 3*Math.PI/8){
+          word_y = word_y + word_dims.height/2 // Move anchor down
           var word_element = document.createElementNS(svg_namespace, 'text');
           word_element.innerHTML = trial.stimulus;
           word_element.setAttribute('x', word_x);
           word_element.setAttribute('y', word_y);
           word_element.setAttribute('text-anchor', 'start');
 
-        } else if (Math.PI/4 < trial.angle && trial.angle < Math.PI/2){
-          word_y = word_y + word_dims.height/2
-          var word_element = document.createElementNS(svg_namespace, 'text');
-          word_element.innerHTML = trial.stimulus;
-          word_element.setAttribute('x', word_x);
-          word_element.setAttribute('y', word_y);
-          word_element.setAttribute('text-anchor', 'start');
-
-        } else if (trial.angle == Math.PI/2){
-                    word_y = word_y + word_dims.height // Move anchor down
+        } else if (3*Math.PI/8 < trial.angle && trial.angle < 5*Math.PI/8){
+          word_y = word_y + word_dims.height //Move anchor down a lot
           var word_element = document.createElementNS(svg_namespace, 'text');
           word_element.innerHTML = trial.stimulus;
           word_element.setAttribute('x', word_x);
           word_element.setAttribute('y', word_y);
           word_element.setAttribute('text-anchor', 'middle');
 
-        }else if (Math.PI/2 < trial.angle && trial.angle <= 3*Math.PI/4){
-          word_y = word_y + word_dims.height/2
+        }else if (5*Math.PI/8 < trial.angle && trial.angle <= 7*Math.PI/8){
+          word_y = word_y + word_dims.height/2 // Move anchor down
           var word_element = document.createElementNS(svg_namespace, 'text');
           word_element.innerHTML = trial.stimulus;
           word_element.setAttribute('x', word_x);
           word_element.setAttribute('y', word_y);
           word_element.setAttribute('text-anchor', 'end');
 
-        } else if (3*Math.PI/4 < trial.angle && trial.angle < Math.PI){
-          var word_element = document.createElementNS(svg_namespace, 'text');
-          word_element.innerHTML = trial.stimulus;
-          word_element.setAttribute('x', word_x);
-          word_element.setAttribute('y', word_y);
-          word_element.setAttribute('text-anchor', 'end');
-
-        } else if (trial.angle == Math.PI){
+        } else if (7*Math.PI/8 < trial.angle && trial.angle < 9*Math.PI/8){
           word_y = word_y + word_dims.height/4 // Move anchor down a bit
           var word_element = document.createElementNS(svg_namespace, 'text');
           word_element.innerHTML = trial.stimulus;
@@ -178,35 +164,28 @@ jsPsych.plugins['contmemory-present'] = (function() {
           word_element.setAttribute('y', word_y);
           word_element.setAttribute('text-anchor', 'end');
 
-        } else if (Math.PI < trial.angle && trial.angle <= 5*Math.PI/4){
+        } else if (9*Math.PI/8 < trial.angle && trial.angle <= 11*Math.PI/8){
           var word_element = document.createElementNS(svg_namespace, 'text');
           word_element.innerHTML = trial.stimulus;
           word_element.setAttribute('x', word_x);
           word_element.setAttribute('y', word_y);
           word_element.setAttribute('text-anchor', 'end');
 
-        } else if (5*Math.PI/4 < trial.angle && trial.angle < 3*Math.PI/2){
-          var word_element = document.createElementNS(svg_namespace, 'text');
-          word_element.innerHTML = trial.stimulus;
-          word_element.setAttribute('x', word_x);
-          word_element.setAttribute('y', word_y);
-          word_element.setAttribute('text-anchor', 'end');
-
-        } else if (trial.angle == 3*Math.PI/2){
-          word_y = word_y - word_dims.height/4 // Move anchor up a bit
+        } else if (11*Math.PI/8 < trial.angle && trial.angle < 13*Math.PI/8){
           var word_element = document.createElementNS(svg_namespace, 'text');
           word_element.innerHTML = trial.stimulus;
           word_element.setAttribute('x', word_x);
           word_element.setAttribute('y', word_y);
           word_element.setAttribute('text-anchor', 'middle');
 
-        } else if (3*Math.PI/2 < trial.angle && trial.angle <= 7*Math.PI/4){
+        } else if (13*Math.PI/8 < trial.angle && trial.angle <= 15*Math.PI/8){
           var word_element = document.createElementNS(svg_namespace, 'text');
           word_element.innerHTML = trial.stimulus;
           word_element.setAttribute('x', word_x);
           word_element.setAttribute('y', word_y);
           word_element.setAttribute('text-anchor', 'start');
         } else {
+          word_y = word_y + word_dims.height/4
           var word_element = document.createElementNS(svg_namespace, 'text');
           word_element.innerHTML = trial.stimulus;
           word_element.setAttribute('x', word_x);
@@ -215,6 +194,13 @@ jsPsych.plugins['contmemory-present'] = (function() {
         }
 
         svg_element.appendChild(word_element);
+
+
+        var marker_element = document.createElementNS(svg_namespace, 'circle');
+        marker_element.setAttribute('cx', CIRCLE_RADIUS_PX * Math.cos(trial.angle) + MIDPOINT_X);
+        marker_element.setAttribute('cy', CIRCLE_RADIUS_PX * Math.sin(trial.angle) + MIDPOINT_Y);
+        marker_element.setAttribute('r', 10);
+        svg_element.appendChild(marker_element);
 
         // The way to get the size of the word is to append the text svg element
         // when it is is visibility: hidden, compute the bounding box size, reposition
