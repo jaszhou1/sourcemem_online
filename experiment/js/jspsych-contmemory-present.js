@@ -124,15 +124,16 @@ jsPsych.plugins['contmemory-present'] = (function() {
         // Clear whatever is already in the container element.
         display_element.innerHTML = '';
 
-        // Here are the constants for laying out the stimuli.
+        // Compute the constants for laying out the stimuli.
+        const SVG_NAMESPACE = 'http://www.w3.org/2000/svg';
         const MIDPOINT_X = trial.svg_size_px / 2;
         const MIDPOINT_Y = trial.svg_size_px / 2;
         const CIRCLE_RADIUS_PX = (trial.svg_size_px / 2) - trial.circle_buffer_px;
         const WORD_RADIUS_PX = CIRCLE_RADIUS_PX + trial.word_buffer_px
 
         // Construct the SVG element that will hold the stimulus.
-        var svg_namespace = 'http://www.w3.org/2000/svg';
-        var svg_element = document.createElementNS(svg_namespace, 'svg');
+
+        var svg_element = document.createElementNS(SVG_NAMESPACE, 'svg');
         svg_element.id = 'jspsych-contmemory-present';
 
         // Set the height and width of the SVG element.
@@ -146,7 +147,7 @@ jsPsych.plugins['contmemory-present'] = (function() {
         );
 
         // Construct the circle within the stimulus.
-        var circle_element = document.createElementNS(svg_namespace, 'circle');
+        var circle_element = document.createElementNS(SVG_NAMESPACE, 'circle');
         circle_element.setAttribute('cx', MIDPOINT_X);
         circle_element.setAttribute('cy', MIDPOINT_Y);
         circle_element.setAttribute('r', CIRCLE_RADIUS_PX);
@@ -154,7 +155,7 @@ jsPsych.plugins['contmemory-present'] = (function() {
         svg_element.appendChild(circle_element);
 
         // Construct the fixation cross at the centre of the stimulus.
-        var fixation_element = document.createElementNS(svg_namespace, 'path');
+        var fixation_element = document.createElementNS(SVG_NAMESPACE, 'path');
         var path_description = ''; // we're doin this the old postscript way...
         path_description = 'M ' // moveto with absolute coordinates
                          + (MIDPOINT_X - trial.fixation_length_px).toString()
@@ -172,7 +173,7 @@ jsPsych.plugins['contmemory-present'] = (function() {
         svg_element.appendChild(fixation_element);
 
         // Construct hidden word stimulus to work out dimensions of textbox
-        var text_element = document.createElementNS(svg_namespace, 'text');
+        var text_element = document.createElementNS(SVG_NAMESPACE, 'text');
         text_element.innerHTML = trial.stimulus;
         text_element.style.visibility = 'hidden';
         display_element.appendChild(svg_element);
@@ -186,7 +187,7 @@ jsPsych.plugins['contmemory-present'] = (function() {
 
 
 
-        var marker_element = document.createElementNS(svg_namespace, 'circle');
+        var marker_element = document.createElementNS(SVG_NAMESPACE, 'circle');
         marker_element.setAttribute('cx', CIRCLE_RADIUS_PX * Math.cos(trial.angle) + MIDPOINT_X);
         marker_element.setAttribute('cy', CIRCLE_RADIUS_PX * Math.sin(trial.angle) + MIDPOINT_Y);
         marker_element.setAttribute('r', 10);
