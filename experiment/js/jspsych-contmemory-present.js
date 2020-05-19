@@ -54,6 +54,70 @@ jsPsych.plugins['contmemory-present'] = (function() {
     };
 
     plugin.trial = function(display_element, trial) {
+        // Function to "normalise" an angle in radians (ensure it is
+        // in the range of [0, 2pi]).
+        var normalise_angle = function(angle) {
+            while(angle > 2*Math.PI) {
+                angle -= 2*Math.PI;
+            }
+            while(angle < 0) {
+                angle += 2*Math.PI;
+            }
+            return angle;
+        };
+        
+        // Function for positioning the stimulus word text element.
+        // NOTE: For getBBox to work correctly, the text element must
+        // already be a child of the SVG element. Just ensure that it is
+        // hidden.
+        var position_text = function(text_element, target_angle, word_radius, centre_x, centre_y) {
+            // A note on positioning: we divide the circle into eight
+            // equal sized sectors (cardinal directions and
+            // intercardinal directions) because there are eight anchors
+            // on a text box. The coordinates of a circle start from
+            // the eastern point and go clockwise.
+
+            // Sector / Circle / Closest text box anchor:
+            // 0      / E      / (Mid-)left
+            // 1      / SE     / Upper left
+            // 2      / S      / Top (middle)
+            // 3      / SW     / Upper right
+            // 4      / W      / (Mid-)right
+            // 5      / NW     / Lower right
+            // 6      / N      / Bottom (middle)
+            // 7      / NE     / Lower left
+            
+            // The number of sectors (8) matches the number of handles on a text box.
+            const NUM_SECTORS = 8;
+            const SECTOR_ANGLE = 2 * Math.PI / NUM_SECTORS;
+            const LOWER_ANGLE = [...Array(NUM_SECTORS).keys()].map(i => i * SECTOR_ANGLE - SECTOR_ANGLE/2.0);
+            const ANCHOR_X = word_radius * Math.cos(target_angle) + centre_x;
+            const ANCHOR_Y = word_radius * Math.sin(target_angle) + centre_y;
+            const WORD_DIMS = text_element.getBBox();
+            const WORD_HEIGHT = WORD_DIMS.height;
+            const WORD_WIDTH = WORD_DIMS.width;
+            // just hardcode the coordinate offset
+            const WORD_X_HANDLE = [0, 0, -WORD_WIDTH/2, -WORD_WIDTH, -WORD_WIDTH, -WORD_WIDTH, -WORD_WIDTH/2, 0];
+            const WORD_Y_HANDLE = [WORD_HEIGHT/4, WORD_HEIGHT/2, WORD_HEIGHT/2, WORD_HEIGHT/2, WORD_HEIGHT/4, 0, 0, 0];
+
+            // Ensure the angle is correctly normalised to be between 0 and 2*pi.
+            target_angle = normalise_angle(target_angle);
+
+            // Find the first index over the "lower angle" for a
+            // sector and under the "lower angle" for the next sector.
+            for(var i = 0; i < NUM_SECTORS - 1; i++) {
+                if((target_angle >= LOWER_ANGLE[i]) && (target_angle < LOWER_ANGLE[i+1])) {
+                    break;
+                }
+            }
+
+            text_element.setAttribute('x', WORD_X_HANDLE[i] + ANCHOR_X);
+            text_element.setAttribute('y', WORD_Y_HANDLE[i] + ANCHOR_Y);
+            text_element.setAttribute('text-anchor', 'start');
+        };
+
+        // Set up all of the drawing elements (albeit hidden) for the entire trial.
+        
         // Clear whatever is already in the container element.
         display_element.innerHTML = '';
 
@@ -108,92 +172,15 @@ jsPsych.plugins['contmemory-present'] = (function() {
         var text_element = document.createElementNS(svg_namespace, 'text');
         text_element.innerHTML = trial.stimulus;
         text_element.style.visibility = 'hidden';
-        text_element.setAttribute('x', MIDPOINT_X);
-        text_element.setAttribute('y', MIDPOINT_Y);
-        var text_width = 0, text_height = 0;
-        svg_element.appendChild(text_element);
-         // Maybe I shouldn't be showing it here, but not sure how to get word dimensions otherwise?
-         // Seems to need to "flip" and be a drawn object (albeit invisible) to use getBBbox
         display_element.appendChild(svg_element);
-        var word_dims = text_element.getBBox();  // I don't actually believe height is 20 pixels. Is there some sort of buffer?
+        svg_element.appendChild(text_element);
+        
+        position_text(text_element, trial.angle, WORD_RADIUS_PX, MIDPOINT_X, MIDPOINT_Y);
 
-        // Cartesian Co-ordinates of the text stimulus, ignoring anchor points
-        word_x = MIDPOINT_X + (WORD_RADIUS_PX * Math.cos(trial.angle))
-        word_y = MIDPOINT_Y + (WORD_RADIUS_PX * Math.sin(trial.angle))
+        text_element.style.visibility = 'visible';
 
-        // Set anchor point co-ordinates based on sector
-        // TO DO, offset everything by pi/8, then can have 8 equal sized sectors
 
-        if (0 < trial.angle && trial.angle < Math.PI/8){
-          word_y = word_y + word_dims.height/4 // Move anchor down a bit
-          var word_element = document.createElementNS(svg_namespace, 'text');
-          word_element.innerHTML = trial.stimulus;
-          word_element.setAttribute('x', word_x);
-          word_element.setAttribute('y', word_y);
-          word_element.setAttribute('text-anchor', 'start');
 
-        } else if (Math.PI/8 < trial.angle && trial.angle <= 3*Math.PI/8){
-          word_y = word_y + word_dims.height/2 // Move anchor down
-          var word_element = document.createElementNS(svg_namespace, 'text');
-          word_element.innerHTML = trial.stimulus;
-          word_element.setAttribute('x', word_x);
-          word_element.setAttribute('y', word_y);
-          word_element.setAttribute('text-anchor', 'start');
-
-        } else if (3*Math.PI/8 < trial.angle && trial.angle < 5*Math.PI/8){
-          word_y = word_y + word_dims.height //Move anchor down a lot
-          var word_element = document.createElementNS(svg_namespace, 'text');
-          word_element.innerHTML = trial.stimulus;
-          word_element.setAttribute('x', word_x);
-          word_element.setAttribute('y', word_y);
-          word_element.setAttribute('text-anchor', 'middle');
-
-        }else if (5*Math.PI/8 < trial.angle && trial.angle <= 7*Math.PI/8){
-          word_y = word_y + word_dims.height/2 // Move anchor down
-          var word_element = document.createElementNS(svg_namespace, 'text');
-          word_element.innerHTML = trial.stimulus;
-          word_element.setAttribute('x', word_x);
-          word_element.setAttribute('y', word_y);
-          word_element.setAttribute('text-anchor', 'end');
-
-        } else if (7*Math.PI/8 < trial.angle && trial.angle < 9*Math.PI/8){
-          word_y = word_y + word_dims.height/4 // Move anchor down a bit
-          var word_element = document.createElementNS(svg_namespace, 'text');
-          word_element.innerHTML = trial.stimulus;
-          word_element.setAttribute('x', word_x);
-          word_element.setAttribute('y', word_y);
-          word_element.setAttribute('text-anchor', 'end');
-
-        } else if (9*Math.PI/8 < trial.angle && trial.angle <= 11*Math.PI/8){
-          var word_element = document.createElementNS(svg_namespace, 'text');
-          word_element.innerHTML = trial.stimulus;
-          word_element.setAttribute('x', word_x);
-          word_element.setAttribute('y', word_y);
-          word_element.setAttribute('text-anchor', 'end');
-
-        } else if (11*Math.PI/8 < trial.angle && trial.angle < 13*Math.PI/8){
-          var word_element = document.createElementNS(svg_namespace, 'text');
-          word_element.innerHTML = trial.stimulus;
-          word_element.setAttribute('x', word_x);
-          word_element.setAttribute('y', word_y);
-          word_element.setAttribute('text-anchor', 'middle');
-
-        } else if (13*Math.PI/8 < trial.angle && trial.angle <= 15*Math.PI/8){
-          var word_element = document.createElementNS(svg_namespace, 'text');
-          word_element.innerHTML = trial.stimulus;
-          word_element.setAttribute('x', word_x);
-          word_element.setAttribute('y', word_y);
-          word_element.setAttribute('text-anchor', 'start');
-        } else {
-          word_y = word_y + word_dims.height/4
-          var word_element = document.createElementNS(svg_namespace, 'text');
-          word_element.innerHTML = trial.stimulus;
-          word_element.setAttribute('x', word_x);
-          word_element.setAttribute('y', word_y);
-          word_element.setAttribute('text-anchor', 'start');
-        }
-
-        svg_element.appendChild(word_element);
 
 
         var marker_element = document.createElementNS(svg_namespace, 'circle');
