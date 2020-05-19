@@ -99,6 +99,9 @@ jsPsych.plugins['contmemory-present'] = (function() {
             // just hardcode the coordinate offset
             const WORD_X_HANDLE = [0, 0, -WORD_WIDTH/2, -WORD_WIDTH, -WORD_WIDTH, -WORD_WIDTH, -WORD_WIDTH/2, 0];
             const WORD_Y_HANDLE = [WORD_HEIGHT/4, WORD_HEIGHT/2, WORD_HEIGHT/2, WORD_HEIGHT/2, WORD_HEIGHT/4, 0, 0, 0];
+            // NB: The WORD_Y_HANDLE *ought* to be moved to
+            // WORD_HEIGHT/2 and WORD_HEIGHT, but this seems to
+            // produce words that are double the Y distance away.
 
             // Ensure the angle is correctly normalised to be between 0 and 2*pi.
             target_angle = normalise_angle(target_angle);
