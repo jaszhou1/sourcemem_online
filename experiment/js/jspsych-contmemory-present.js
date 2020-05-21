@@ -75,7 +75,8 @@ jsPsych.plugins['contmemory-present'] = (function() {
         // Start the timer for the trial.
         var start_trial = performance.now(),
             start_stimulus = -1.0,
-            start_response = -1.0;
+            start_response = -1.0,
+            start_feedback = -1.0;
         
         // Declare all of the main display components.
         var svg_element = null,
@@ -88,7 +89,9 @@ jsPsych.plugins['contmemory-present'] = (function() {
             stimulus_text_element = null;
 
         // Declare each of the trial components.
-        var stimulus_word = trial.stimulus,
+        var num_fast_attempts = 0,
+            num_error_attempts = 0,
+            stimulus_word = trial.stimulus,
             stimulus_angle = trial.angle,
             hitting_position = [0, 0],
             hitting_angle = 0.0,
@@ -115,25 +118,43 @@ jsPsych.plugins['contmemory-present'] = (function() {
 
         // Function to compute the x part of the Cartesian coordinates
         // from a set of radial coordinate.
-        var cart_to_pol_x = function(theta, rho) {
+        var pol_to_cart_x = function(theta, rho) {
             return rho * Math.cos(theta) + MIDPOINT_X;
         };
 
         // Function to compute the y part of the Cartesian coordinates
         // from a set of radial coordinates.
-        var cart_to_pol_y = function(theta, rho) {
+        var pol_to_cart_y = function(theta, rho) {
             return rho * Math.sin(theta) + MIDPOINT_Y;
         };
 
         // Function to compute the radial coordinates from Cartesian
         // coordinates.
-        var pol_to_cart = function(aa) {
+        var cart_to_pol = function(x, y) {
             var rho = Math.sqrt(x*x + y*y)
             var theta  = Math.atan2(y,x)
             return {
                 rho: rho, theta: theta
             }
         };
+
+        // Function to compute angular difference.
+        var angular_difference = function(first, second) {
+            var diff = second - first;
+            if(Math.abs(diff) > Math.PI) {
+                return diff - Math.PI * 2.0;
+            }
+            return diff;
+        };
+
+        // Function to check whether an angle is sufficiently close to
+        // the target angle.
+        var angle_within_limits = function(angle) {
+            console.log(angle);
+            console.log(trial.angle);
+            console.log(Math.abs(angular_difference(angle, trial.angle)));
+            return Math.abs(angular_difference(angle, trial.angle)) <= Math.PI / 8;
+        }
         
         // Function for positioning the stimulus word text element.
         // NOTE: For getBBox to work correctly, the text element must
@@ -161,8 +182,8 @@ jsPsych.plugins['contmemory-present'] = (function() {
             const NUM_SECTORS = 8;
             const SECTOR_ANGLE = 2 * Math.PI / NUM_SECTORS;
             const LOWER_ANGLE = [...Array(NUM_SECTORS).keys()].map(i => i * SECTOR_ANGLE - SECTOR_ANGLE/2.0);
-            const ANCHOR_X = cart_to_pol_x(target_angle, word_radius);
-            const ANCHOR_Y = cart_to_pol_y(target_angle, word_radius);
+            const ANCHOR_X = pol_to_cart_x(target_angle, word_radius);
+            const ANCHOR_Y = pol_to_cart_y(target_angle, word_radius);
             const WORD_DIMS = text_element.getBBox();
             const WORD_HEIGHT = WORD_DIMS.height;
             const WORD_WIDTH = WORD_DIMS.width;
@@ -364,22 +385,86 @@ jsPsych.plugins['contmemory-present'] = (function() {
 
             // Construct the trial data structure to be handed to jsPsych.
             var trial_data = {
+                num_fast_attempts: num_fast_attempts,
+                num_error_attempts: num_error_attempts,
                 stimulus_word: stimulus_word,
                 stimulus_angle: stimulus_angle,
                 hitting_position: hitting_position,
                 hitting_angle: hitting_angle,
                 response_time: response_time
             };
+
+            console.log(trial_data);
             
             // Indicate to jsPsych that the trial is over.
             jsPsych.finishTrial(trial_data);
         };
+
+        // The event listener for exiting the response circle.
+        var response_circle_exited = function(e) {
+            // Remove the event listener.
+            response_circle_element.removeEventListener('mouseleave', response_circle_exited);
+            // Compute position.
+            hitting_position = [e.offsetX - MIDPOINT_X,
+                                e.offsetY - MIDPOINT_Y];
+            console.log(hitting_position);
+            hitting_angle = cart_to_pol(hitting_position[0], hitting_position[1]).theta;
+            present_feedback();
+        };
+
+        // The event listener for entering the calibration circle.
+        var calibration_circle_entered = function(e) {
+             console.log('Calibration element entered');
+            // Remove the event listener.
+            calibration_marker_element.removeEventListener('mouseenter', calibration_circle_entered);
+            
+            present_stimulus();
+        };
         
-        // A routine for the presentation of each stage in 
+        // A routine for the presentation of each stage of the experiment.
+        var present_feedback = function() {
+            // Set the feedback time.
+            start_feedback = performance.now();
+            
+            // Check whether the response time is valid.
+            if((start_feedback - start_response) < 200) {
+                feedback_marker_element.innerHTML = 'Too fast';                
+                feedback_marker_element.setAttribute('cx', hitting_position[0]);
+                feedback_marker_element.setAttribute('cy', hitting_position[1]);
+                feedback_display();
+
+                // After a delay, begin the trial again.
+                jsPsych.pluginAPI.setTimeout(function() {
+                    begin_presentation();
+                }, 2000);
+                return;
+            }
+            
+            // Check whether the angle is valid.
+            if(!angle_within_limits(hitting_angle)) {
+                feedback_text_element.innerHTML = 'Too distant';                
+                feedback_marker_element.setAttribute('cx', hitting_position[0]);
+                feedback_marker_element.setAttribute('cy', hitting_position[1]);
+                feedback_display();
+
+                // After a delay, begin the trial again.
+                jsPsych.pluginAPI.setTimeout(function() {
+                    begin_presentation();
+                }, 2000);
+                return;
+            }
+
+            // End the trial.
+            end_trial_handle();
+        };
+        
         var present_stimulus = function() {
             // Set up the stimulus display elements.
             stimulus_display();
 
+            // Set the stimulus time.
+            start_stimulus = performance.now();
+            
             // Set up the stimulus display to be removed.
             jsPsych.pluginAPI.setTimeout(function() {
                 present_response();
@@ -390,19 +475,12 @@ jsPsych.plugins['contmemory-present'] = (function() {
             // Set up the response display elements.
             response_display();
 
+            // Set the response timestamp.
+            start_response = performance.now();
+            
             // Set up the response circle.
-            response_circle_element.addEventListener('mouseleave', e => {
-                console.log('got here');
-                console.log(e);
-                feedback_marker_element.setAttribute('cx', e.offsetX);
-                feedback_marker_element.setAttribute('cy', e.offsetY);
-                feedback_marker_element.style.visibility = 'visible';
-            });
-        };
-
-        var present_feedback = function() {
-            // Set up the feedback display elements.
-            feedback_display();
+            response_circle_element.addEventListener('mouseleave',
+                                                     response_circle_exited);
         };
 
         var begin_presentation = function() {
@@ -413,11 +491,8 @@ jsPsych.plugins['contmemory-present'] = (function() {
             
             // Add an event handler to switch when the mouse is inside
             // the calibration marker.
-            calibration_marker_element.addEventListener('mouseenter', e => {
-                console.log('Calibration element entered');
-
-                present_stimulus();
-            });
+            calibration_marker_element.addEventListener('mouseenter',
+                                                        calibration_circle_entered);
         };
 
         // Set the stage for the calibration section.
