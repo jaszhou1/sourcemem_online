@@ -26,6 +26,12 @@ jsPsych.plugins['contmemory-present'] = (function() {
                 default: 0.0,
                 description: 'The angle to be associated with the stimulus word'
             },
+            stimulus_display_ms: {
+                type: jsPsych.plugins.parameterType.INT,
+                pretty_name: 'Stimulus display time (ms)',
+                default: 1000,
+                description: 'The time to present the stimulus before the response in milliseconds.'
+            },
             svg_size_px: {
                 type: jsPsych.plugins.parameterType.INT,
                 pretty_name: 'SVG canvas size (px)',
@@ -49,11 +55,52 @@ jsPsych.plugins['contmemory-present'] = (function() {
                 pretty_name: 'Length of each fixation cross arm (px)',
                 default: 5,
                 description: 'The length of the fixation cross in pixels'
+            },
+            angle_marker_px: {
+                type: jsPsych.plugins.parameterType.INT,
+                pretty_name: 'Radius of angle marker (px)',
+                default: 10,
+                description: 'The radius of the stimulus location marker in pixels'
+            },
+            calibration_marker_px: {
+                type: jsPsych.plugins.parameterType.INT,
+                pretty_name: 'Radius of the calibration area (px)',
+                default: 4,
+                description: 'The radius of the calibration area marker in pixels'
             }
         }
     };
 
     plugin.trial = function(display_element, trial) {
+        // Start the timer for the trial.
+        var start_trial = performance.now(),
+            start_stimulus = -1.0,
+            start_response = -1.0;
+        
+        // Declare all of the main display components.
+        var svg_element = null,
+            fixation_element = null,
+            calibration_marker_element = null,
+            response_circle_element = null,
+            angle_marker_element = null,
+            feedback_marker_element = null,
+            feedback_text_element = null,
+            stimulus_text_element = null;
+
+        // Declare each of the trial components.
+        var stimulus_word = trial.stimulus,
+            stimulus_angle = trial.angle,
+            hitting_position = [0, 0],
+            hitting_angle = 0.0,
+            response_time = 0.0;
+
+        // Compute the constants for laying out the stimuli.
+        const SVG_NAMESPACE = 'http://www.w3.org/2000/svg';
+        const MIDPOINT_X = trial.svg_size_px / 2;
+        const MIDPOINT_Y = trial.svg_size_px / 2;
+        const CIRCLE_RADIUS_PX = (trial.svg_size_px / 2) - trial.circle_buffer_px;
+        const WORD_RADIUS_PX = CIRCLE_RADIUS_PX + trial.word_buffer_px
+        
         // Function to "normalise" an angle in radians (ensure it is
         // in the range of [0, 2pi]).
         var normalise_angle = function(angle) {
@@ -65,12 +112,35 @@ jsPsych.plugins['contmemory-present'] = (function() {
             }
             return angle;
         };
+
+        // Function to compute the x part of the Cartesian coordinates
+        // from a set of radial coordinate.
+        var cart_to_pol_x = function(theta, rho) {
+            return rho * Math.cos(theta) + MIDPOINT_X;
+        };
+
+        // Function to compute the y part of the Cartesian coordinates
+        // from a set of radial coordinates.
+        var cart_to_pol_y = function(theta, rho) {
+            return rho * Math.sin(theta) + MIDPOINT_Y;
+        };
+
+        // Function to compute the radial coordinates from Cartesian
+        // coordinates.
+        var pol_to_cart = function(aa) {
+            var rho = Math.sqrt(x*x + y*y)
+            var theta  = Math.atan2(y,x)
+            return {
+                rho: rho, theta: theta
+            }
+        };
         
         // Function for positioning the stimulus word text element.
         // NOTE: For getBBox to work correctly, the text element must
         // already be a child of the SVG element. Just ensure that it is
         // hidden.
-        var position_text = function(text_element, target_angle, word_radius, centre_x, centre_y) {
+        var position_text = function(text_element, target_angle,
+                                     word_radius) {
             // A note on positioning: we divide the circle into eight
             // equal sized sectors (cardinal directions and
             // intercardinal directions) because there are eight anchors
@@ -91,8 +161,8 @@ jsPsych.plugins['contmemory-present'] = (function() {
             const NUM_SECTORS = 8;
             const SECTOR_ANGLE = 2 * Math.PI / NUM_SECTORS;
             const LOWER_ANGLE = [...Array(NUM_SECTORS).keys()].map(i => i * SECTOR_ANGLE - SECTOR_ANGLE/2.0);
-            const ANCHOR_X = word_radius * Math.cos(target_angle) + centre_x;
-            const ANCHOR_Y = word_radius * Math.sin(target_angle) + centre_y;
+            const ANCHOR_X = cart_to_pol_x(target_angle, word_radius);
+            const ANCHOR_Y = cart_to_pol_y(target_angle, word_radius);
             const WORD_DIMS = text_element.getBBox();
             const WORD_HEIGHT = WORD_DIMS.height;
             const WORD_WIDTH = WORD_DIMS.width;
@@ -119,23 +189,109 @@ jsPsych.plugins['contmemory-present'] = (function() {
             text_element.setAttribute('text-anchor', 'start');
         };
 
-        // Set up all of the drawing elements (albeit hidden) for the entire trial.
-        
-        // Clear whatever is already in the container element.
+        // Create a circle and append it as an (invisible) child of
+        // the parent SVG element.
+        var create_and_append_circle = function(id, x_pos, y_pos, radius) {
+            var res = document.createElementNS(SVG_NAMESPACE, 'circle');
+            res.setAttribute('cx', x_pos);
+            res.setAttribute('cy', y_pos);
+            res.setAttribute('r', radius);
+            res.id = id;
+            res.style.visibility = 'hidden';
+            svg_element.appendChild(res);
+            return res;
+        };
+
+        // Create a text element and append it as an (invisible) child
+        // of the SVG element.
+        var create_and_append_text = function(id, text, x_pos, y_pos, text_anchor) {
+            var res = document.createElementNS(SVG_NAMESPACE, 'text');
+            res.innerHTML = text;
+            res.id = id;
+            res.setAttribute('x', x_pos);
+            res.setAttribute('y', y_pos);
+            res.setAttribute('text-anchor', text_anchor);
+            res.style.visibility = 'hidden';
+            svg_element.appendChild(res);
+            return res;
+        };
+
+        var calibration_display = function() {
+            console.log('Calibration display');
+
+            // Make sure the feedback text is indicating people should
+            // enter the calibration circle.
+            feedback_text_element.innerHTML = 'Please place your cursor in the small circle.';
+            feedback_text_element.setAttribute('y', MIDPOINT_Y - trial.calibration_marker_px - 5);
+            
+            // Set the non-calibration elements to visibility: hidden.
+            fixation_element.style.visibility = 'hidden';
+            angle_marker_element.style.visibility = 'hidden';
+            feedback_marker_element.style.visibility = 'hidden';
+            stimulus_text_element.style.visibility = 'hidden';
+            
+            // Set the calibration elements to visibility: visible.
+            calibration_marker_element.style.visibility = 'visible';
+            response_circle_element.style.visibility = 'visible';
+            feedback_text_element.style.visibility = 'visible';            
+        };
+
+        var stimulus_display = function() {
+            console.log('Stimulus display');
+
+            // Set the non-calibration elements to visibility: hidden.
+            fixation_element.style.visibility = 'hidden';
+
+            feedback_marker_element.style.visibility = 'hidden';
+            feedback_text_element.style.visibility = 'hidden'; 
+            
+            // Set the calibration elements to visibility: visible.
+            calibration_marker_element.style.visibility = 'visible';
+            angle_marker_element.style.visibility = 'visible';
+            response_circle_element.style.visibility = 'visible';
+            stimulus_text_element.style.visibility = 'visible';          
+        };
+
+        var response_display = function() {
+            console.log('Response display');
+
+            // Set the non-calibration elements to visibility: hidden.
+            calibration_marker_element.style.visibility = 'hidden';
+            angle_marker_element.style.visibility = 'hidden';
+            feedback_marker_element.style.visibility = 'hidden';
+            stimulus_text_element.style.visibility = 'hidden';
+            feedback_text_element.style.visibility = 'hidden';           
+            
+            // Set the calibration elements to visibility: visible.
+            fixation_element.style.visibility = 'visible'; 
+            response_circle_element.style.visibility = 'visible';
+            
+        };
+
+        var feedback_display = function() {
+            console.log('Feedback display');
+
+            // Set the non-calibration elements to visibility: hidden.
+            fixation_element.style.visibility = 'hidden';
+            angle_marker_element.style.visibility = 'hidden';
+            feedback_marker_element.style.visibility = 'hidden';
+            stimulus_text_element.style.visibility = 'hidden';
+            
+            // Set the calibration elements to visibility: visible.
+            calibration_marker_element.style.visibility = 'visible';
+            response_circle_element.style.visibility = 'visible';
+            feedback_text_element.style.visibility = 'visible';           
+
+        };
+
+        // Set up all of the elements for the trial. First, clear
+        // whatever is already in the container element.
         display_element.innerHTML = '';
-
-        // Compute the constants for laying out the stimuli.
-        const SVG_NAMESPACE = 'http://www.w3.org/2000/svg';
-        const MIDPOINT_X = trial.svg_size_px / 2;
-        const MIDPOINT_Y = trial.svg_size_px / 2;
-        const CIRCLE_RADIUS_PX = (trial.svg_size_px / 2) - trial.circle_buffer_px;
-        const WORD_RADIUS_PX = CIRCLE_RADIUS_PX + trial.word_buffer_px
-
+        
         // Construct the SVG element that will hold the stimulus.
-
-        var svg_element = document.createElementNS(SVG_NAMESPACE, 'svg');
+        svg_element = document.createElementNS(SVG_NAMESPACE, 'svg');
         svg_element.id = 'jspsych-contmemory-present';
-
+       
         // Set the height and width of the SVG element.
         svg_element.setAttribute('height', trial.svg_size_px);
         svg_element.setAttribute('width', trial.svg_size_px);
@@ -145,75 +301,127 @@ jsPsych.plugins['contmemory-present'] = (function() {
             trial.svg_size_px.toString() + ' ' +
             trial.svg_size_px.toString()
         );
-
-        // Construct the circle within the stimulus.
-        var circle_element = document.createElementNS(SVG_NAMESPACE, 'circle');
-        circle_element.setAttribute('cx', MIDPOINT_X);
-        circle_element.setAttribute('cy', MIDPOINT_Y);
-        circle_element.setAttribute('r', CIRCLE_RADIUS_PX);
-        circle_element.classList.add('stimulus-circle');
-        svg_element.appendChild(circle_element);
-
-        // Construct the fixation cross at the centre of the stimulus.
-        var fixation_element = document.createElementNS(SVG_NAMESPACE, 'path');
-        var path_description = ''; // we're doin this the old postscript way...
-        path_description = 'M ' // moveto with absolute coordinates
-                         + (MIDPOINT_X - trial.fixation_length_px).toString()
-                         + ',' + MIDPOINT_Y.toString() + ' '
+        display_element.appendChild(svg_element);
+        
+        // Construct the response circle element.
+        response_circle_element = create_and_append_circle('response-circle',
+                                                           MIDPOINT_X, MIDPOINT_Y,
+                                                           CIRCLE_RADIUS_PX);
+        response_circle_element.classList.add('response-circle');
+        
+        // Construct the fixation cross element at the centre of the stimulus.
+        fixation_element = document.createElementNS(SVG_NAMESPACE, 'path');
+        var path_description =
+            'M ' // moveto with absolute coordinates
+            + (MIDPOINT_X - trial.fixation_length_px).toString()
+            + ',' + MIDPOINT_Y.toString() + ' '
         // lineto horizontal offset
-                         + 'h ' + (trial.fixation_length_px * 2).toString() + ' '
+            + 'h ' + (trial.fixation_length_px * 2).toString() + ' '
         // moveto with absolute coordinates
-                         + 'M ' + MIDPOINT_X.toString() + ','
-                         + (MIDPOINT_Y - trial.fixation_length_px).toString()
+            + 'M ' + MIDPOINT_X.toString() + ','
+            + (MIDPOINT_Y - trial.fixation_length_px).toString()
         // lineto with vertical offset
-                         + 'v ' + (trial.fixation_length_px * 2).toString();
-
+            + 'v ' + (trial.fixation_length_px * 2).toString();
         fixation_element.setAttribute('d', path_description);
         fixation_element.classList.add('fixation-cross');
+        fixation_element.style.visibility = 'hidden';
         svg_element.appendChild(fixation_element);
 
-        // Construct hidden word stimulus to work out dimensions of textbox
-        var text_element = document.createElementNS(SVG_NAMESPACE, 'text');
-        text_element.innerHTML = trial.stimulus;
-        text_element.style.visibility = 'hidden';
-        display_element.appendChild(svg_element);
-        svg_element.appendChild(text_element);
+        // Construct stimulus word element.
+        stimulus_text_element = create_and_append_text('stimulus-text', trial.stimulus,
+                                                       MIDPOINT_X, MIDPOINT_Y, 'middle');
+        position_text(stimulus_text_element, trial.angle, WORD_RADIUS_PX);
+
+        // Construct stimulus angle marker element.
+        angle_marker_element = create_and_append_circle(
+            'stim-angle-marker',
+            CIRCLE_RADIUS_PX * Math.cos(trial.angle) + MIDPOINT_X,
+            CIRCLE_RADIUS_PX * Math.sin(trial.angle) + MIDPOINT_Y,
+            trial.angle_marker_px
+        );
+        angle_marker_element.classList.add('angle-marker');
+
+        // Construct the calibration marker.
+        calibration_marker_element = create_and_append_circle('calibration-marker',
+                                                              MIDPOINT_X,
+                                                              MIDPOINT_Y,
+                                                              trial.calibration_marker_px);
+        calibration_marker_element.classList.add('calibration-marker');
         
-        position_text(text_element, trial.angle, WORD_RADIUS_PX, MIDPOINT_X, MIDPOINT_Y);
+        // Construct feedback text.
+        feedback_text_element = create_and_append_text('feedback-text', 'Too fast',
+                                                       MIDPOINT_X, MIDPOINT_Y, 'middle');
 
-        text_element.style.visibility = 'visible';
+        // Construct feedback marker element.
+        feedback_marker_element = create_and_append_circle('feedback-marker',
+                                                           MIDPOINT_X, MIDPOINT_Y,
+                                                           trial.angle_marker_px);
 
+        // The procedure to be called at the end of a trial.
+        var end_trial_handle = function() {
+            // Kill any remaining setTimeout handlers.
+            jsPsych.pluginAPI.clearAllTimeouts();
 
+            // Construct the trial data structure to be handed to jsPsych.
+            var trial_data = {
+                stimulus_word: stimulus_word,
+                stimulus_angle: stimulus_angle,
+                hitting_position: hitting_position,
+                hitting_angle: hitting_angle,
+                response_time: response_time
+            };
+            
+            // Indicate to jsPsych that the trial is over.
+            jsPsych.finishTrial(trial_data);
+        };
+        
+        // A routine for the presentation of each stage in 
+        var present_stimulus = function() {
+            // Set up the stimulus display elements.
+            stimulus_display();
 
+            // Set up the stimulus display to be removed.
+            jsPsych.pluginAPI.setTimeout(function() {
+                present_response();
+            }, trial.stimulus_display_ms);
+        };
 
+        var present_response = function() {
+            // Set up the response display elements.
+            response_display();
 
-        var marker_element = document.createElementNS(SVG_NAMESPACE, 'circle');
-        marker_element.setAttribute('cx', CIRCLE_RADIUS_PX * Math.cos(trial.angle) + MIDPOINT_X);
-        marker_element.setAttribute('cy', CIRCLE_RADIUS_PX * Math.sin(trial.angle) + MIDPOINT_Y);
-        marker_element.setAttribute('r', 10);
-        svg_element.appendChild(marker_element);
+            // Set up the response circle.
+            response_circle_element.addEventListener('mouseleave', e => {
+                console.log('got here');
+                console.log(e);
+                feedback_marker_element.setAttribute('cx', e.offsetX);
+                feedback_marker_element.setAttribute('cy', e.offsetY);
+                feedback_marker_element.style.visibility = 'visible';
+            });
+        };
 
-        // The way to get the size of the word is to append the text svg element
-        // when it is is visibility: hidden, compute the bounding box size, reposition
-        // the text based on the bounding box size, and then switch visibility: visible.
-        //word_element.style.visibility = 'hidden';
+        var present_feedback = function() {
+            // Set up the feedback display elements.
+            feedback_display();
+        };
 
-          // First work out the quadrant that the angle is in.
+        var begin_presentation = function() {
+            console.log('Presentation begun');
+            
+            // Show the calibration marker and text.
+            calibration_display();
+            
+            // Add an event handler to switch when the mouse is inside
+            // the calibration marker.
+            calibration_marker_element.addEventListener('mouseenter', e => {
+                console.log('Calibration element entered');
 
-          // Portion up the circle
+                present_stimulus();
+            });
+        };
 
-
-          // Work out the dimensions of the text bounding box.
-
-          // Based on the quadrant, set the text-anchor attribute.
-
-          // Set the cartesian coordinates of the word element.
-
-        // Append the SVG to the container node.
-        display_element.appendChild(svg_element);
-        console.log(trial.angle);
-
-
+        // Set the stage for the calibration section.
+        begin_presentation();
     };
 
     return plugin;
