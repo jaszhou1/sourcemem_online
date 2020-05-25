@@ -94,9 +94,14 @@ jsPsych.plugins['contmemory-present'] = (function() {
             stimulus_word = trial.stimulus,
             stimulus_angle = trial.angle,
             hitting_position = [0, 0],
-            hitting_angle = 0.0,
-            response_time = 0.0;
+            hitting_angle = null,
+            angular_error = null,
+            response_time = null;
 
+        // Variables for tracking the mouse position.
+        var mouse_x = null,
+            mouse_y = null;
+        
         // Compute the constants for laying out the stimuli.
         const SVG_NAMESPACE = 'http://www.w3.org/2000/svg';
         const MIDPOINT_X = trial.svg_size_px / 2;
@@ -155,6 +160,14 @@ jsPsych.plugins['contmemory-present'] = (function() {
             console.log(Math.abs(angular_difference(angle, trial.angle)));
             return Math.abs(angular_difference(angle, trial.angle)) <= Math.PI / 8;
         }
+
+        // Function to check whether the mouse cursor's current
+        // position is within an element.
+        var mouse_within_element = function(el) {
+            var bbounds;
+            var mouse_x,
+                mouse_y;
+        };
         
         // Function for positioning the stimulus word text element.
         // NOTE: For getBBox to work correctly, the text element must
@@ -391,6 +404,7 @@ jsPsych.plugins['contmemory-present'] = (function() {
                 stimulus_angle: stimulus_angle,
                 hitting_position: hitting_position,
                 hitting_angle: hitting_angle,
+                angular_error: angular_error,
                 response_time: response_time
             };
 
@@ -402,13 +416,20 @@ jsPsych.plugins['contmemory-present'] = (function() {
 
         // The event listener for exiting the response circle.
         var response_circle_exited = function(e) {
+            // Ignore if we've entered the fixation element.
+            if(e.relatedTarget === fixation_element) {
+                return;
+            }
+            
             // Remove the event listener.
-            response_circle_element.removeEventListener('mouseleave', response_circle_exited);
+            response_circle_element.removeEventListener('mouseout', response_circle_exited);
+            
             // Compute position.
             hitting_position = [e.offsetX - MIDPOINT_X,
                                 e.offsetY - MIDPOINT_Y];
             console.log(hitting_position);
             hitting_angle = cart_to_pol(hitting_position[0], hitting_position[1]).theta;
+            angular_error = angular_difference(hitting_angle, trial.angle);
             present_feedback();
         };
 
@@ -420,14 +441,23 @@ jsPsych.plugins['contmemory-present'] = (function() {
             
             present_stimulus();
         };
+
+        // The event listener to track the mouse position.
+        var response_circle_moved = function(e) {
+            mouse_x = e.clientX;
+            mouse_y = e.clientY;
+        };
         
         // A routine for the presentation of each stage of the experiment.
         var present_feedback = function() {
             // Set the feedback time.
             start_feedback = performance.now();
+            response_time = start_feedback - start_response;
             
             // Check whether the response time is valid.
-            if((start_feedback - start_response) < 200) {
+            if(response_time < 200) {
+                num_fast_attempts++;
+                
                 feedback_marker_element.innerHTML = 'Too fast';                
                 feedback_marker_element.setAttribute('cx', hitting_position[0]);
                 feedback_marker_element.setAttribute('cy', hitting_position[1]);
@@ -442,6 +472,8 @@ jsPsych.plugins['contmemory-present'] = (function() {
             
             // Check whether the angle is valid.
             if(!angle_within_limits(hitting_angle)) {
+                num_error_attempts++;
+                
                 feedback_text_element.innerHTML = 'Too distant';                
                 feedback_marker_element.setAttribute('cx', hitting_position[0]);
                 feedback_marker_element.setAttribute('cy', hitting_position[1]);
@@ -479,15 +511,22 @@ jsPsych.plugins['contmemory-present'] = (function() {
             start_response = performance.now();
             
             // Set up the response circle.
-            response_circle_element.addEventListener('mouseleave',
+            response_circle_element.addEventListener('mouseout',
                                                      response_circle_exited);
         };
 
         var begin_presentation = function() {
             console.log('Presentation begun');
+
+            // If we're not already inside the calibration marker.
+            
             
             // Show the calibration marker and text.
             calibration_display();
+
+            // Add an event handler to the response circle.
+            response_circle_element.addEventListener('mousemove',
+                                                     response_circle_moved);
             
             // Add an event handler to switch when the mouse is inside
             // the calibration marker.
