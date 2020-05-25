@@ -416,6 +416,7 @@ jsPsych.plugins['contmemory-present'] = (function() {
             // Construct the trial data structure to be handed to jsPsych.
             var trial_data = {
                 num_fast_attempts: num_fast_attempts,
+                num_slow_attempts: num_slow_attempts,
                 num_error_attempts: num_error_attempts,
                 stimulus_word: stimulus_word,
                 stimulus_angle: stimulus_angle,
