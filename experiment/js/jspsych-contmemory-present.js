@@ -67,6 +67,18 @@ jsPsych.plugins['contmemory-present'] = (function() {
                 pretty_name: 'Radius of the calibration area (px)',
                 default: 4,
                 description: 'The radius of the calibration area marker in pixels'
+            },
+            quick_trap_ms: {
+                type: jsPsych.plugins.parameterType.INT,
+                pretty_name: 'Shortest valid response time (ms)',
+                default: 200,
+                description: 'The upper bound of the quick response time trap in milliseconds'
+            },
+            slow_trap_ms: {
+                type: jsPsych.plugins.parameterType.INT,
+                pretty_name: 'Longest valid response time (ms)',
+                default: 2000,
+                description: 'The lower bound of the slow response time trap in milliseconds'
             }
         }
     };
@@ -90,6 +102,7 @@ jsPsych.plugins['contmemory-present'] = (function() {
 
         // Declare each of the trial components.
         var num_fast_attempts = 0,
+            num_slow_attempts = 0,
             num_error_attempts = 0,
             stimulus_word = trial.stimulus,
             stimulus_angle = trial.angle,
@@ -459,10 +472,26 @@ jsPsych.plugins['contmemory-present'] = (function() {
             response_time = start_feedback - start_response;
             
             // Check whether the response time is valid.
-            if(response_time < 200) {
+            if(response_time < trial.quick_trap_ms) {
                 num_fast_attempts++;
                 
-                feedback_marker_element.innerHTML = 'Too fast';                
+                feedback_text_element.innerHTML = 'Too fast';                
+                feedback_marker_element.setAttribute('cx', hitting_position[0]);
+                feedback_marker_element.setAttribute('cy', hitting_position[1]);
+                feedback_display();
+
+                // After a delay, begin the trial again.
+                jsPsych.pluginAPI.setTimeout(function() {
+                    begin_presentation();
+                }, 2000);
+                return;
+            }
+
+            // Check whether the response time is valid.
+            if(response_time > trial.slow_trap_ms) {
+                num_slow_attempts++;
+                
+                feedback_text_element.innerHTML = 'Too slow';                
                 feedback_marker_element.setAttribute('cx', hitting_position[0]);
                 feedback_marker_element.setAttribute('cy', hitting_position[1]);
                 feedback_display();
