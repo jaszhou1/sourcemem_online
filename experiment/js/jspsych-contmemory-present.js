@@ -162,11 +162,15 @@ jsPsych.plugins['contmemory-present'] = (function() {
         }
 
         // Function to check whether the mouse cursor's current
-        // position is within an element.
+        // position is within an element's bounding box.
         var mouse_within_element = function(el) {
-            var bbounds;
-            var mouse_x,
-                mouse_y;
+            var bbounds = el.getBoundingClientRect();
+            if(mouse_x !== null && mouse_y !== null) {
+                if(mouse_x >= bbounds.left && mouse_x <= bbounds.right && mouse_y >= bbounds.top && mouse_y <= bbounds.bottom) {
+                    return true;
+                }
+            }
+            return false;
         };
         
         // Function for positioning the stimulus word text element.
@@ -504,6 +508,13 @@ jsPsych.plugins['contmemory-present'] = (function() {
         };
 
         var present_response = function() {
+            // If we're not inside the calibration marker element
+            // bounding box, then go to calibration marker.
+            if(!mouse_within_element(calibration_marker_element)) {
+                begin_presentation();
+                return;
+            }
+            
             // Set up the response display elements.
             response_display();
 
@@ -518,13 +529,19 @@ jsPsych.plugins['contmemory-present'] = (function() {
         var begin_presentation = function() {
             console.log('Presentation begun');
 
-            // If we're not already inside the calibration marker.
-            
-            
-            // Show the calibration marker and text.
-            calibration_display();
+            if(mouse_within_element(calibration_marker_element)) {
+                // If we're already inside the calibration marker, go
+                // straight to the stimulus display.
+                stimulus_display();
+            } else {
+                // Show the calibration marker and text.
+                calibration_display();
+            }
 
-            // Add an event handler to the response circle.
+            // Add an event handler to the response circle. Because
+            // this event listener is registered to the same (named)
+            // function, it won't get bound twice if begin_presentation
+            // is called multiple times.
             response_circle_element.addEventListener('mousemove',
                                                      response_circle_moved);
             
