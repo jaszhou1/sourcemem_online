@@ -5,7 +5,8 @@
     <meta charset="utf-8" />
     <script src="js/jspsych.js" type="text/javascript"></script>
     <script src="js/jspsych-contmemory-present.js" type="text/javascript"></script>
-    <title>Prototype of the memory stimulus presentation</title>
+    <script src="js/jspsych-contmemory-recall.js" type="text/javascript"></script>
+    <title>Prototype of the memory stimulus recall</title>
     <link rel="stylesheet" href="css/jspsych.css" type="text/css" />
     <link rel="stylesheet" href="css/custom.css" type="text/css" />
   </head>
@@ -21,9 +22,8 @@
       var TIMELINE = [];
 
       TIMELINE.push({
-          type: 'contmemory-present',
-          stimulus: 'WORD',
-          angle: getRandomInt(2*Math.PI)
+          type: 'contmemory-recall',
+          stimulus: 'WORD'
       });
 
       jsPsych.init({
