@@ -268,7 +268,7 @@ jsPsych.plugins['contmemory-recall'] = (function() {
         
         // Construct the SVG element that will hold the stimulus.
         svg_element = document.createElementNS(SVG_NAMESPACE, 'svg');
-        svg_element.id = 'jspsych-contmemory-present';
+        svg_element.id = 'jspsych-contmemory-recall';
        
         // Set the height and width of the SVG element.
         svg_element.setAttribute('height', trial.svg_size_px);
