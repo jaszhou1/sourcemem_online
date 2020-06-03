@@ -168,9 +168,6 @@ jsPsych.plugins['contmemory-present'] = (function() {
         // Function to check whether an angle is sufficiently close to
         // the target angle.
         var angle_within_limits = function(angle) {
-            console.log(angle);
-            console.log(trial.angle);
-            console.log(Math.abs(angular_difference(angle, trial.angle)));
             return Math.abs(angular_difference(angle, trial.angle)) <= Math.PI / 8;
         }
 
@@ -541,6 +538,7 @@ jsPsych.plugins['contmemory-present'] = (function() {
             // If we're not inside the calibration marker element
             // bounding box, then go to calibration marker.
             if(!mouse_within_element(calibration_marker_element)) {
+                console.log('At begin_presentation, mouse within calibration marker.');
                 begin_presentation();
                 return;
             }
@@ -562,6 +560,7 @@ jsPsych.plugins['contmemory-present'] = (function() {
             if(mouse_within_element(calibration_marker_element)) {
                 // If we're already inside the calibration marker, go
                 // straight to the stimulus display.
+                console.log('At begin_presentation, mouse within calibration marker.');
                 stimulus_display();
             } else {
                 // Show the calibration marker and text.

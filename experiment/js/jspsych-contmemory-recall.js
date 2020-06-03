@@ -20,6 +20,12 @@ jsPsych.plugins['contmemory-recall'] = (function() {
                 default: null,
                 description: 'The word to be stored in memory'
             },
+            angle: {
+                type: jsPsych.plugins.parameterType.FLOAT,
+                pretty_name: 'Target angle',
+                default: null,
+                description: 'The target angle in radians used for feedback purposes'
+            },
             stimulus_display_ms: {
                 type: jsPsych.plugins.parameterType.INT,
                 pretty_name: 'Stimulus display time (ms)',
@@ -92,6 +98,7 @@ jsPsych.plugins['contmemory-recall'] = (function() {
         var num_fast_attempts = 0,
             num_slow_attempts = 0,
             stimulus_word = trial.stimulus,
+            target_angle = trial.angle,
             hitting_position = [0, 0],
             hitting_angle = null,
             angular_error = null,
@@ -141,6 +148,21 @@ jsPsych.plugins['contmemory-recall'] = (function() {
                 rho: rho, theta: theta
             }
         };
+        
+        // Function to compute angular difference.
+        var angular_difference = function(first, second) {
+            var diff = second - first;
+            if(Math.abs(diff) > Math.PI) {
+                return diff - Math.PI * 2.0;
+            }
+            return diff;
+        };
+
+        // Function to check whether an angle is sufficiently close to
+        // the target angle.
+        var angle_within_limits = function(angle) {
+            return Math.abs(angular_difference(angle, trial.angle)) <= Math.PI / 8;
+        }
 
         // Function to check whether the mouse cursor's current
         // position is within an element's bounding box.
@@ -310,6 +332,7 @@ jsPsych.plugins['contmemory-recall'] = (function() {
                 stimulus_word: stimulus_word,
                 hitting_position: hitting_position,
                 hitting_angle: hitting_angle,
+                angular_error: angular_error,
                 response_time: response_time
             };
 
@@ -331,6 +354,7 @@ jsPsych.plugins['contmemory-recall'] = (function() {
             hitting_position = [e.offsetX - MIDPOINT_X,
                                 e.offsetY - MIDPOINT_Y];
             hitting_angle = cart_to_pol(hitting_position[0], hitting_position[1]).theta;
+            angular_error = angular_difference(hitting_angle, trial.angle);
             present_feedback();
         };
 
@@ -387,8 +411,17 @@ jsPsych.plugins['contmemory-recall'] = (function() {
                 return;
             }
 
-            // End the trial.
-            end_trial_handle();
+            // Display the feedback and ready the end trial handle.
+            if(angle_within_limits(hitting_angle)) {
+                feedback_text_element.innerHTML = 'CORRECT';
+            } else {
+                feedback_text_element.innerHTML = 'INCORRECT';
+            }
+            feedback_display();
+            
+            jsPsych.pluginAPI.setTimeout(function() {
+                end_trial_handle();
+            }, 1000);
         };
         
         var present_stimulus = function() {
@@ -408,6 +441,7 @@ jsPsych.plugins['contmemory-recall'] = (function() {
             // If we're not inside the calibration marker element
             // bounding box, then go to calibration marker.
             if(!mouse_within_element(calibration_marker_element)) {
+                console.log('At response, mouse left calibration marker.');
                 begin_presentation();
                 return;
             }
@@ -429,6 +463,7 @@ jsPsych.plugins['contmemory-recall'] = (function() {
             if(mouse_within_element(calibration_marker_element)) {
                 // If we're already inside the calibration marker, go
                 // straight to the stimulus display.
+                console.log('At begin_presentation, mouse within calibration marker.');
                 stimulus_display();
             } else {
                 // Show the calibration marker and text.
