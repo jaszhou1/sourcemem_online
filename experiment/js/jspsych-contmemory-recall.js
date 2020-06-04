@@ -35,7 +35,7 @@ jsPsych.plugins['contmemory-recall'] = (function() {
             svg_size_px: {
                 type: jsPsych.plugins.parameterType.INT,
                 pretty_name: 'SVG canvas size (px)',
-                default: 500,
+                default: 600,
                 description: 'The size of the SVG canvas element in pixels'
             },
             circle_buffer_px: {
@@ -83,7 +83,7 @@ jsPsych.plugins['contmemory-recall'] = (function() {
             start_stimulus = -1.0,
             start_response = -1.0,
             start_feedback = -1.0;
-        
+
         // Declare all of the main display components.
         var svg_element = null,
             fixation_element = null,
@@ -107,14 +107,14 @@ jsPsych.plugins['contmemory-recall'] = (function() {
         // Variables for tracking the mouse position.
         var mouse_x = null,
             mouse_y = null;
-        
+
         // Compute the constants for laying out the stimuli.
         const SVG_NAMESPACE = 'http://www.w3.org/2000/svg';
         const MIDPOINT_X = trial.svg_size_px / 2;
         const MIDPOINT_Y = trial.svg_size_px / 2;
         const CIRCLE_RADIUS_PX = (trial.svg_size_px / 2) - trial.circle_buffer_px;
         const WORD_RADIUS_PX = CIRCLE_RADIUS_PX + trial.word_buffer_px
-        
+
         // Function to "normalise" an angle in radians (ensure it is
         // in the range of [0, 2pi]).
         var normalise_angle = function(angle) {
@@ -148,7 +148,7 @@ jsPsych.plugins['contmemory-recall'] = (function() {
                 rho: rho, theta: theta
             }
         };
-        
+
         // Function to compute angular difference.
         var angular_difference = function(first, second) {
             var diff = second - first;
@@ -175,7 +175,7 @@ jsPsych.plugins['contmemory-recall'] = (function() {
             }
             return false;
         };
-        
+
         // Create a circle and append it as an (invisible) child of
         // the parent SVG element.
         var create_and_append_circle = function(id, x_pos, y_pos, radius) {
@@ -210,15 +210,15 @@ jsPsych.plugins['contmemory-recall'] = (function() {
             // enter the calibration circle.
             feedback_text_element.innerHTML = 'Please place your cursor in the small circle.';
             feedback_text_element.setAttribute('y', MIDPOINT_Y - trial.calibration_marker_px - 5);
-            
+
             // Set the non-calibration elements to visibility: hidden.
             fixation_element.style.visibility = 'hidden';
             stimulus_text_element.style.visibility = 'hidden';
-            
+
             // Set the calibration elements to visibility: visible.
             calibration_marker_element.style.visibility = 'visible';
             response_circle_element.style.visibility = 'visible';
-            feedback_text_element.style.visibility = 'visible';            
+            feedback_text_element.style.visibility = 'visible';
         };
 
         var stimulus_display = function() {
@@ -226,12 +226,12 @@ jsPsych.plugins['contmemory-recall'] = (function() {
 
             // Set the non-calibration elements to visibility: hidden.
             fixation_element.style.visibility = 'hidden';
-            feedback_text_element.style.visibility = 'hidden'; 
-            
+            feedback_text_element.style.visibility = 'hidden';
+
             // Set the calibration elements to visibility: visible.
             calibration_marker_element.style.visibility = 'visible';
             response_circle_element.style.visibility = 'visible';
-            stimulus_text_element.style.visibility = 'visible';          
+            stimulus_text_element.style.visibility = 'visible';
         };
 
         var response_display = function() {
@@ -240,12 +240,12 @@ jsPsych.plugins['contmemory-recall'] = (function() {
             // Set the non-calibration elements to visibility: hidden.
             calibration_marker_element.style.visibility = 'hidden';
             stimulus_text_element.style.visibility = 'hidden';
-            feedback_text_element.style.visibility = 'hidden';           
-            
+            feedback_text_element.style.visibility = 'hidden';
+
             // Set the calibration elements to visibility: visible.
-            fixation_element.style.visibility = 'visible'; 
+            fixation_element.style.visibility = 'visible';
             response_circle_element.style.visibility = 'visible';
-            
+
         };
 
         var feedback_display = function() {
@@ -254,22 +254,22 @@ jsPsych.plugins['contmemory-recall'] = (function() {
             // Set the non-calibration elements to visibility: hidden.
             fixation_element.style.visibility = 'hidden';
             stimulus_text_element.style.visibility = 'hidden';
-            
+
             // Set the calibration elements to visibility: visible.
             calibration_marker_element.style.visibility = 'visible';
             response_circle_element.style.visibility = 'visible';
-            feedback_text_element.style.visibility = 'visible';           
+            feedback_text_element.style.visibility = 'visible';
 
         };
 
         // Set up all of the elements for the trial. First, clear
         // whatever is already in the container element.
         display_element.innerHTML = '';
-        
+
         // Construct the SVG element that will hold the stimulus.
         svg_element = document.createElementNS(SVG_NAMESPACE, 'svg');
         svg_element.id = 'jspsych-contmemory-recall';
-       
+
         // Set the height and width of the SVG element.
         svg_element.setAttribute('height', trial.svg_size_px);
         svg_element.setAttribute('width', trial.svg_size_px);
@@ -280,13 +280,13 @@ jsPsych.plugins['contmemory-recall'] = (function() {
             trial.svg_size_px.toString()
         );
         display_element.appendChild(svg_element);
-        
+
         // Construct the response circle element.
         response_circle_element = create_and_append_circle('response-circle',
                                                            MIDPOINT_X, MIDPOINT_Y,
                                                            CIRCLE_RADIUS_PX);
         response_circle_element.classList.add('response-circle');
-        
+
         // Construct the fixation cross element at the centre of the stimulus.
         fixation_element = document.createElementNS(SVG_NAMESPACE, 'path');
         var path_description =
@@ -315,7 +315,7 @@ jsPsych.plugins['contmemory-recall'] = (function() {
                                                               MIDPOINT_Y,
                                                               trial.calibration_marker_px);
         calibration_marker_element.classList.add('calibration-marker');
-        
+
         // Construct feedback text.
         feedback_text_element = create_and_append_text('feedback-text', 'Too fast',
                                                        MIDPOINT_X, MIDPOINT_Y, 'middle');
@@ -346,10 +346,10 @@ jsPsych.plugins['contmemory-recall'] = (function() {
             if(e.relatedTarget === fixation_element) {
                 return;
             }
-            
+
             // Remove the event listener.
             response_circle_element.removeEventListener('mouseout', response_circle_exited);
-            
+
             // Compute position.
             hitting_position = [e.offsetX - MIDPOINT_X,
                                 e.offsetY - MIDPOINT_Y];
@@ -363,7 +363,7 @@ jsPsych.plugins['contmemory-recall'] = (function() {
              console.log('Calibration element entered');
             // Remove the event listener.
             calibration_marker_element.removeEventListener('mouseenter', calibration_circle_entered);
-            
+
             present_stimulus();
         };
 
@@ -372,18 +372,18 @@ jsPsych.plugins['contmemory-recall'] = (function() {
             mouse_x = e.clientX;
             mouse_y = e.clientY;
         };
-        
+
         // A routine for the presentation of each stage of the experiment.
         var present_feedback = function() {
             // Set the feedback time.
             start_feedback = performance.now();
             response_time = start_feedback - start_response;
-            
+
             // Check whether the response time is valid.
             if(response_time < trial.quick_trap_ms) {
                 num_fast_attempts++;
-                
-                feedback_text_element.innerHTML = 'Too fast';                
+
+                feedback_text_element.innerHTML = 'Too fast';
                 feedback_marker_element.setAttribute('cx', hitting_position[0]);
                 feedback_marker_element.setAttribute('cy', hitting_position[1]);
                 feedback_display();
@@ -398,8 +398,8 @@ jsPsych.plugins['contmemory-recall'] = (function() {
             // Check whether the response time is valid.
             if(response_time > trial.slow_trap_ms) {
                 num_slow_attempts++;
-                
-                feedback_text_element.innerHTML = 'Too slow';                
+
+                feedback_text_element.innerHTML = 'Too slow';
                 feedback_marker_element.setAttribute('cx', hitting_position[0]);
                 feedback_marker_element.setAttribute('cy', hitting_position[1]);
                 feedback_display();
@@ -418,19 +418,19 @@ jsPsych.plugins['contmemory-recall'] = (function() {
                 feedback_text_element.innerHTML = 'INCORRECT';
             }
             feedback_display();
-            
+
             jsPsych.pluginAPI.setTimeout(function() {
                 end_trial_handle();
             }, 1000);
         };
-        
+
         var present_stimulus = function() {
             // Set up the stimulus display elements.
             stimulus_display();
 
             // Set the stimulus time.
             start_stimulus = performance.now();
-            
+
             // Set up the stimulus display to be removed.
             jsPsych.pluginAPI.setTimeout(function() {
                 present_response();
@@ -445,13 +445,13 @@ jsPsych.plugins['contmemory-recall'] = (function() {
                 begin_presentation();
                 return;
             }
-            
+
             // Set up the response display elements.
             response_display();
 
             // Set the response timestamp.
             start_response = performance.now();
-            
+
             // Set up the response circle.
             response_circle_element.addEventListener('mouseout',
                                                      response_circle_exited);
@@ -476,7 +476,7 @@ jsPsych.plugins['contmemory-recall'] = (function() {
             // is called multiple times.
             response_circle_element.addEventListener('mousemove',
                                                      response_circle_moved);
-            
+
             // Add an event handler to switch when the mouse is inside
             // the calibration marker.
             calibration_marker_element.addEventListener('mouseenter',

@@ -12,7 +12,7 @@
  body {
      background-color: rgb(127, 127, 127);
  }
- 
+
  .jspsych-display-element {
    display: flex;
    flex-direction: column;

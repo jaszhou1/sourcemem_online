@@ -5,6 +5,8 @@
     <meta charset="utf-8" />
     <script src="js/jspsych.js" type="text/javascript"></script>
     <script src="js/jspsych-contmemory-present.js" type="text/javascript"></script>
+    <script src="js/jspsych-math-distractor.js" type="text/javascript"></script>
+    <script src="js/jspsych-contmemory-recall.js" type="text/javascript"></script>
     <script src="js/jspsych-html-keyboard-response.js" type="text/javascript"></script>
     <script src="stimuli/wordlist.js"></script>
     <title>Source Memory Experiment</title>
@@ -22,12 +24,16 @@
 // Jason Zhou <jaszhou AT unimelb DOT edu DOT au>
 
   /* - - - - PARAMETERS - - - - */
-  var num_blocks = 10; // Subject to pilot testing for session timing
-  var num_trials = 10; // Subject to pilot testing for session timing
-  var isi = 250; // Inter-stimulus interval
+  var num_blocks = 1; // Subject to pilot testing for session timing
+  var num_trials = 2; // Subject to pilot testing for session timing
   var num_stim = num_blocks * num_trials; // Total number of words needed for the session
   var num_foil = num_stim // Number of foil words for the recognition task
-  var maths_secs = 30;
+
+
+  // Timing
+  var isi = 250; // Inter-stimulus interval
+  var post_trial = 750;
+  var maths_time = 12000;
 
 
   /* - - - - INSTRUCTIONS - - - - */
@@ -61,9 +67,6 @@
   for (i = 0; i < stim_words.length; i++){
     stim_angles[i] = getRandomAng(2*Math.PI)
   }
-
-
-
 
   /* - - - - GENERATE DESIGN - - - - */
 
@@ -154,7 +157,12 @@
       TIMELINE.push({
           type: 'contmemory-present',
           stimulus: encode_list[i][j].word,
-          angle: encode_list[i][j].angle
+          angle: encode_list[i][j].angle,
+          data: {
+            phase: 'study',
+            block: i,
+            trial: j
+          }
       });
     }
 
@@ -166,7 +174,17 @@
         choices: jsPsych.NO_KEYS,
         trial_duration: 2000,
     });
-      // Trial
+
+    // TODO: this plug-in was originally written for an older version of jspsych, ISI is defined within the function. Neater to treat as a parameter.
+    TIMELINE.push({
+      type: 'math-distractor',
+      duration: maths_time,
+      data: {
+        phase: 'delay',
+        block: i,
+        trial: j
+      }
+    });
 
 
     // RECOGNITION
@@ -184,10 +202,15 @@
             type: 'html-keyboard-response',
             stimulus: recog_list[i][j].word,
             choices: ['1','2','3','4','5','6'],
-            prompt: '<p style="colour:white">\nIs this word NEW or OLD?</p> <p>\nPlease Enter a number from 1 (Sure NEW) to 6 (Sure OLD).</p>'
+            prompt: '<p style="colour:white">Please Enter a number from 1 (Sure NEW) to 6 (Sure OLD).</p>',
+            post_trial_gap: isi,
+            data: {
+              phase: 'recognition',
+              block: i,
+              trial: j
+            }
         });
       }
-
 
     // SOURCE
     // Instructions
@@ -197,25 +220,52 @@
         choices: jsPsych.NO_KEYS,
         trial_duration: 2000,
     });
+
+    //  var correct_trials = [];
       // Trial
+      for(j = 0; j < num_trials; j++){
+        TIMELINE.push({
+            type: 'contmemory-recall',
+            stimulus: source_list[i][j].word,
+            angle: source_list[i][j].angle,
+            data: {
+              phase: 'recall',
+              block: i,
+              trial: j
+            },
+            on_finish: function(data){
+              data.correct = data.angular_error < Math.PI/8  // How do I actually get this to save into an array that I can use for block feedback?
+            }
+        });
+      }
 
-
-    // FEEDBACK
+    // BLOCK FEEDBACK
     // Calculate feedback percentage and assemble string to be displayed
+    // Function to construct string for html keyboard response stimulus
 
     TIMELINE.push({
       type: "html-keyboard-response",
-      //TODO: Have stimulus say Block x of y, and give a % of trials with error < pi/8 for participant
-      stimulus: '<p>End of Block</p> <p>\nPress any key to continue onto the next block.</p>'
+      stimulus: function() {
+        var accuracy = 0; // change to actual output from cont-recall
+        //var block_number = i; // this will just say the last value of i, because all im telling jspsych is to look for "i", and at the time the timeline is being run through, i will be 10 since its all been pushed.
+        return "<p>End of Block</p>" +
+                "<p>You responded correctly on "+accuracy+"% of the trials in this block.</p>"+
+                "<p>Press any key to begin the next block.</p>";
+      }
     });
 
   }
+
+
+  TIMELINE[TIMELINE.length-1] = ending; // Replace continue instructions from final list with ending screen
+
+
 
   /* create timeline */
     jsPsych.init({
         timeline: TIMELINE,
         on_finish: function() {
-            jsPsych.data.displayData();
+            jsPsych.data.displayData(); // Going to have to save this somewhere with a timestamp in the filename
         }
     });
 

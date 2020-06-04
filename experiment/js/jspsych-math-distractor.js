@@ -1,23 +1,40 @@
-jsPsych.plugins['jspsych-math-distractor'] = (function() {
+/**
+ * jspsych-math-distractor
+ * Originally coded by Adam Osth for jspsych [Version Number?]
+ * Adapted for 6.1.0 by Jason Zhou (jasonz1@student.unimelb.edu.au)
+ *
+ * plugin for running a arithmetic distractor task
+ *
+ *
+ **/
+
+
+jsPsych.plugins['math-distractor'] = (function() {
 
   var plugin = {};
 
   plugin.info = {
     name: 'math-distractor',
-    description: ''
+    description: '',
+    parameters:{
+      duration: {
+        type: jsPsych.plugins.parameterType.INT,
+        pretty_name: 'Distractor duration',
+        default: 10,
+        description: 'How long to run the distractor phase before it ends.'
+      }
+    }
   }
 
   plugin.trial = function(display_element, trial) {
 
-    // Default value for time limit option
-    trial.duration = trial.duration || -1;
     // Time handlers
     var setTimeoutHandlers = [];
 
     // if any trial variables are functions
     // this evaluates the function and replaces
     // it with the output of the function
-    trial = jsPsych.pluginAPI.evaluateFunctionParameters(trial);
+    //trial = jsPsych.pluginAPI.evaluateFunctionParameters(trial);
 
     var rts = [];
     var num_a = [];
@@ -32,6 +49,13 @@ jsPsych.plugins['jspsych-math-distractor'] = (function() {
     var after_response = function(info) {
       console.log('Response')
     };
+
+
+    // Function to generate random ints
+    function randomInt(min,max) {
+      return Math.floor(Math.random() * (max - min)) + min;
+    };
+
 
     var first_trial = function() {
 
