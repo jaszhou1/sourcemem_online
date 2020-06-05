@@ -79,6 +79,12 @@ jsPsych.plugins['contmemory-present'] = (function() {
                 pretty_name: 'Longest valid response time (ms)',
                 default: 2000,
                 description: 'The lower bound of the slow response time trap in milliseconds'
+            },
+            color: {
+                type: jsPsych.plugins.parameterType.INT,
+                pretty_name: 'Colour of stimuli',
+                default: 'white',
+                description: 'The colour of the stimuli to be displayed'
             }
         }
     };
@@ -244,6 +250,8 @@ jsPsych.plugins['contmemory-present'] = (function() {
             res.setAttribute('cx', x_pos);
             res.setAttribute('cy', y_pos);
             res.setAttribute('r', radius);
+            res.style.color = trial.color;
+            res.style.fill = trial.color;
             res.id = id;
             res.style.visibility = 'hidden';
             svg_element.appendChild(res);
@@ -259,6 +267,7 @@ jsPsych.plugins['contmemory-present'] = (function() {
             res.setAttribute('x', x_pos);
             res.setAttribute('y', y_pos);
             res.setAttribute('text-anchor', text_anchor);
+            res.style.fill = trial.color;
             res.style.visibility = 'hidden';
             svg_element.appendChild(res);
             return res;
@@ -271,6 +280,7 @@ jsPsych.plugins['contmemory-present'] = (function() {
             // enter the calibration circle.
             feedback_text_element.innerHTML = 'Please place your cursor in the small circle.';
             feedback_text_element.setAttribute('y', MIDPOINT_Y - trial.calibration_marker_px - 5);
+
 
             // Set the non-calibration elements to visibility: hidden.
             fixation_element.style.visibility = 'hidden';
