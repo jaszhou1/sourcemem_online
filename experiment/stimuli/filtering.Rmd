@@ -1,0 +1,24 @@
+---
+title: "word_processing"
+author: "jason"
+date: "February 24, 2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+setwd('C:/Users/jason/Documents/GitHub/sourcemem/EXPSIM/experiment/code/simultaneous/word-lists')
+dataset <- data.frame()
+
+all_words <- read.csv("subtlexLength.csv")
+words_length_4 <- all_words[all_words$length == 4,]
+
+words_length_4_freq <- words_length_4[(words_length_4$Lg10WF<5),]
+words_length_4_freq <- words_length_4_freq[(words_length_4_freq$Lg10WF>1),]
+
+write.csv(words_length_4_freq, file = "word_list_filtered.csv")
+
+```
