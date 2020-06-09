@@ -119,12 +119,19 @@ The key values there are those next to `Google Cloud SDK` and
 significantly, you may have to use different commands to achieve the
 same outcomes.
 
-## Ensure that `gcloud` is authenticated with your Google account
+## Authenticate `gcloud` with your Google account
+The `gcloud` SDK on your computer needs to be linked to your Google
+account (or the Google account associated with your Google Cloud
+project) in order to properly deploy the code. The most
+straightforward way to do this is to use the initialisation
+subcommand, `gcloud init`. If you have since logged out, changed
+details, or (for any other reason) need to log back in, you can use
+the command `gcloud auth login`.
 
-
-## Ensure the project is set up
+## Set up the project
 All of the services within the larger Google Cloud Services
-infrastructure are tied to a "project", which simply delineates the use 
+infrastructure are tied to a "project", which simply delineates the
+use of Google services between different 
 
 For the current experiment, I have already taken the liberty of
 setting up a project under the name of `jzhou-sourcemem-online`. You
@@ -133,20 +140,40 @@ having to use the `--project` argument for all commands (see
 [below](#ensure-that-the-project-is-active)).
 
 For experiments, projects should roughly correspond to the overall
-Python module
+Python module used to serve an experiment. It is possible to put many
+experiments into a single Python module (or to abstract how
+experiments and data are handled so all of your experiments can be
+handled in a uniform way), but this requires a substantially more
+abstract design or, worse, piecing together a lot of reproduced code
+in an unmanageable way. Some balance of *ad hoc* design and
+extensibility for writing experiments usually means that you want to
+copy most of the experimental software to create a new project for
+most experiments, as writing more general software isn't generally
+worth the effort. But, if you know you will have an almost identical
+structure for a large number of experiments, you can write a single
+Python package for all experiments and, therefore, use a single Google
+Cloud Platform project. (This is essentially following the rule stated
+in the introductory remarks: writing specific solutions scales
+nonlinearly with the problem space if you can define the problem at
+the right level of abstraction.)
 
-## Ensure that the datastore is correctly configured
+## Configure the datastore
+The datastore is where all of the client (participant) session data
+and experimental data will be stored. "Datastore" here is just a fancy
+word for "database". The datastore, as we will use it, is slightly
+different from the standard database software 
 
+This has some upsides 
 
-## Ensure that the project is active
+## Activate the correct project
 All of the deployment commands either take a `--project` command-line
 argument or, if the `--project` argument is missing, use the project
 as specified in the global configuration. You can set this, as well as
 all of the global configuration values, using the `gcloud config`
 subcommand. Specifically, if your project name is
-`jzhou-sourcemem-online`, you can set the project using the command
+`jzhou-sourcemem-online`, you can set the project using the command:
 
-``` gcloud config set project jzhou-sourcemem-online ```
+``` gcloud config set project jzhou-sourcemem-online ```.
 
 If you don't know what the current global project is currently
 configured, you can use the command `gcloud config get-value project`
@@ -160,9 +187,16 @@ turn our attention to actually deploying the experiment. Deployment
 means, in the current situation, uploading all of the relevant Python
 code, as well as the static (HTML, image) files, to the Google App
 Engine so that it can load the Python and start listening for incoming
-requests. Specifically, 
+requests.
 
-## Ensure that the datastore index is uploaded
+## Update the datastore index
+This step is easy to miss but important. Whenever information is
+retrieved from the datastore (a fancy word for a database), the
+specific 
+
+requires a corresponding *index*. This index is updated on each 
+
+The 
 
 ## Deploy the application
 To deploy the application, change directory to the location of the
@@ -187,17 +221,43 @@ what is uploaded and when it is uploaded.
 The second thing that the `deploy` command does is sets up the newly
 uploaded version of the code to be the location where incoming traffic
 will be routed. This is part of what actually occurs within the App
-Engine:
+Engine: although writing the Python script might seem to indicate that
+a single interpreter will be handling all requests in the system as
+they come in, the computer handling the requests will actually create
+many *instances* of the Python interpreter for handling different
+requests. This means that new connections to the server will be sent
+to (potentially many) different instances of the Python interpreter
+running the new code.
 
-although writing the Python script might seem to indicate that a
-single interpreter will be handling all requests in the system as they
-come in, these 
+This is the essential (software) part of allowing a single piece of
+software to service many, many incoming requests efficiently. The
+routing of an incoming request to a running Python instance is done
+through a piece of software (or, occasionally, hardware) called a
+*load balancer*. In practice, all this means is that responding to a
+request shouldn't rely on the global state of a Python environment
+unless that state is identical across all instances (*e.g.,* the state
+is initialised in the same way for all instances). More succinctly, if
+you need something to change the behaviour of how a request is
+handled, that should be stored in a database and the actual request
+behaviour determined by reading the appropriate values from the
+database and handling accordingly.
 
-This is the essential (software) part of scaling 
-
-
+For an example of this, we can examine how "client sessions" are
+handled in the code for this experiment: we associate the client
+session with a session identifier string which is stored in the
+client's cookie and store in the database along with all of the
+participant's details (whether they've completed the task, read the
+PLS, clicked agree on the consent form, *etc.*). Whenever a request is
+received, the session identifier in the cookie is read from the HTTP
+headers. The user information is then read from the database and the
+appropriate response is given. If we could absolutely ensure that only
+a single Python process was ever going to handle this session data, we
+could just store all of this information in memory, but that can not
+be ensured in this case (and is generally not good practice unless it
+is required for other reasons).
 
 # Retrieving the data
+Once data has been uploaded by the participants to the 
 
 # A little more information
 ## Why Python? What is Flask?
