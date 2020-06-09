@@ -1,0 +1,17 @@
+indexes:
+- kind: ClientSession
+  properties:
+  - name: session_id
+  - name: created
+    direction: desc
+- kind: ExperimentalSlot
+  properties:
+  - name: allocated_to
+  - name: created
+    direction: desc
+- kind: ClientSession
+  properties:
+  - name: session_id
+  - name: sim_present
+  - name: created
+    direction: desc
