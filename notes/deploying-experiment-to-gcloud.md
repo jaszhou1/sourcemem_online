@@ -131,7 +131,8 @@ the command `gcloud auth login`.
 ## Set up the project
 All of the services within the larger Google Cloud Services
 infrastructure are tied to a "project", which simply delineates the
-use of Google services between different 
+use of Google services between different resources and large-scale
+configuration between different sets of code.
 
 For the current experiment, I have already taken the liberty of
 setting up a project under the name of `jzhou-sourcemem-online`. You
@@ -161,9 +162,19 @@ the right level of abstraction.)
 The datastore is where all of the client (participant) session data
 and experimental data will be stored. "Datastore" here is just a fancy
 word for "database". The datastore, as we will use it, is slightly
-different from the standard database software 
+different from the standard database software in that it is
+"schemaless". You don't have to know much about this, other than the
+fact that it largely means we can store and retrieve Python
+dictionaries (with many types of standard data included as fields of
+those dictionaries) without having to do any conversion.
 
-This has some upsides 
+This has some upsides (mostly to do with the flexibility of writing to
+a database without having to first specify and migrate "schema", which
+are often required in databases generally) but has some downsides. The
+most salient downside in the current situation is that compound
+queries---those that operate on multiple fields---require explicit
+specification in an index file. (See
+[below](#update-the-datastore-index).)
 
 ## Activate the correct project
 All of the deployment commands either take a `--project` command-line
@@ -173,7 +184,7 @@ all of the global configuration values, using the `gcloud config`
 subcommand. Specifically, if your project name is
 `jzhou-sourcemem-online`, you can set the project using the command:
 
-``` gcloud config set project jzhou-sourcemem-online ```.
+``` gcloud config set project jzhou-sourcemem-online ```
 
 If you don't know what the current global project is currently
 configured, you can use the command `gcloud config get-value project`
@@ -185,18 +196,28 @@ projects list`.
 Once the one-time installation and initialisation is complete, we can
 turn our attention to actually deploying the experiment. Deployment
 means, in the current situation, uploading all of the relevant Python
-code, as well as the static (HTML, image) files, to the Google App
-Engine so that it can load the Python and start listening for incoming
-requests.
+code, as well as the static files (*e.g.,* HTML, image, Javascript
+files), to the Google App Engine so that it can load the Python and
+start listening for incoming requests.
 
 ## Update the datastore index
 This step is easy to miss but important. Whenever information is
-retrieved from the datastore (a fancy word for a database), the
-specific 
+retrieved from the datastore, the specific query requires a
+corresponding *index*. This index is updated whenever data is modified
+in the database. Simply retrieving or ordering records on the basis of
+a single "field" within the datastore is almost always handled as
+indexes are automatically created for each individual field upon the
+creation of entries (or *entities*) in the datastore. Querying
+entities by multiple fields, even if one is simply for ordering the
+results, requires the construction of specified indexes.
 
-requires a corresponding *index*. This index is updated on each 
-
-The 
+These indexes can be specified in the `index.yaml` file in the
+application directory. This file must be deployed separated from the
+application using `gcloud app deploy index.yaml`. A few minutes should
+be given while the index specification is propagated in the database,
+otherwise a runtime error might be encountered when a query is run.
+Failure to specify an index when querying will result in a runtime
+error.
 
 ## Deploy the application
 To deploy the application, change directory to the location of the
@@ -257,7 +278,24 @@ be ensured in this case (and is generally not good practice unless it
 is required for other reasons).
 
 # Retrieving the data
-Once data has been uploaded by the participants to the 
+Once data has been uploaded by the participants to the datastore, we
+need a way of both monitoring experimental completions as well as
+downloading the data on to a local computer for storage and analysis.
+This can be done with special API endpoints in the Flask application
+that list the completed datasets and allow the experimenter to access
+each completed dataset by an identification number.
+
+Although security is not the highest priority here (no sensitive data
+is being stored and we expect all of the experimental data will be
+available publicly at some later date), we put the data access
+endpoints behind some authentication to prevent public access while
+the experiment is running.
+
+The R scripts in `analysis/` directory (specifically the
+`sourcemem-online.R` top-level script and the procedures in the
+`access-data.R` script) provide the means for polling the server
+status, getting a list of the completed dataset IDs, and then (for
+each ID) downloading the corresponding dataset.
 
 # A little more information
 ## Why Python? What is Flask?
@@ -266,9 +304,7 @@ Javascript to correctly operate jsPsych. Now, in order to actually
 deploy the experiment (or roll it out to the participants) we have to
 use Python. It's reasonable to wonder why we suddenly have so many
 different programming languages and why simply writing the experiment
-in jsPsych is not sufficient. (You may wonder why, for instance, you
-can open the HTML file which has the jsPsych experiment written out
-but this is not reasonable
+in jsPsych is not sufficient.
 
 The broad answer for why two different parts are required relates to
 the first section, where I said that there are two parts to a
@@ -276,7 +312,14 @@ webpage's operations: a server and a client. Everything on the
 server's side is, unsurprisingly, labelled with the adjective
 *serverside* (and likewise for the client and *clientside*). 
 
-The more specific answer about why Flask and Python are used for this 
+The more specific answer about why Flask and Python are used for the
+serverside is that Flask provides a relatively quick way of getting
+the core request handling code together without a huge amount of
+overhead: it allows a developer to map out different URLs, which
+correspond to different request types on the part of the client, to
+responses (that can call any Python code). The Google Cloud Platform
+SDK also provides Python bindings for most of its functionality
+(Storage Services, datastore, *etc.*).
 
 It is possible to write the serverside procedures for handling
 incoming requests in Javascript, using a special interpreter of
@@ -284,7 +327,7 @@ Javascript developed for server-type applications, known as
 [*node.js*](https://nodejs.org/en/). There are some nice features
 about Javascript that make this a viable option for people writing web
 applications but it is a somewhat difficult language to wrangle at the
-best of times.
-
-It is not possible (to a first approximation!) to write the
-client-side experiment in anything other than Javascript 
+best of times. It is not possible (to a first approximation!) to write
+the client-side experiment in anything other than Javascript, so we
+can't escape [the myriad joys of
+Javascript](https://www.destroyallsoftware.com/talks/wat) there.
