@@ -1,0 +1,230 @@
+---
+title: Deploying the experiment to the Google Cloud Platform
+author: Simon Lilburn
+date: June 9, 2020
+---
+
+This is a short guide to "deploying" your experiment on to the Google
+Cloud Platform. "Deploy" is just tech jargon for "get the output of
+some code into a state where it can actually be used by the end
+users". Before we get to the preliminaries, here's a very quick cook's
+tour through what Google Cloud Services is and why we need it in the
+current case.
+
+The [Google Cloud
+Platform](https://en.wikipedia.org/wiki/Google_Cloud_Platform) (or
+GCP) is a set of services provided by Google for using their (very
+extensive) server and computing infrastructure. It is similar to
+Amazon Web Services (AWS) and the Google App Engine, the primary
+service we will use in the current experiment, is similar to other
+virtualisation-based/serverless "platforms" (technically PaaS,
+*platform-as-a-service*[^1]) like Heroku. It comprises a large number
+of different services for different use cases, including many services
+that are used for mobile development and deployment, as well as data
+analysis and machine learning infrastructure. For the current
+experiment, we will use only three components of the infrastructure:
+the Google App Engine, the Google Datastore, and the logging
+functionality. In other experiments you may also wish to use the
+Google Cloud Storage functionality, although that isn't necessary in
+the current case. The overall monitoring and control interface can be
+found at the [Google Cloud Console](http://console.cloud.google.com).
+
+[^1]: More abominable tech jargon. We'll get to what a "platform" is
+    momentarily.
+
+To understand why it helps to use the Google Cloud Platform, we should
+first quickly cover how an online experiment works (which is,
+basically, how any webpage works). To a first approximation, surfing
+the web requires two types of computer: the "client", which has the
+person surfing the web (almost always in a web browser), and the
+"server", which provides the actual web content when asked. In simple
+terms, the client computer *requests* a webpage and the server
+computer *responds* with the content of that webpage. This is called a
+*request--response transaction* (for fairly obvious reasons) is the
+basis for almost all communication across the web[^http]. Servers are
+regular computers that "listen" to incoming requests (on a *network
+port* to use the slightly more technical language) and which have
+software which can respond to valid requests. We will use the Flask
+framework written in Python as the software for responding to valid
+requests. Going into depth about how Flask works is beyond the scope
+of this document, except for the description of the broad parameters
+of operation.
+
+[^http]: The way these computers communicate, at the top (most
+    abstract) level, is defined by what is known as the Hypertext
+    Transfer Protocol or
+    [HTTP](https://en.wikipedia.org/wiki/Hypertext_Transfer_Protocol).
+    This protocol---other than being a familiar friend at the front of
+    URLs---determines the way in which the computers can talk to each
+    other: the types of requests they can make, what constitutes a
+    legal response, how to respond when things go wrong, *etc.*
+
+The Google Cloud Platform---or more specifically, the Google App
+Engine---handles the server part of the above description. In the
+past, servers usually had to have some fairly sophisticated
+configuration to work correctly. They had to have their hardware and
+physical networking configured so that they could be reached by a
+consistent address (corresponding to the "top" parts of a URL, the
+domain name) and, second, had to have their internal software
+(operating system *etc.*) configured to be able to correctly handle
+these incoming requests. This is a real hassle, very easy to get
+(somewhat) wrong, and very difficult to configure when large volumes
+of traffic are encountered. Like many problems in software
+engineering, the pain of implementing a solution doesn't scale
+linearly with the size of the problem itself (or the number of times
+that the solution needs to be implemented): if you have the expertise
+to solve the problem correctly once, with some minor abstraction to
+solve the class of related problems, then you can reproduce that
+solution multiple times to a large neighbourhood of related problems
+many times over. Specifically, in the case of Google App Engine, this
+works by "abstracting out" everything beyond the programming language
+interpreter (*e.g.,* the Python interpreter) and by knowing how to
+"talk" with the specific components within the programming language
+interpreter itself. Services which handle everything outside of the
+programming language interpretation itself are called "platforms". For
+the specific details about Flask and Python, and why we're using them
+here, see [below](#why-python-what-is-flask).
+
+# Preliminaries
+Before you can deploy the experiment to the App Engine, you will need
+to make sure that the appropriate software is installed, that a
+project for the application has been created and configured, and that
+the local software is configured correctly to be linked to your
+account and project. **You can skip this subsection if I am handling
+all of the deployment for you, but you may want to read the section in
+case you have to deploy your experiment into the future.**
+
+## Install `gcloud`
+You will need the Google Cloud SDK (Software Development Kit)
+installed. It is used, in this project, through the command-line
+program `gcloud`. You will know that you have the Cloud SDK installed
+when you can, in the terminal of your choosing, launch `gcloud`. For
+the purposes of the current document, when I type `gcloud version` the
+following information is printed out:
+
+```
+Google Cloud SDK 295.0.0
+alpha 2020.05.29
+app-engine-python 1.9.91
+beta 2020.05.29
+bq 2.0.57
+cloud-datastore-emulator 2.1.0
+core 2020.05.29
+gsutil 4.51
+kubectl 2020.05.29
+```
+
+The key values there are those next to `Google Cloud SDK` and
+`app-engine-python`. If your version differs from the above
+significantly, you may have to use different commands to achieve the
+same outcomes.
+
+## Ensure that `gcloud` is authenticated with your Google account
+
+
+## Ensure the project is set up
+All of the services within the larger Google Cloud Services
+infrastructure are tied to a "project", which simply delineates the use 
+
+For the current experiment, I have already taken the liberty of
+setting up a project under the name of `jzhou-sourcemem-online`. You
+will need to set your `gcloud` SDK global configuration to avoid
+having to use the `--project` argument for all commands (see
+[below](#ensure-that-the-project-is-active)).
+
+For experiments, projects should roughly correspond to the overall
+Python module
+
+## Ensure that the datastore is correctly configured
+
+
+## Ensure that the project is active
+All of the deployment commands either take a `--project` command-line
+argument or, if the `--project` argument is missing, use the project
+as specified in the global configuration. You can set this, as well as
+all of the global configuration values, using the `gcloud config`
+subcommand. Specifically, if your project name is
+`jzhou-sourcemem-online`, you can set the project using the command
+
+``` gcloud config set project jzhou-sourcemem-online ```
+
+If you don't know what the current global project is currently
+configured, you can use the command `gcloud config get-value project`
+to print the global project value to the terminal. To get a list of
+all of the projects on the current account, use the command `gcloud
+projects list`.
+
+# Deployment
+Once the one-time installation and initialisation is complete, we can
+turn our attention to actually deploying the experiment. Deployment
+means, in the current situation, uploading all of the relevant Python
+code, as well as the static (HTML, image) files, to the Google App
+Engine so that it can load the Python and start listening for incoming
+requests. Specifically, 
+
+## Ensure that the datastore index is uploaded
+
+## Deploy the application
+To deploy the application, change directory to the location of the
+`app.yaml` configuration file and type `gcloud app deploy`.
+
+Before uploading the application, `gcloud` will ask for confirmation
+and indicate the project name that the application will be uploaded to
+and the URL with which the application will be available: echeck that
+the project name `gcloud` shows is the correct project before
+confirming the deployment. When you are satisfied that the details are
+correct, type `Y` to confirm the deployment and wait for the `gcloud`
+software to upload the relevant files and set up the routing.
+
+Deploying the application has two major components. First, the files
+themselves are uploaded to Google's servers. Each version of uploaded
+files is tracked by the App Engine, meaning that you can "roll back"
+to a previous version at any time. For the most part, you want to make
+sure that this version handling is done on your end (using `git`, for
+instance) but it is good to have some redundancy in terms of tracking
+what is uploaded and when it is uploaded. 
+
+The second thing that the `deploy` command does is sets up the newly
+uploaded version of the code to be the location where incoming traffic
+will be routed. This is part of what actually occurs within the App
+Engine:
+
+although writing the Python script might seem to indicate that a
+single interpreter will be handling all requests in the system as they
+come in, these 
+
+This is the essential (software) part of scaling 
+
+
+
+# Retrieving the data
+
+# A little more information
+## Why Python? What is Flask?
+In setting up the experiment, you had to learn a little bit of
+Javascript to correctly operate jsPsych. Now, in order to actually
+deploy the experiment (or roll it out to the participants) we have to
+use Python. It's reasonable to wonder why we suddenly have so many
+different programming languages and why simply writing the experiment
+in jsPsych is not sufficient. (You may wonder why, for instance, you
+can open the HTML file which has the jsPsych experiment written out
+but this is not reasonable
+
+The broad answer for why two different parts are required relates to
+the first section, where I said that there are two parts to a
+webpage's operations: a server and a client. Everything on the
+server's side is, unsurprisingly, labelled with the adjective
+*serverside* (and likewise for the client and *clientside*). 
+
+The more specific answer about why Flask and Python are used for this 
+
+It is possible to write the serverside procedures for handling
+incoming requests in Javascript, using a special interpreter of
+Javascript developed for server-type applications, known as
+[*node.js*](https://nodejs.org/en/). There are some nice features
+about Javascript that make this a viable option for people writing web
+applications but it is a somewhat difficult language to wrangle at the
+best of times.
+
+It is not possible (to a first approximation!) to write the
+client-side experiment in anything other than Javascript 
