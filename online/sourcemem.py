@@ -14,7 +14,8 @@ handling the request to download the data as JSON.
 import logging
 import random
 import string
-from flask import Flask
+from flask import Flask, request, make_response, render_template, \
+    redirect, url_for
 from google.cloud import datastore
 from google.cloud import storage
 import google.cloud.logging
@@ -130,11 +131,244 @@ def user_status_is_error(user_status):
                   user_status)
     return True
 
+def get_best_user_allocation():
+    """Get the best allocation (true=sim; false=seq) for a new participant
+    based on the currently allocated participants.
+
+    """
+    num_sim_users, num_seq_users = num_users()
+    if num_sim_users > num_seq_users: # pylint: disable=no-else-return
+        return False
+    if num_seq_users > num_sim_users:
+        return True
+    return random.random() > 0.5
+
+def get_user_between_subjects_status(req):
+    """Get the Seq/Sim allocation of the user associated with the current
+    request.
+
+    """
+    sid = get_cookie(req)
+    return datahandling.get_between_subject_allocation_from_session_id(DATASTORE_CLIENT,
+                                                                       sid)
+
+def num_users():
+    """Get the number of user sessions."""
+    return datahandling.num_user_sessions(DATASTORE_CLIENT, True), \
+        datahandling.num_user_sessions(DATASTORE_CLIENT, False)
+
+def num_complete_datasets():
+    """Get the number of complete data sets."""
+    return datahandling.num_complete_datasets(DATASTORE_CLIENT, True), \
+        datahandling.num_complete_datasets(DATASTORE_CLIENT, False)
+
+def completed_users():
+    """Get a list of completed user IDs."""
+    return datahandling.completed_user_ids(DATASTORE_CLIENT)
+
+
+## Error and template responses
+## ============================
+##
+## Return standard issue template responses.
+def not_found_error(attempted_url):
+
+    """Return a "Not Found" error page."""
+    return render_template("not-found-error.html",
+                           url=attempted_url)
+
+def server_error(message=None):
+    """Return a "Not Found" error page."""
+    return render_template("server-error.html",
+                           message=message)
 
 ## Public endpoints
 ## ================
 ##
 ## Here are the public endpoints for enduser (participant) use.
+@app.route("/entry", methods=["GET", "POST"])
+def entry():
+    """The entry point for users from SOMA, REP, or Amazon Mechanical Turk."""
+    user_status = next_step_from_request(request).lower()
+    status_is_error = user_status_is_error(user_status)
+    if status_is_error:
+        if user_status == "unknownstate":
+            raise NotImplementedError("Need to deal with errors here")
+        if user_status == "error":
+            raise NotImplementedError("Need to deal with errors here")
+    if request.method == "GET" or status_is_error:
+        response = make_response(render_template("entry.html",
+                                                 exp_name=EXPERIMENT_NAME,
+                                                 msg=""))
+        if user_status in ("invalidsid", "notfound"):
+            unset_cookie(response)
+        return response
+    if request.method == "POST":
+        external_id = request.form.get("extid")
+        x_forwarded = request.headers.getlist("X-Forwarded-For")
+        user_agent = request.headers.get("User-Agent")
+        new_sid = generate_sid()
+        is_sim_present = get_best_user_allocation()
+        if datahandling.is_valid_external_id(external_id):
+            _ = datahandling.make_session(DATASTORE_CLIENT,
+                                          new_sid,
+                                          external_id,
+                                          user_agent,
+                                          x_forwarded,
+                                          is_sim_present)
+            response = redirect(url_for(".pls"))
+            set_cookie(response, new_sid) # either do this or "after_this_request"
+            return response
+        return render_template("entry.html",
+                               exp_name=EXPERIMENT_NAME,
+                               msg="Please enter a valid external ID")
+    return render_template("message.html",
+                           msg="Invalid request type.")
+
+@app.route("/pls", methods=["GET", "POST"])
+def pls():
+    """Display the plain language statement (PLS) to the client, getting
+    them to acknowledge its contents before getting them to move on.
+    If we get the affirmative from the participant, we set a flag on
+    their client session entry in the datastore.
+
+    """
+    user_status = next_step_from_request(request).lower()
+    if user_status != "pls":
+        return redirect(url_for(".dispatch"))
+    if request.method == "POST":
+        _ = datahandling.set_pls_done(DATASTORE_CLIENT, get_cookie(request))
+        return redirect(url_for(".dispatch"))
+    return render_template("pls.html")
+
+@app.route("/ethics", methods=["GET", "POST"])
+def ethics():
+    """Display the ethics statement to the client, getting them to
+    acknowledge its contents before getting them to move on. If we get
+    the affirmative from the participant, we set a flag on their
+    client session entry in the datastore.
+
+    """
+    user_status = next_step_from_request(request).lower()
+    if user_status != "ethics":
+        return redirect(url_for(".dispatch"))
+    if request.method == "POST":
+        agree_value = request.form.get("ethics-agree")
+        if agree_value == "agree":
+            _ = datahandling.set_ethics_done(DATASTORE_CLIENT, get_cookie(request))
+        return redirect(url_for(".dispatch"))
+    return render_template("ethics.html")
+
+@app.route("/calibration", methods=["GET", "POST"])
+def calibration():
+    """Display a script that will be able to determine what settings the
+    subsequent experiment should be.
+
+    """
+    # user_status = next_step_from_request(request).lower()
+    # if user_status != "calibration":
+    #     return redirect(url_for(".dispatch"))
+    # user_is_seq = get_user_between_subjects_status(request)
+    # calibration_slot = get_calibration(user_is_seq)
+    # if calibration_slot:
+    #     prog_text = calibration_slot["program_text"]
+    #     return render_template("calibration.html",
+    #                            exp_name=EXPERIMENT_NAME,
+    #                            program_text=prog_text)
+    # return render_template("no-generated-calibration.html")
+    return "Need to implement calibration return"
+
+@app.route("/experiment", methods=["GET"])
+def experiment():
+    """Show the actual experiment. Get or allocate an experimental slot to
+    the participant and show the generated program text if available
+    (otherwise show an error).
+
+    """
+    # user_status = next_step_from_request(request).lower()
+    # if user_status != "experiment":
+    #     return redirect(url_for(".dispatch"))
+    # user_is_seq = get_user_between_subjects_status(request)
+    # experiment_slot = allocate_or_get_experiment_slot(user_is_seq, request)
+    # if experiment_slot:
+    #     prog_text = experiment_slot["program_text"]
+    #     return render_template("experiment.html",
+    #                            exp_name=EXPERIMENT_NAME,
+    #                            program_text=prog_text)
+    # logging.error("No free slots available for users.")
+    # return render_template("no-free-slots.html")
+    return "Need to implement experiment return"
+
+@app.route("/complete", methods=["GET"])
+def complete():
+    """Display a script that will be able to determine what settings the
+    subsequent experiment should be.
+
+    """
+    user_status = next_step_from_request(request).lower()
+    if user_status != "complete":
+        return redirect(url_for(".dispatch"))
+    sid = get_cookie(request)
+    completion_code = datahandling.get_completion_code(DATASTORE_CLIENT,
+                                                       sid)
+    return render_template("completion.html",
+                           completion_code=completion_code)
+
+@app.route("/dispatch")
+def dispatch():
+    """This is the general user dispatch procedure that sends a user to
+    the default location based on the latest ClientSession entity in
+    the datastored associated with their session ID.
+
+    """
+    current_status = next_step_from_request(request).lower()
+    if current_status == "pls":
+        ## The user needs to acknowledge having sighted the Plain
+        ## Language Statement. Redirect there.
+        return redirect(url_for(".pls"))
+    if current_status == "ethics":
+        ## The user needs to agree to the ethics statement to proceed.
+        ## Redirect there.
+        return redirect(url_for(".ethics"))
+    if current_status == "error":
+        ## Some (unspecified) error. Send to error screen.
+        return server_error("Unknown server error. Please contact " + \
+                            "administrator at " + \
+                            "<a href=\"mailto:lilburns@unimelb.edu.au\">" + \
+                            "lilburns@unimelb.edu.au</a>."), 500
+    if current_status == "notfound":
+        ## Session not found. Clear the session ID and redirect back
+        ## to the entry portal.
+        return redirect(url_for(".entry"))
+    if current_status == "calibration":
+        ## Requires completion of the calibration block. Send to the
+        ## calibration presentation.
+        return redirect(url_for(".calibration"))
+    if current_status == "experiment":
+        ## Assigned to an experimental slot. Send to the experiment
+        ## presentation.
+        return redirect(url_for(".experiment"))
+    if current_status == "complete":
+        ## Experiment complete. Get the completion code.
+        return redirect(url_for(".complete"))
+    if current_status == "nosession":
+        ## No session found. Send to entry portal.
+        return redirect(url_for(".entry"))
+    if current_status == "invalidsid":
+        ## Invalid session ID. Clear the session ID and have a
+        ## redirect back to the entry portal.
+        raise NotImplementedError("Need to implement SID clearing and redirect here")
+    if current_status == "unknownstate":
+        logging.error("Unknown user status (%s) from next_step_from_request",
+                      current_status)
+    logging.error("Unknown user status (%s) in dispatch",
+                  current_status)
+    return server_error("Unknown server error. Please contact " + \
+                        "administrator at " + \
+                        "<a href=\"mailto:lilburns@unimelb.edu.au\">" + \
+                        "lilburns@unimelb.edu.au</a>. " + \
+                        "Cite: SID = %s / user_status = %s" % (str(get_cookie(request)),
+                                                               current_status)), 500
 
 @app.route("/")
 def hello():
