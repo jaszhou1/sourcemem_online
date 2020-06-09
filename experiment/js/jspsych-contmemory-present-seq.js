@@ -1,5 +1,5 @@
 /**
- * jspsych-contmemory-present
+ * jspsych-contmemory-present-seq
  *
  * A plugin to handle the display and response acquisition for
  * word--location pair presentation and location reproduction as part
@@ -7,11 +7,11 @@
  * experiment.
  */
 
-jsPsych.plugins['contmemory-present'] = (function() {
+jsPsych.plugins['contmemory-present-seq'] = (function() {
     var plugin = {};
 
     plugin.info = {
-        name: 'contmemory-present',
+        name: 'contmemory-present-seq',
         description: 'Word--location presentation and location reproduction during encoding phase',
         parameters: {
             stimulus: {
@@ -26,11 +26,17 @@ jsPsych.plugins['contmemory-present'] = (function() {
                 default: 0.0,
                 description: 'The angle to be associated with the stimulus word'
             },
-            stimulus_display_ms: {
+            angle_display_ms: {
                 type: jsPsych.plugins.parameterType.INT,
-                pretty_name: 'Stimulus display time (ms)',
-                default: 1500, //is this appropriate? ask Adam, compare to time in seq condition
-                description: 'The time to present the stimulus before the response in milliseconds.'
+                pretty_name: 'Stimulus angle display time (ms)',
+                default: 1000,
+                description: 'The time to present the stimulus angle before the stimulus word in milliseconds.'
+            },
+            word_display_ms: {
+                type: jsPsych.plugins.parameterType.INT,
+                pretty_name: 'Stimulus word display time (ms)',
+                default: 1500,
+                description: 'The time to present the stimulus word before the response in milliseconds.'
             },
             svg_size_px: {
                 type: jsPsych.plugins.parameterType.INT,
@@ -189,60 +195,6 @@ jsPsych.plugins['contmemory-present'] = (function() {
             return false;
         };
 
-        // Function for positioning the stimulus word text element.
-        // NOTE: For getBBox to work correctly, the text element must
-        // already be a child of the SVG element. Just ensure that it is
-        // hidden.
-        var position_text = function(text_element, target_angle,
-                                     word_radius) {
-            // A note on positioning: we divide the circle into eight
-            // equal sized sectors (cardinal directions and
-            // intercardinal directions) because there are eight anchors
-            // on a text box. The coordinates of a circle start from
-            // the eastern point and go clockwise.
-
-            // Sector / Circle / Closest text box anchor:
-            // 0      / E      / (Mid-)left
-            // 1      / SE     / Upper left
-            // 2      / S      / Top (middle)
-            // 3      / SW     / Upper right
-            // 4      / W      / (Mid-)right
-            // 5      / NW     / Lower right
-            // 6      / N      / Bottom (middle)
-            // 7      / NE     / Lower left
-
-            // The number of sectors (8) matches the number of handles on a text box.
-            const NUM_SECTORS = 8;
-            const SECTOR_ANGLE = 2 * Math.PI / NUM_SECTORS;
-            const LOWER_ANGLE = [...Array(NUM_SECTORS).keys()].map(i => i * SECTOR_ANGLE - SECTOR_ANGLE/2.0);
-            const ANCHOR_X = pol_to_cart_x(target_angle, word_radius);
-            const ANCHOR_Y = pol_to_cart_y(target_angle, word_radius);
-            const WORD_DIMS = text_element.getBBox();
-            const WORD_HEIGHT = WORD_DIMS.height;
-            const WORD_WIDTH = WORD_DIMS.width;
-            // just hardcode the coordinate offset
-            const WORD_X_HANDLE = [0, 0, -WORD_WIDTH/2, -WORD_WIDTH, -WORD_WIDTH, -WORD_WIDTH, -WORD_WIDTH/2, 0];
-            const WORD_Y_HANDLE = [WORD_HEIGHT/4, WORD_HEIGHT/2, WORD_HEIGHT/2, WORD_HEIGHT/2, WORD_HEIGHT/4, 0, 0, 0];
-            // NB: The WORD_Y_HANDLE *ought* to be moved to
-            // WORD_HEIGHT/2 and WORD_HEIGHT, but this seems to
-            // produce words that are double the Y distance away.
-
-            // Ensure the angle is correctly normalised to be between 0 and 2*pi.
-            target_angle = normalise_angle(target_angle);
-
-            // Find the first index over the "lower angle" for a
-            // sector and under the "lower angle" for the next sector.
-            for(var i = 0; i < NUM_SECTORS - 1; i++) {
-                if((target_angle >= LOWER_ANGLE[i]) && (target_angle < LOWER_ANGLE[i+1])) {
-                    break;
-                }
-            }
-
-            text_element.setAttribute('x', WORD_X_HANDLE[i] + ANCHOR_X);
-            text_element.setAttribute('y', WORD_Y_HANDLE[i] + ANCHOR_Y);
-            text_element.setAttribute('text-anchor', 'start');
-        };
-
         // Create a circle and append it as an (invisible) child of
         // the parent SVG element.
         var create_and_append_circle = function(id, x_pos, y_pos, radius) {
@@ -294,8 +246,8 @@ jsPsych.plugins['contmemory-present'] = (function() {
             feedback_text_element.style.visibility = 'visible';
         };
 
-        var stimulus_display = function() {
-            console.log('Stimulus display');
+        var angle_display = function() {
+            console.log('Stimulus angle display');
 
             // Set the non-calibration elements to visibility: hidden.
             fixation_element.style.visibility = 'hidden';
@@ -306,6 +258,22 @@ jsPsych.plugins['contmemory-present'] = (function() {
             // Set the calibration elements to visibility: visible.
             calibration_marker_element.style.visibility = 'visible';
             angle_marker_element.style.visibility = 'visible';
+            response_circle_element.style.visibility = 'visible';
+            stimulus_text_element.style.visibility = 'hidden';
+        };
+
+        var word_display = function() {
+            console.log('Stimulus word display');
+
+            // Set the non-calibration elements to visibility: hidden.
+            fixation_element.style.visibility = 'hidden';
+
+            feedback_marker_element.style.visibility = 'hidden';
+            feedback_text_element.style.visibility = 'hidden';
+
+            // Set the calibration elements to visibility: visible.
+            calibration_marker_element.style.visibility = 'hidden';
+            angle_marker_element.style.visibility = 'hidden';
             response_circle_element.style.visibility = 'visible';
             stimulus_text_element.style.visibility = 'visible';
         };
@@ -388,7 +356,6 @@ jsPsych.plugins['contmemory-present'] = (function() {
         // Construct stimulus word element.
         stimulus_text_element = create_and_append_text('stimulus-text', trial.stimulus,
                                                        MIDPOINT_X, MIDPOINT_Y, 'middle');
-        position_text(stimulus_text_element, trial.angle, WORD_RADIUS_PX);
 
         // Construct stimulus angle marker element.
         angle_marker_element = create_and_append_circle(
@@ -463,8 +430,7 @@ jsPsych.plugins['contmemory-present'] = (function() {
              console.log('Calibration element entered');
             // Remove the event listener.
             calibration_marker_element.removeEventListener('mouseenter', calibration_circle_entered);
-
-            present_stimulus();
+            present_angle();
         };
 
         // The event listener to track the mouse position.
@@ -531,9 +497,22 @@ jsPsych.plugins['contmemory-present'] = (function() {
             end_trial_handle();
         };
 
-        var present_stimulus = function() {
+        var present_angle = function() {
             // Set up the stimulus display elements.
-            stimulus_display();
+            angle_display();
+
+            // Set the stimulus time.
+            start_stimulus = performance.now();
+
+            // Set up the stimulus display to be removed.
+            jsPsych.pluginAPI.setTimeout(function() {
+                present_word();
+            }, trial.angle_display_ms);
+        };
+
+        var present_word = function() {
+            // Set up the stimulus display elements.
+            word_display();
 
             // Set the stimulus time.
             start_stimulus = performance.now();
@@ -541,7 +520,7 @@ jsPsych.plugins['contmemory-present'] = (function() {
             // Set up the stimulus display to be removed.
             jsPsych.pluginAPI.setTimeout(function() {
                 present_response();
-            }, trial.stimulus_display_ms);
+            }, trial.word_display_ms);
         };
 
         var present_response = function() {
@@ -571,7 +550,7 @@ jsPsych.plugins['contmemory-present'] = (function() {
                 // If we're already inside the calibration marker, go
                 // straight to the stimulus display.
                 console.log('At begin_presentation, mouse within calibration marker.');
-                stimulus_display();
+                angle_display();
             } else {
                 // Show the calibration marker and text.
                 calibration_display();
