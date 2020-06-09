@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Vision and Attention Lab{% endblock %}
+{% block main %}
+<div class="container">
+  {% block interior %}
+  <div class="heading">
+    {% block heading %}
+    {% endblock %}
+  </div>
+  <div class="content">
+    {% block content %}
+    {% endblock %}
+  </div>
+  <div class="footer">
+    <p>
+      Vision and Attention Laboratory, Melbourne School of
+      Psychological Sciences, the University of Melbourne.
+    </p>
+    <p>
+      If you are experiencing technical problems with this experiment,
+      please contact Simon Lilburn
+      at <a href="mailto:lilburns@unimelb.edu.au">lilburns@unimelb.edu.au</a>.
+    </p>
+  </div>
+  {% endblock %}
+</div>
+{% endblock %}
