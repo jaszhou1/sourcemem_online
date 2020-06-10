@@ -1,0 +1,104 @@
+%% sourcemem-online.tex
+%%
+%% A manuscript for the online sequential--simultaneous version of the
+%% source memory experiment.
+
+%% sdl: I've put a lot of extra comments in here to show you what each
+%% command is doing. You can feel free to remove the comments you
+%% don't need any more.
+
+%% The `documentclass` command sets up the major look and feel of the
+%% document, as well as bringing in relevant commands (sections,
+%% floats, etc.) for operating within that document.
+%%
+%% The `apa6` document class is, as you may have expected, an
+%% implementation of the publication guidelines of the sixth edition
+%% of the American Psychological Association. (There is a package
+%% targetting the seventh edition of the publication manual, `apa7`,
+%% but it is not widely available and widely tested yet.) The
+%% arguments for this package are somewhat straightforward: `10pt`
+%% specifies that the base font size should be 10 points; `a4paper`
+%% sets the page geometry to follow an A4 size (the default is letter
+%% sized paper); `man` sets the document class to output in the
+%% "manuscript" style (rather than the `jou` setting, which outputs a
+%% mockup of the manuscript as it would appear as a journal article).
+%% This package has a fairly good set of documentation, which you
+%% should consult if you need to change things, or want to explore the
+%% different options.
+\documentclass[10pt, a4paper, man]{apa6} 
+
+%% Below are the `usepackage` commands: these import packages of
+%% TeX/LaTeX functionality.
+\usepackage[utf8]{inputenc} % Set the input encoding (the text of the
+                            % source file) to Unicode (UTF-8).
+
+%% This set of commands allows plain text files to be included
+%% directly in the TeX source as if it was TeX source (TeX/LaTeX can
+%% be a little funny when included text as code, this bypasses that).
+%% This means that tables and figures can be set up in their own
+%% individual files and included in the manuscript rather than
+%% copy--pasting the relevant code into manuscript document itself and
+%% risking version issues.
+\makeatletter % << This means that the "@" symbol will be interpreted
+              %    for the following lines as being part of the command,
+              %    which is usually turned off by default (to prevent
+              %    people from using "system" commands.
+\newcommand\primitiveinput[1] % << Define a new command.
+{\@@input #1 }                % << The command body.
+\makeatother                  % << Return the "@" to normal.
+
+%% These commands are useful for drafting: they allow different
+%% authors to put comments in the document at different places which
+%% appear in the PDF output and (more importantly) can be searched for
+%% in the LaTeX source. When compiling the final document, either
+%% remove the body of the command to suppress the output on the PDF
+%% or, better, fix and remove the comments.
+\newcommand\jz[1]{\texttt{\small{}JZ:\@#1}}
+\newcommand\afo[1]{\texttt{\small{}AFO:\@#1}}
+\newcommand\sdl[1]{\texttt{\small{}SDL:\@#1}}
+\newcommand\pls[1]{\texttt{\small{}PLS:\@#1}}
+\newcommand\todo[1]{\texttt{\small{}TODO:\@#1}}
+\newcommand\fixme[1]{\texttt{\small{}FIXME:\@#1}}
+
+%% The bibliographic information for the manuscript. Most of this is
+%% straightforward: the `apa6` document class requires authors to be
+%% individually enumerated, and provides commands for different sized
+%% author lists.
+\title{Source memory online}
+\shorttitle{Source memory online}
+\fourauthors{Jason Zhou}{Author B}{Author C}{Author D}
+\fouraffiliations{Melbourne School of Psychological Sciences,
+  The University of Melbourne, Parkville, Victoria,
+  Australia}{Melbourne School of Psychological Sciences,
+  The University of Melbourne, Parkville, Victoria,
+  Australia}{Melbourne School of Psychological Sciences,
+  The University of Melbourne, Parkville, Victoria,
+  Australia}{Melbourne School of Psychological Sciences,
+  The University of Melbourne, Parkville, Victoria,
+  Australia}
+\leftheader{Zhou, B, C, \& D}
+\authornote{Contact information and corresponding author here.}
+\keywords{source memory}
+
+\abstract{%
+  This is where the abstract text will go.
+}
+
+%%%%%%
+\begin{document}
+\maketitle % << This is required to actually lay out the bibliographic
+           %    information on the page.
+
+Introduction here.
+
+\section{Method}
+
+\end{document}
+
+%%  VVVV This is a bunch of stuff to configure emacs.
+%%% Local Variables:
+%%% mode: latex
+%%% coding: utf-8
+%%% ispell-local-dictionary: "en_US"
+%%% End:
+% LocalWords:  VSTM psychophysical 
