@@ -172,7 +172,6 @@ def completed_users():
 ##
 ## Return standard issue template responses.
 def not_found_error(attempted_url):
-
     """Return a "Not Found" error page."""
     return render_template("not-found-error.html",
                            url=attempted_url)
@@ -191,16 +190,13 @@ def entry():
     """The entry point for users from SOMA, REP, or Amazon Mechanical Turk."""
     user_status = next_step_from_request(request).lower()
     status_is_error = user_status_is_error(user_status)
-    if status_is_error:
-        if user_status == "unknownstate":
-            raise NotImplementedError("Need to deal with errors here")
-        if user_status == "error":
-            raise NotImplementedError("Need to deal with errors here")
+    if user_status not in ("invalidsid", "notfound"):
+        return redirect(url_for(".dispatch"))
     if request.method == "GET" or status_is_error:
         response = make_response(render_template("entry.html",
                                                  exp_name=EXPERIMENT_NAME,
                                                  msg=""))
-        if user_status in ("invalidsid", "notfound"):
+        if user_status == "invalidsid":
             unset_cookie(response)
         return response
     if request.method == "POST":
