@@ -71,7 +71,6 @@ def make_session(datastore_client,
         "completed": False,
         "completion_code": False,
         "user_agent": user_agent_string,
-        "calibration": False,
         "ethics": False,
         "pls": False,
         "sim_present": is_sim_present,
@@ -249,13 +248,10 @@ def get_user_status_from_session(session_entry):
     try:
         if session_entry["pls"]:
             if session_entry["ethics"]:
-                if session_entry["calibration"]:
-                    if session_entry["completion_code"]:
-                        state = "complete"
-                    else:
-                        state = "experiment"
+                if session_entry["completion_code"]:
+                    state = "complete"
                 else:
-                    state = "calibration"
+                    state = "experiment"
             else:
                 state = "ethics"
         else:

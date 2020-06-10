@@ -122,7 +122,7 @@ def user_status_is_error(user_status):
     """
     user_status = user_status.lower()
     if user_status in ("pls", "ethics", "experiment", "complete",
-                       "calibration", "nosession"):
+                       "nosession"):
         return False
     if user_status in ("error", "notfound", "invalidsid",
                        "unknownstate"):
@@ -255,25 +255,6 @@ def ethics():
         return redirect(url_for(".dispatch"))
     return render_template("ethics.html")
 
-@app.route("/calibration", methods=["GET", "POST"])
-def calibration():
-    """Display a script that will be able to determine what settings the
-    subsequent experiment should be.
-
-    """
-    # user_status = next_step_from_request(request).lower()
-    # if user_status != "calibration":
-    #     return redirect(url_for(".dispatch"))
-    # user_is_seq = get_user_between_subjects_status(request)
-    # calibration_slot = get_calibration(user_is_seq)
-    # if calibration_slot:
-    #     prog_text = calibration_slot["program_text"]
-    #     return render_template("calibration.html",
-    #                            exp_name=EXPERIMENT_NAME,
-    #                            program_text=prog_text)
-    # return render_template("no-generated-calibration.html")
-    return "Need to implement calibration return"
-
 @app.route("/experiment", methods=["GET"])
 def experiment():
     """Show the actual experiment. Get or allocate an experimental slot to
@@ -336,10 +317,6 @@ def dispatch():
         ## Session not found. Clear the session ID and redirect back
         ## to the entry portal.
         return redirect(url_for(".entry"))
-    if current_status == "calibration":
-        ## Requires completion of the calibration block. Send to the
-        ## calibration presentation.
-        return redirect(url_for(".calibration"))
     if current_status == "experiment":
         ## Assigned to an experimental slot. Send to the experiment
         ## presentation.
