@@ -176,6 +176,21 @@ queries---those that operate on multiple fields---require explicit
 specification in an index file. (See
 [below](#update-the-datastore-index).)
 
+To configure the datastore, you will need to log into the Google Cloud
+Console and navigate to the "Datastore" section in the left-hand
+panel. If the datastore has not yet been initialised, you will need to
+do so by both selecting a "mode" for the datastore to operate in
+(either "Native" mode, which is better for mobile apps, or "Datastore"
+mode). **Select "Datastore" mode**. You will also need to indicate
+where the datastore should be located. This is not critically
+important, as our datastore usage is comparatively tiny, but selecting
+the United States region (or a single instance on the west coast of
+the United States) should be more than sufficient.
+
+**Remember to [update the datastore
+index](#update-the-datastore-index)** during deployment before
+actually running any (somewhat complex) query.
+
 ## Activate the correct project
 All of the deployment commands either take a `--project` command-line
 argument or, if the `--project` argument is missing, use the project
