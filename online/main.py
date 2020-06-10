@@ -190,7 +190,7 @@ def entry():
     """The entry point for users from SOMA, REP, or Amazon Mechanical Turk."""
     user_status = next_step_from_request(request).lower()
     status_is_error = user_status_is_error(user_status)
-    if user_status not in ("invalidsid", "notfound"):
+    if user_status not in ("invalidsid", "nosession", "notfound"):
         return redirect(url_for(".dispatch"))
     if request.method == "GET" or status_is_error:
         response = make_response(render_template("entry.html",
