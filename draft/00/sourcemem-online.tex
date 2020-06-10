@@ -25,12 +25,15 @@
 %% This package has a fairly good set of documentation, which you
 %% should consult if you need to change things, or want to explore the
 %% different options.
-\documentclass[10pt, a4paper, man]{apa6} 
+\documentclass[10pt, a4paper, man, biblatex]{apa6} 
 
 %% Below are the `usepackage` commands: these import packages of
 %% TeX/LaTeX functionality.
 \usepackage[utf8]{inputenc} % Set the input encoding (the text of the
                             % source file) to Unicode (UTF-8).
+
+%% Add "bibliographic resources" (i.e., BibLaTeX files).
+\addbibresource{sourcemem.bib}
 
 %% This set of commands allows plain text files to be included
 %% directly in the TeX source as if it was TeX source (TeX/LaTeX can
@@ -89,10 +92,13 @@
 \maketitle % << This is required to actually lay out the bibliographic
            %    information on the page.
 
-Introduction here.
+Introduction here. Here is an example of a parenthetical citation
+\parencite{Harlow2013} and here is an example of an in-text citation:
+\textcite{Smith2016}.
 
 \section{Method}
 
+\printbibliography
 \end{document}
 
 %%  VVVV This is a bunch of stuff to configure emacs.

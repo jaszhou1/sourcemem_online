@@ -1,0 +1,3 @@
+#!/bin/sh
+
+pdflatex sourcemem-online && pdflatex sourcemem-online && biber sourcemem-online && pdflatex sourcemem-online && pdflatex sourcemem-online
