@@ -1,0 +1,266 @@
+{% extends "base.html" %}
+{% block title %}{{ exp_name }} - Vision and Attention Lab{% endblock %}
+{% block head_css %}
+<link href="static/css/jspsych.css" rel="stylesheet" type="text/css" />
+<link href="static/css/custom.css" rel="stylesheet" type="text/css" />
+{% endblock %}
+{% block head_js %}
+<script src="static/js/jspsych.js" type="text/javascript"></script>
+<script src="static/js/jspsych-contmemory-present-seq.js" type="text/javascript"></script>
+<script src="static/js/jspsych-math-distractor.js" type="text/javascript"></script>
+<script src="static/js/jspsych-contmemory-recall.js" type="text/javascript"></script>
+<script src="static/js/jspsych-html-keyboard-response.js" type="text/javascript"></script>
+<script src="static/stimuli/wordlist.js" type="text/javascript"></script>
+{% endblock %}
+{% block main %}
+{% endblock %}
+{% block postbody_js %}
+<script type="text/javascript">
+  // SOURCE MEMORY EXPERIMENT
+  // Online (jspsych) version of Jason Zhou's second PhD experiment
+  
+  // Simon Lilburn <lilburns AT unimelb DOT edu DOT au>
+  // Jason Zhou <jaszhou AT unimelb DOT edu DOT au>
+  
+  /* - - - - PARAMETERS - - - - */
+  var num_blocks = 14; // Subject to pilot testing for session timing
+  var num_trials = 10; // Subject to pilot testing for session timing
+  var num_stim = num_blocks * num_trials; // Total number of words needed for the session
+  var num_foil = num_stim // Number of foil words for the recognition task
+  
+  // Timing
+  var isi = 250; // Inter-stimulus interval
+  var post_trial = 750;
+  var maths_time = 12000;
+  
+  
+  /* - - - - INSTRUCTIONS - - - - */
+  
+  // Welcome message
+  var welcome = {
+      type: "html-keyboard-response",
+      stimulus: '<p style = "colour:white">Welcome to the experiment. Press any key to begin.</p>'
+  };
+  
+  // End message
+  var ending = {
+      type: "html-keyboard-response",
+      stimulus: '<p id="inst">You have now completed the study.</p><p>Thank you for participating! Press any key to submit your data and end the experiment.</p><p>Once you have done so, feel free to close your browser.</p>'
+  };
+  
+  /* - - - - STIMULI - - - - */
+  // Shuffle wordpool
+  wordlist = jsPsych.randomization.shuffle(wordlist);
+  stim_words = wordlist.slice(0,num_stim) // Assign words as stimuli
+  foil_words = wordlist.slice(num_stim, num_stim + num_foil) // Assign words unused as stimuli as foils
+  
+  // Function to generate a random angle between 0 and 2*pi
+  var stim_angles = []
+  function getRandomAng(max) {
+      return Math.random() * max;
+  }
+  
+  // Populate an array of same length as word stimuli with random angles
+  for (i = 0; i < stim_words.length; i++){
+      stim_angles[i] = getRandomAng(2*Math.PI)
+  }
+  
+  /* - - - - GENERATE DESIGN - - - - */
+  
+  //Function to shuffle stimuli (Fisher-Yates)
+  function shuffle(originalArray){
+      // Added this line, otherwise it shuffles the encode list, rather than just returning a new array
+      var array = [].concat(originalArray);
+      var currentIndex = array.length, temporaryValue, randomIndex;
+      
+      // While there remain elements to shuffle...
+      while (0 !== currentIndex) {
+          
+          // Pick a remaining element...
+          randomIndex = Math.floor(Math.random() * currentIndex);
+          currentIndex -= 1;
+          
+          // And swap it with the current element.
+          temporaryValue = array[currentIndex];
+          array[currentIndex] = array[randomIndex];
+          array[randomIndex] = temporaryValue;
+      }
+      return array;
+  }
+  
+  //Generate encode list
+  var encode_list = []; // Empty array for all stimuli to go into
+  for (i = 0; i < num_blocks; i++) {
+      word_offset = i * num_trials
+      
+      this_block_words = stim_words.slice(word_offset, word_offset + num_trials)
+      this_block_angles = stim_angles.slice(word_offset, word_offset + num_trials)
+      var this_block = [] ;
+      for (j = 0; j <num_trials; j++) {
+          this_block[j] = {word: this_block_words[j],
+                           angle: this_block_angles[j]};
+      }
+      encode_list[i] = this_block;
+  }
+  
+  
+  //Append foils to encode list..
+  var recog_list = [];
+  
+  for (i = 0; i < num_blocks; i++) {
+      word_offset = i * num_trials
+      
+      this_block_foil_words = foil_words.slice(word_offset, word_offset + num_trials)
+      var this_block_foil = [] ;
+      for (j = 0; j <num_trials; j++) {
+          this_block_foil[j] = {word: this_block_foil_words[j], // Not strictly necessary, but treating foils the same as stimuli for consistent indexing
+                                angle: "N/A"};
+      }
+      recog_list[i] = this_block_foil.concat(encode_list[i]);
+  }
+  
+  // ...and shuffle to create recognition list
+  for (i = 0; i < num_blocks; i++) {
+      recog_list[i] = shuffle(recog_list[i])
+  }
+  
+  //Shuffle encode blocks to create test blocks
+  var source_list = [];
+  for (i = 0; i < num_blocks; i++) {
+      source_list[i] = shuffle(encode_list[i])
+  }
+  
+  
+  
+  /* - - - - TIMELINE - - - - */
+  var TIMELINE = [welcome]
+  // Main experiment loop here
+  
+  
+  // For each block
+  for (i = 0; i < num_blocks; i++) {
+      
+      // ENCODE
+      // Instructions
+      TIMELINE.push({
+          type: 'html-keyboard-response',
+          stimulus: '<p style="color:white">STUDY</p>',
+          choices: jsPsych.NO_KEYS,
+          trial_duration: 2000,
+      });
+      
+      // Trial
+      for(j = 0; j < num_trials; j++){
+          TIMELINE.push({
+              type: 'contmemory-present-seq',
+              stimulus: encode_list[i][j].word,
+              angle: encode_list[i][j].angle,
+              data: {
+                  phase: 'study',
+                  block: i,
+                  trial: j
+              }
+          });
+      }
+      
+      // MATHS
+      // Instructions
+      TIMELINE.push({
+          type: 'html-keyboard-response',
+          stimulus: '<p style="color:white">MATH</p>',
+          choices: jsPsych.NO_KEYS,
+          trial_duration: 2000,
+      });
+      
+      // TODO: this plug-in was originally written for an older version of jspsych, ISI is defined within the function. Neater to treat as a parameter.
+      TIMELINE.push({
+          type: 'math-distractor',
+          duration: maths_time,
+          data: {
+              phase: 'delay',
+              block: i,
+              trial: j
+          }
+      });
+      
+      
+      // RECOGNITION
+      // Instructions
+      TIMELINE.push({
+          type: 'html-keyboard-response',
+          stimulus: '<p style="color:white">RECOGNITION</p>',
+          choices: jsPsych.NO_KEYS,
+          trial_duration: 2000,
+      });
+      
+      // Trial
+      for(j = 0; j < num_trials*2; j++){
+          TIMELINE.push({
+              type: 'html-keyboard-response',
+              stimulus: recog_list[i][j].word,
+              choices: ['1','2','3','4','5','6'],
+              prompt: '<p style="colour:white">Please Enter a number from 1 (Sure NEW) to 6 (Sure OLD).</p>',
+              post_trial_gap: isi,
+              data: {
+                  phase: 'recognition',
+                  block: i,
+                  trial: j
+              }
+          });
+      }
+      
+      // SOURCE
+      // Instructions
+      TIMELINE.push({
+          type: 'html-keyboard-response',
+          stimulus: '<p style="color:white">SOURCE</p>',
+          choices: jsPsych.NO_KEYS,
+          trial_duration: 2000,
+      });
+      
+      //  var correct_trials = [];
+      // Trial
+      for(j = 0; j < num_trials; j++){
+          TIMELINE.push({
+              type: 'contmemory-recall',
+              stimulus: source_list[i][j].word,
+              angle: source_list[i][j].angle,
+              data: {
+                  phase: 'recall',
+                  block: i,
+                  trial: j
+              },
+              on_finish: function(data){
+                  data.correct = data.angular_error < Math.PI/8  // How do I actually get this to save into an array that I can use for block feedback?
+              }
+          });
+      }
+      
+      // BLOCK FEEDBACK
+      // Calculate feedback percentage and assemble string to be displayed
+      // Function to construct string for html keyboard response stimulus
+      
+      TIMELINE.push({
+          type: "html-keyboard-response",
+          stimulus: function() {
+              var accuracy = 0; // change to actual output from cont-recall
+              //var block_number = i; // this will just say the last value of i, because all im telling jspsych is to look for "i", and at the time the timeline is being run through, i will be 10 since its all been pushed.
+              return "<p>End of Block</p>" +
+                  "<p>You responded correctly on "+accuracy+"% of the trials in this block.</p>"+
+                  "<p>Press any key to begin the next block.</p>";
+          }
+      });
+      
+  }
+  
+  TIMELINE[TIMELINE.length-1] = ending; // Replace continue instructions from final list with ending screen
+  
+  /* create timeline */
+  jsPsych.init({
+      timeline: TIMELINE,
+      on_finish: function() {
+          jsPsych.data.displayData(); // Going to have to save this somewhere with a timestamp in the filename
+      }
+  });
+</script>
+{% endblock %}

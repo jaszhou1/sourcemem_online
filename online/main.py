@@ -262,19 +262,13 @@ def experiment():
     (otherwise show an error).
 
     """
-    # user_status = next_step_from_request(request).lower()
-    # if user_status != "experiment":
-    #     return redirect(url_for(".dispatch"))
-    # user_is_seq = get_user_between_subjects_status(request)
-    # experiment_slot = allocate_or_get_experiment_slot(user_is_seq, request)
-    # if experiment_slot:
-    #     prog_text = experiment_slot["program_text"]
-    #     return render_template("experiment.html",
-    #                            exp_name=EXPERIMENT_NAME,
-    #                            program_text=prog_text)
-    # logging.error("No free slots available for users.")
-    # return render_template("no-free-slots.html")
-    return "Need to implement experiment return"
+    user_status = next_step_from_request(request).lower()
+    if user_status != "experiment":
+        return redirect(url_for(".dispatch"))
+    user_is_sim = get_user_between_subjects_status(request)
+    if user_is_sim:
+        return render_template("experiment-sim.html")
+    return render_template("experiment-seq.html")
 
 @app.route("/complete", methods=["GET"])
 def complete():
@@ -349,7 +343,7 @@ def hello():
     This is not the entrypoint for individual participants.
 
     """
-    return "Hello world!"
+    return render_template("landing.html")
 
 if __name__ == "__main__":
     print("Source Memory Experiment Server")
