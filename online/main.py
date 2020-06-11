@@ -181,6 +181,24 @@ def server_error(message=None):
     return render_template("server-error.html",
                            message=message)
 
+## Debug endpoints
+## ===============
+##
+## Endpoints for internal administrator use. These should not be
+## anything that is desperately private (nothing that would nuke the
+## dataset or server or anything), but stuff that is not useful for
+## participants.
+@app.route("/debug/clear-sid")
+def clear_sid():
+    """An endpoint to clear the session ID from a cookie. This is for
+    debugging purposes only.
+
+    """
+    res = make_response(render_template("message.html",
+                                        msg="Your SID has been cleared."))
+    unset_cookie(res)
+    return res
+
 ## Public endpoints
 ## ================
 ##
