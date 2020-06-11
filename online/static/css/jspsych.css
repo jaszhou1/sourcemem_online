@@ -5,14 +5,15 @@
  * experiments look polished without any additional styles.
  */
 
-/* The main body tag.*/
+ @import url(https://fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,400,700);
+
+/* Container holding jsPsych content */
 
  body {
-     background: rgb(127, 127, 127);
+     background-color: rgb(0, 0, 0);
+     color: rgb(255,255,255);
  }
 
- 
-/* Container holding jsPsych content */
  .jspsych-display-element {
    display: flex;
    flex-direction: column;
@@ -47,16 +48,15 @@
 /* fonts and type */
 
 .jspsych-display-element {
-  font-family: 'Arial', sans-serif;
+  font-family: 'Open Sans', 'Arial', sans-serif;
   font-size: 18px;
-  color: #fff;
   line-height: 1.6em;
 }
 
 /* Form elements like input fields and buttons */
 
 .jspsych-display-element input[type="text"] {
-  font-family: 'Arial', sans-serif;
+  font-family: 'Open Sans', 'Arial', sans-serif;
   font-size: 14px;
 }
 
@@ -67,7 +67,7 @@
   margin: 0px;
   font-size: 14px;
   font-weight: 400;
-  font-family: 'Arial', sans-serif;
+  font-family: 'Open Sans', 'Arial', sans-serif;
   cursor: pointer;
   line-height: 1.4;
   text-align: center;
@@ -127,11 +127,4 @@
 /* Control appearance of jsPsych.data.displayData() */
 #jspsych-data-display {
   text-align: left;
-}
-
-.any-key-continue {
-  margin-top: 1em;
-  color: #ccc;
-  font-style: italic;
-  font-size: 0.85em;
 }
