@@ -21,7 +21,7 @@
 // Online (jspsych) version of Jason Zhou's second PhD experiment
 
 // Simon Lilburn <lilburns AT unimelb DOT edu DOT au>
-// Jason Zhou <jaszhou AT unimelb DOT edu DOT au>
+// Jason Zhou <jasonz1 AT student DOT unimelb DOT edu DOT au>
 
   /* - - - - PARAMETERS - - - - */
   var num_blocks = 14; // Subject to pilot testing for session timing
@@ -44,7 +44,22 @@
     stimulus: '<p style = "colour:white">Welcome to the experiment. Press any key to begin.</p>'
   };
 
-// End message
+  var instructions = {
+    type: "html-keyboard-response",
+    stimulus: '<p style = "colour:white"> This experiment is made up of 14 blocks. In each block you will be asked to:<br><br> (1) Study a series of words and locations<br>(2) Complete a series of math problems<br>(3) Rate your confidence that words were presented in (1) <br> (4) Reproduce the locations of words that were studied in (1) <br><br> Press any key to contiue.</p>'
+  };
+
+  var instructions_sim = {
+    type: "html-keyboard-response",
+    stimulus: '<p style = "colour:white"> You will first be shown a series of words located along a circle. After each word, you will be asked to confirm you saw its location by moving your cursor from the center of the circle to the location. <br><br> Each study list will be immediately followed by a series of math problems of the form A + B + C = D, where A, B, C, and D are numbers. You will be asked whether D is the true sum of these numbers, pressing "1" for TRUE and "0" for FALSE. Try to perform these math problems as quickly and accurately as possible. <br><br> Press any key to contiue. </p>'
+  };
+
+  var instructions_test = {
+    type: "html-keyboard-response",
+    stimulus: '<p style = "colour:white"> Once you have finished the math problems, you will then be asked to use the numbers from 1 to 6 on your keyboard to rate a list on words on how confident you are that they were in the study list, where 1 means that you are sure it was not on the list (a NEW word), and 6 means you are sure it was on the list (an OLD word) <br><br> After rating each word, you will then be shown the words that were studied, and use your cursor to reproduce the locations that each of the words were originally presented in during the study phase. <br><br> Press any key to begin.</p>'
+  };
+
+  // End message
   var ending = {
     type: "html-keyboard-response",
     stimulus: '<p id="inst">You have now completed the study.</p><p>Thank you for participating! Press any key to submit your data and end the experiment.</p><p>Once you have done so, feel free to close your browser.</p>'
@@ -136,7 +151,7 @@
 
 
   /* - - - - TIMELINE - - - - */
-    var TIMELINE = [welcome]
+    var TIMELINE = [welcome, instructions, instructions_sim, instructions_test]
   // Main experiment loop here
 
 

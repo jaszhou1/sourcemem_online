@@ -16,70 +16,86 @@
 {% endblock %}
 {% block postbody_js %}
 <script type="text/javascript">
-  // SOURCE MEMORY EXPERIMENT
-  // Online (jspsych) version of Jason Zhou's second PhD experiment
-  
-  // Simon Lilburn <lilburns AT unimelb DOT edu DOT au>
-  // Jason Zhou <jaszhou AT unimelb DOT edu DOT au>
-  
+
+// SOURCE MEMORY EXPERIMENT
+// Online (jspsych) version of Jason Zhou's second PhD experiment
+
+// Simon Lilburn <lilburns AT unimelb DOT edu DOT au>
+// Jason Zhou <jasonz1 AT student DOT unimelb DOT edu DOT au>
+
   /* - - - - PARAMETERS - - - - */
   var num_blocks = 14; // Subject to pilot testing for session timing
   var num_trials = 10; // Subject to pilot testing for session timing
   var num_stim = num_blocks * num_trials; // Total number of words needed for the session
   var num_foil = num_stim // Number of foil words for the recognition task
-  
+
   // Timing
   var isi = 250; // Inter-stimulus interval
   var post_trial = 750;
   var maths_time = 12000;
-  
-  
+
+
   /* - - - - INSTRUCTIONS - - - - */
-  
+
   // Welcome message
   var welcome = {
-      type: "html-keyboard-response",
-      stimulus: '<p style = "colour:white">Welcome to the experiment. Press any key to begin.</p>'
+    type: "html-keyboard-response",
+    stimulus: '<p style = "colour:white">Welcome to the experiment. Press any key to begin.</p>'
   };
-  
+
+  var instructions = {
+    type: "html-keyboard-response",
+    stimulus: '<p style = "colour:white"> This experiment is made up of 14 blocks. In each block you will be asked to:<br><br> (1) Study a series of words and locations<br>(2) Complete a series of math problems<br>(3) Rate your confidence that words were presented in (1) <br> (4) Reproduce the locations of words that were studied in (1) <br><br> Press any key to contiue.</p>'
+  };
+
+  var instructions_seq = {
+    type: "html-keyboard-response",
+    stimulus: '<p style = "colour:white"> You will first be shown a series of locations, marked by a marker along the outline of a circle. Each location will be immediately followed by a word. The word and location of the marker form a word-location pair. After each word, you will be asked to confirm you saw its paired location by moving your cursor from the center of the circle to the location. <br><br> Each study list will be immediately followed by a series of math problems of the form A + B + C = D, where A, B, C, and D are numbers. You will be asked whether D is the true sum of these numbers, pressing "1" for TRUE and "0" for FALSE. Try to perform these math problems as quickly and accurately as possible. <br><br> Press any key to contiue. </p>'
+  };
+
+  var instructions_test = {
+    type: "html-keyboard-response",
+    stimulus: '<p style = "colour:white"> Once you have finished the math problems, you will then be asked to use the numbers from 1 to 6 on your keyboard to rate a list on words on how confident you are that they were in the study list, where 1 means that you are sure it was not on the list (a NEW word), and 6 means you are sure it was on the list (an OLD word) <br><br> After rating each word, you will then be shown the words that were studied, and use your cursor to reproduce the locations that each word was paired with during the study phase. <br><br> Press any key to begin.</p>'
+  };
+
   // End message
   var ending = {
       type: "html-keyboard-response",
       stimulus: '<p id="inst">You have now completed the study.</p><p>Thank you for participating! Press any key to submit your data and end the experiment.</p><p>Once you have done so, feel free to close your browser.</p>'
   };
-  
+
   /* - - - - STIMULI - - - - */
   // Shuffle wordpool
   wordlist = jsPsych.randomization.shuffle(wordlist);
   stim_words = wordlist.slice(0,num_stim) // Assign words as stimuli
   foil_words = wordlist.slice(num_stim, num_stim + num_foil) // Assign words unused as stimuli as foils
-  
+
   // Function to generate a random angle between 0 and 2*pi
   var stim_angles = []
   function getRandomAng(max) {
       return Math.random() * max;
   }
-  
+
   // Populate an array of same length as word stimuli with random angles
   for (i = 0; i < stim_words.length; i++){
       stim_angles[i] = getRandomAng(2*Math.PI)
   }
-  
+
   /* - - - - GENERATE DESIGN - - - - */
-  
+
   //Function to shuffle stimuli (Fisher-Yates)
   function shuffle(originalArray){
       // Added this line, otherwise it shuffles the encode list, rather than just returning a new array
       var array = [].concat(originalArray);
       var currentIndex = array.length, temporaryValue, randomIndex;
-      
+
       // While there remain elements to shuffle...
       while (0 !== currentIndex) {
-          
+
           // Pick a remaining element...
           randomIndex = Math.floor(Math.random() * currentIndex);
           currentIndex -= 1;
-          
+
           // And swap it with the current element.
           temporaryValue = array[currentIndex];
           array[currentIndex] = array[randomIndex];
@@ -87,12 +103,12 @@
       }
       return array;
   }
-  
+
   //Generate encode list
   var encode_list = []; // Empty array for all stimuli to go into
   for (i = 0; i < num_blocks; i++) {
       word_offset = i * num_trials
-      
+
       this_block_words = stim_words.slice(word_offset, word_offset + num_trials)
       this_block_angles = stim_angles.slice(word_offset, word_offset + num_trials)
       var this_block = [] ;
@@ -102,14 +118,14 @@
       }
       encode_list[i] = this_block;
   }
-  
-  
+
+
   //Append foils to encode list..
   var recog_list = [];
-  
+
   for (i = 0; i < num_blocks; i++) {
       word_offset = i * num_trials
-      
+
       this_block_foil_words = foil_words.slice(word_offset, word_offset + num_trials)
       var this_block_foil = [] ;
       for (j = 0; j <num_trials; j++) {
@@ -118,28 +134,28 @@
       }
       recog_list[i] = this_block_foil.concat(encode_list[i]);
   }
-  
+
   // ...and shuffle to create recognition list
   for (i = 0; i < num_blocks; i++) {
       recog_list[i] = shuffle(recog_list[i])
   }
-  
+
   //Shuffle encode blocks to create test blocks
   var source_list = [];
   for (i = 0; i < num_blocks; i++) {
       source_list[i] = shuffle(encode_list[i])
   }
-  
-  
-  
+
+
+
   /* - - - - TIMELINE - - - - */
-  var TIMELINE = [welcome]
+  var TIMELINE = [welcome, instructions, instructions_seq, insturctions_test]
   // Main experiment loop here
-  
-  
+
+
   // For each block
   for (i = 0; i < num_blocks; i++) {
-      
+
       // ENCODE
       // Instructions
       TIMELINE.push({
@@ -148,7 +164,7 @@
           choices: jsPsych.NO_KEYS,
           trial_duration: 2000,
       });
-      
+
       // Trial
       for(j = 0; j < num_trials; j++){
           TIMELINE.push({
@@ -162,7 +178,7 @@
               }
           });
       }
-      
+
       // MATHS
       // Instructions
       TIMELINE.push({
@@ -171,7 +187,7 @@
           choices: jsPsych.NO_KEYS,
           trial_duration: 2000,
       });
-      
+
       // TODO: this plug-in was originally written for an older version of jspsych, ISI is defined within the function. Neater to treat as a parameter.
       TIMELINE.push({
           type: 'math-distractor',
@@ -182,8 +198,8 @@
               trial: j
           }
       });
-      
-      
+
+
       // RECOGNITION
       // Instructions
       TIMELINE.push({
@@ -192,7 +208,7 @@
           choices: jsPsych.NO_KEYS,
           trial_duration: 2000,
       });
-      
+
       // Trial
       for(j = 0; j < num_trials*2; j++){
           TIMELINE.push({
@@ -208,7 +224,7 @@
               }
           });
       }
-      
+
       // SOURCE
       // Instructions
       TIMELINE.push({
@@ -217,7 +233,7 @@
           choices: jsPsych.NO_KEYS,
           trial_duration: 2000,
       });
-      
+
       //  var correct_trials = [];
       // Trial
       for(j = 0; j < num_trials; j++){
@@ -235,11 +251,11 @@
               }
           });
       }
-      
+
       // BLOCK FEEDBACK
       // Calculate feedback percentage and assemble string to be displayed
       // Function to construct string for html keyboard response stimulus
-      
+
       TIMELINE.push({
           type: "html-keyboard-response",
           stimulus: function() {
@@ -250,11 +266,11 @@
                   "<p>Press any key to begin the next block.</p>";
           }
       });
-      
+
   }
-  
+
   TIMELINE[TIMELINE.length-1] = ending; // Replace continue instructions from final list with ending screen
-  
+
   /* create timeline */
   jsPsych.init({
       timeline: TIMELINE,
