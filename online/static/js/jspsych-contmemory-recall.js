@@ -59,7 +59,7 @@ jsPsych.plugins['contmemory-recall'] = (function() {
             calibration_marker_px: {
                 type: jsPsych.plugins.parameterType.INT,
                 pretty_name: 'Radius of the calibration area (px)',
-                default: 4,
+                default: 8,
                 description: 'The radius of the calibration area marker in pixels'
             },
             quick_trap_ms: {
@@ -212,12 +212,16 @@ jsPsych.plugins['contmemory-recall'] = (function() {
             return res;
         };
 
-        var calibration_display = function() {
+        var calibration_display = function(return_to_marker) {
             console.log('Calibration display');
 
             // Make sure the feedback text is indicating people should
             // enter the calibration circle.
-            feedback_text_element.innerHTML = 'Please place your cursor in the small circle.';
+            if(return_to_marker) {
+                feedback_text_element.innerHTML = 'Wait until cross appears before responding.';
+            } else {
+                feedback_text_element.innerHTML = 'Please place your cursor in the small circle.';
+            }
             feedback_text_element.setAttribute('y', MIDPOINT_Y - trial.calibration_marker_px - 5);
 
             // Set the non-calibration elements to visibility: hidden.
@@ -373,6 +377,11 @@ jsPsych.plugins['contmemory-recall'] = (function() {
             // Remove the event listener.
             calibration_marker_element.removeEventListener('mouseenter', calibration_circle_entered);
 
+            // Update the position (so that the intersection query works even though we're
+            // in a child of the response circle, not the response circle itself.
+            mouse_x = e.clientX;
+            mouse_y = e.clientY;
+            
             present_stimulus();
         };
 
@@ -451,7 +460,7 @@ jsPsych.plugins['contmemory-recall'] = (function() {
             // bounding box, then go to calibration marker.
             if(!mouse_within_element(calibration_marker_element)) {
                 console.log('At response, mouse left calibration marker.');
-                begin_presentation();
+                begin_presentation(true);
                 return;
             }
 
@@ -466,7 +475,7 @@ jsPsych.plugins['contmemory-recall'] = (function() {
                                                      response_circle_exited);
         };
 
-        var begin_presentation = function() {
+        var begin_presentation = function(return_to_marker) {
             console.log('Presentation begun');
 
             if(mouse_within_element(calibration_marker_element)) {
@@ -476,7 +485,7 @@ jsPsych.plugins['contmemory-recall'] = (function() {
                 stimulus_display();
             } else {
                 // Show the calibration marker and text.
-                calibration_display();
+                calibration_display(return_to_marker);
             }
 
             // Add an event handler to the response circle. Because
@@ -493,7 +502,7 @@ jsPsych.plugins['contmemory-recall'] = (function() {
         };
 
         // Set the stage for the calibration section.
-        begin_presentation();
+        begin_presentation(false);
     };
 
     return plugin;
