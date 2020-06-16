@@ -262,10 +262,10 @@
     TIMELINE.push({
       type: "html-keyboard-response",
       stimulus: function() {
-        var accuracy = 0; // change to actual output from cont-recall
+        //var accuracy = 0; // change to actual output from cont-recall
         //var block_number = i; // this will just say the last value of i, because all im telling jspsych is to look for "i", and at the time the timeline is being run through, i will be 10 since its all been pushed.
         return "<p>End of Block</p>" +
-                "<p>You responded correctly on "+accuracy+"% of the trials in this block.</p>"+
+              //  "<p>You responded correctly on "+accuracy+"% of the trials in this block.</p>"+
                 "<p>Press any key to begin the next block.</p>";
       }
     });

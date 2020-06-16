@@ -249,7 +249,7 @@
               trial: j
             },
             on_finish: function(data){
-              data.correct = data.angular_error < Math.PI/8  // How do I actually get this to save into an array that I can use for block feedback?
+              data.correct = Math.abs(data.angular_error) <= Math.PI/8
             }
         });
       }
@@ -261,8 +261,8 @@
     TIMELINE.push({
       type: "html-keyboard-response",
       stimulus: function() {
-        var accuracy = 0; // change to actual output from cont-recall
-        //var block_number = i; // this will just say the last value of i, because all im telling jspsych is to look for "i", and at the time the timeline is being run through, i will be 10 since its all been pushed.
+        var this_block_correct = jsPsych.data.get().last(num_trials).filter({trial_type: 'contmemory-recall',correct: true}).count()
+        var accuracy = Math.round(this_block_correct/num_trials * 100); // change to actual output from cont-recall
         return "<p>End of Block</p>" +
                 "<p>You responded correctly on "+accuracy+"% of the trials in this block.</p>"+
                 "<p>Press any key to begin the next block.</p>";
