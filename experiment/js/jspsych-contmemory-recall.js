@@ -96,7 +96,6 @@ jsPsych.plugins['contmemory-recall'] = (function() {
             calibration_marker_element = null,
             response_circle_element = null,
             angle_marker_element = null,
-            feedback_marker_element = null,
             feedback_text_element = null,
             stimulus_text_element = null;
 
@@ -393,8 +392,6 @@ jsPsych.plugins['contmemory-recall'] = (function() {
                 num_fast_attempts++;
 
                 feedback_text_element.innerHTML = 'Too fast';
-                feedback_marker_element.setAttribute('cx', hitting_position[0]);
-                feedback_marker_element.setAttribute('cy', hitting_position[1]);
                 feedback_display();
 
                 // After a delay, begin the trial again.
@@ -409,8 +406,6 @@ jsPsych.plugins['contmemory-recall'] = (function() {
                 num_slow_attempts++;
 
                 feedback_text_element.innerHTML = 'Too slow';
-                feedback_marker_element.setAttribute('cx', hitting_position[0]);
-                feedback_marker_element.setAttribute('cy', hitting_position[1]);
                 feedback_display();
 
                 // After a delay, begin the trial again.
