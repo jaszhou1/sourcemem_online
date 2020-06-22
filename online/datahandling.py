@@ -33,6 +33,145 @@ def is_valid_external_id(extid):
                           # more than one character in the external
                           # ID.
 
+def missing_fields(trial_dict, fields):
+    """Returns true if any of the fields are missing xfrom the trial_dict
+    keys.
+
+    """
+    keys = trial_dict.keys()
+    return any(map(lambda f: f not in keys, fields))
+
+def convert_experimental_data(session_id, data):
+    """Convert the experiment data from the JSON provided by the client
+(hopefully from jsPsych) to a data structure we can put in the
+datastore. This function returns three elements: a boolean indicating
+whether the data was valid, a dictionary if the data parsed correctly
+(or a None value if the data was not correct), and either the original
+data handed in or (if the data was invalid) a message to store in the
+datastore indicating the nature of the error.
+
+    """
+    ## We expect to receive a JSON structure that is a list of trial
+    ## elements.
+    if not isinstance(data, list):
+        return False, None, "JSON did not contain list"
+    ## The required fields for each type of trial.
+    REQUIRED_CONF_FIELDS = ["trial_type", "rt", "block",
+                            "trial", "index", "response", "stimulus",
+                            "keycode", "time_elapsed"]
+    REQUIRED_PRESENT_FIELDS = ["trial_type", "num_fast_attempts",
+                               "num_slow_attempts", "num_error_attempts",
+                               "stimulus_word", "stimulus_angle",
+                               "hitting_angle", "hitting_position", "angular_error",
+                               "response_time", "block", "trial",
+                               "trial_index", "time_elapsed"]
+    REQUIRED_DISTRACTOR_FIELDS = ["trial_type", "subj_responses",
+                                  "num1", "num2", "num3", "sums", 
+                                  "rts", "block", "trial",
+                                  "trial_index", "time_elapsed"]
+    REQUIRED_RECALL_FIELDS = ["trial_type", "num_fast_attempts",
+                              "num_slow_attempts", "stimulus_word",
+                              "hitting_position", "hitting_angle",
+                              "response_time", "trial_index", "time_elapsed",
+                              "correct", "angular_error"]
+    trials = []
+    present_trials = []
+    recall_trials = []
+    math_distractors = []
+    confidence_trials = []
+    for trial in data:
+        if not isinstance(trial, dict):
+            return False, None, "Non-dict element in JSON array"
+        if "trial_type" not in trial:
+            return False, None, "Dictionary did not contain trial type"
+        if trial["trial_type"] == "html-keyboard-response":
+            if "response" in trial:
+                if missing_fields(trial, REQUIRED_CONF_FIELDS):
+                    return False, None, "Missing fields in old-new confidence trials."
+                this_trial = {
+                    "trial_type": "confidence",
+                    "rt": trial["rt"],
+                    "block": trial["block"],
+                    "trial": trial["trial"],
+                    "index": trial["trial_index"],
+                    "response": trial["response"],
+                    "stimulus": trial["stimulus"],
+                    "keycode": trial["key_press"],
+                    "time_elapsed": trial["time_elapsed"]
+                }
+                trials.append(this_trial)
+                confidence_trials.append(this_trial)
+            else:
+                continue
+        elif trial["trial_type"] == "contmemory-present":
+            if missing_fields(trial, REQUIRED_PRESENT_FIELDS):
+                return False, None, "Missing fields in contmemory-present trials."
+            this_trial = {
+                "trial_type": "present",
+                "num_fast_attempts": trial["num_fast_attempts"],
+                "num_slow_attempts": trial["num_slow_attempts"],
+                "num_error_attempts": trial["num_error_attempts"],
+                "target_word": trial["stimulus_word"],
+                "target_angle": trial["stimulus_angle"],
+                "hitting_position_x": trial["hitting_position"][0],
+                "hitting_position_y": trial["hitting_position"][1],
+                "hitting_angle": trial["hitting_angle"],
+                "angular_error": trial["angular_error"],
+                "rt": trial["response_time"],
+                "block": trial["block"],
+                "trial": trial["trial"],
+                "index": trial["trial_index"],
+                "time_elapsed": trial["time_elapsed"]
+            }
+            trials.append(this_trial)
+            present_trials.append(this_trial)
+        elif trial["trial_type"] == "math-distractor":
+            if missing_fields(trial, REQUIRED_DISTRACTOR_FIELDS):
+                return False, None, "Missing fields in math-distractor"
+            this_trial = {
+                "trial_type": "math-distractor",
+                "responses": trial["subj_responses"],
+                "rt": trial["rts"],
+                "num1": trial["num1"],
+                "num2": trial["num2"],
+                "num3": trial["num3"],
+                "sums": trial["sums"],
+                "index": trial["trial_index"],
+                "time_elapsed": trial["time_elapsed"]
+            }
+            trials.append(this_trial)
+            math_distractors.append(this_trial)
+        elif trial["trial_type"] == "contmemory-recall":
+            if missing_fields(trial, REQUIRED_RECALL_FIELDS):
+                return False, None, "Missing fields in contmemory-recall trials"
+            this_trial = {
+                "trial_type": "recall",
+                "num_fast_attempts": trial["num_fast_attempts"],
+                "num_slow_attempts": trial["num_slot_attempts"],
+                "hitting_position_x": trial["hitting_position"][0],
+                "hitting_position_y": trial["hitting_position"][1],
+                "hitting_angle": trial["hitting_angle"],
+                "block": trial["block"],
+                "trial": trial["trial"],
+                "correct": trial["correct"],
+                "response_time": trial["response_time"],
+                "time_elapsed": trial["time_elapsed"],
+                "index": trial["trial_index"]
+            }
+            trials.append(this_trial)
+            recall_trials.append(this_trial)
+        else:
+            return False, None, "Unexpected trial type in data"
+    return True, {
+        "created": datetime.datetime.utcnow(),
+        "session_id": session_id,
+        "trials": trials,
+        "present_trials": present_trials,
+        "recall_trials": recall_trials,
+        "math_distractors": math_distractors,
+        "confidence_trials": confidence_trials
+    }, data
+
 def construct_event(event_type, event):
     """Construct an event to add to the event array within a client
     session entity within the datastore.
@@ -117,7 +256,41 @@ def get_completion_code(datastore_client, session_id):
     session = last_session_from_session_id(datastore_client, session_id)
     return session["completion_code"]
 
+def valid_data_received(datastore_client, session_id, data_dictionary):
+    """We have received valid experimental session data. Update the status
+of the user. Returns a version of the data that can be stored to disk as a backup.
+    """
+    with datastore_client.transaction():
+        ## Get the user entity
+        user_query = datastore_client.query(kind=CLIENT_SESSION_KEY)
+        user_query.add_filter("session_id", "=", session_id)
+        user_query.order = ["-created"]
+        user = list(user_query.fetch(1))
+        if user is None or len(user) < 1:
+            return False
+        user = user[0]
+
+        ## Create a valid data entry
+        data_dictionary["user"] = user.key
+        data_key = datastore_client.key(EXPERIMENTAL_DATA_KEY)
+        session_data = datastore.Entity(data_key,
+                                        exclude_from_indexes=("trials",
+                                                              "present_trials",
+                                                              "recall_trials",
+                                                              "math_distractors",
+                                                              "confidence_trials"))
+        session_data.update(data_dictionary)
+        datastore_client.put(session_data)
+
+        ## Update the user entity.
+        user["completion_code"] = generate_completion_code()
+        user["completed"] = True
+        user["events"].append(construct_event("experiment", "complete"))
+        datastore_client.put(user)
+    return True
+
 def set_ethics_done(datastore_client, session_id):
+
     """Set the ethics flag on the most recent client session associated
     with a session ID to True, indicating that ethics has been
     obtained. This also adds a client event to the event array to the
