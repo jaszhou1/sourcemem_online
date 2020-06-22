@@ -223,6 +223,9 @@
               phase: 'recognition',
               block: i,
               trial: j
+            },
+            on_finish: function(data){
+              data.response = jsPsych.pluginAPI.convertKeyCodeToKeyCharacter(data.key_press)
             }
         });
       }
