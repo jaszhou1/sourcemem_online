@@ -15,7 +15,7 @@ import logging
 import random
 import string
 from flask import Flask, request, make_response, render_template, \
-    redirect, url_for
+    redirect, url_for, jsonify
 from google.cloud import datastore
 from google.cloud import storage
 import google.cloud.logging
@@ -302,6 +302,31 @@ def complete():
                                                        sid)
     return render_template("completion.html",
                            completion_code=completion_code)
+
+@app.route("/submit-data", methods=["POST"])
+def submit_data_handler():
+    """POST requests to this endpoint will be add the final experimental
+data, if valid, to the database."""
+    if next_step_from_request(request).lower() != "experiment":
+        return "Experimental data received from invalid user", 403
+    sid = get_cookie(request)
+    is_valid, data_dict, data_str = \
+        datahandling.convert_experimental_data(sid, request.json)
+    if not is_valid:
+        logging.warning("User " + sid + " submitted invalid data: " +
+                        data_str)
+        return "Invalid data: " + data_str, 403
+    success = datahandling.valid_data_received(DATASTORE_CLIENT, sid,
+                                               data_dict)
+    if not success:
+        return jsonify({
+            "success": False,
+            "message": "Error in storing data"
+        })
+    return jsonify({
+        "success": True,
+        "message": "Ready for completion"
+    })
 
 @app.route("/dispatch")
 def dispatch():
