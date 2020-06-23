@@ -206,7 +206,7 @@
       }
       xhr.send(JSON.stringify(data));
   }
-  
+
   function saveData() {
       var xhr = new XMLHttpRequest();
       xhr.open('POST', '/submit-data');
@@ -220,17 +220,17 @@
       };
       xhr.send(jsPsych.data.get().json());
   }
-  
+
   function moveOnward() {
-      if(DATA_SUBMITTED) { 
-          console.log('Data submitted. Moving forward to completion...'); 
+      if(DATA_SUBMITTED) {
+          console.log('Data submitted. Moving forward to completion...');
           window.location.replace('/dispatch');
       } else {
           if(NUM_RETRIES < 5) {
               console.log('Data not yet submitted. Trying again...');
               saveData();
               setTimeout(function() {
-                  console.log('Data not yet submitted. Trying again...');        
+                  console.log('Data not yet submitted. Trying again...');
                   moveOnward();
               }, 5000);
               NUM_RETRIES = NUM_RETRIES + 1;
@@ -241,7 +241,7 @@
   }
 
   /* - - - - TIMELINE - - - - */
-  var TIMELINE = [welcome, instructions, instructions_sim, instructions_test, instructions_practice]
+  var TIMELINE = [welcome, instructions, instructions_seq, instructions_test, instructions_practice]
 
  // Practice block
 
