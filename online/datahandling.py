@@ -107,8 +107,10 @@ datastore indicating the nature of the error.
                                      "contmemory-present-seq"]:
             if missing_fields(trial, REQUIRED_PRESENT_FIELDS):
                 return False, None, "Missing fields in contmemory-present trials."
+            sequential = trial["trial_type"] == "contmemory-present-seq"
             this_trial = {
                 "trial_type": "present",
+                "presentation_sequential": sequential,
                 "num_fast_attempts": trial["num_fast_attempts"],
                 "num_slow_attempts": trial["num_slow_attempts"],
                 "num_error_attempts": trial["num_error_attempts"],
