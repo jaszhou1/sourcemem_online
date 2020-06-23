@@ -259,7 +259,8 @@
          stimulus: prac_encode_list[j].word,
          angle: prac_encode_list[j].angle,
          data: {
-           phase: 'practice_study',
+           phase: 'study',
+           block: -1,
            trial: j
          }
      });
@@ -279,7 +280,8 @@
      type: 'math-distractor',
      duration: maths_time,
      data: {
-       phase: 'practice_delay',
+       phase: 'delay',
+       block: -1,
        trial: j
      }
    });
@@ -303,7 +305,8 @@
            prompt: '<p style="colour:white">Please Enter a number from 1 (Sure NEW) to 6 (Sure OLD).</p>',
            post_trial_gap: isi,
            data: {
-             phase: 'practice_recognition',
+             phase: 'recognition',
+             block: -1,
              trial: j
            },
            on_finish: function(data){
@@ -329,7 +332,8 @@
            stimulus: prac_source_list[j].word,
            angle: prac_source_list[j].angle,
            data: {
-             phase: 'practice_recall',
+             phase: 'recall',
+             block: -1,
              trial: j
            },
            on_finish: function(data){
@@ -339,7 +343,9 @@
      }
 
    TIMELINE.push(instructions_practice_end);
-    // Main experiment loop here
+
+
+  // Main experiment loop here
 
 
   // For each block

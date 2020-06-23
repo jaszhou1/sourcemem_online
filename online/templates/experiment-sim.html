@@ -265,7 +265,8 @@
         stimulus: prac_encode_list[j].word,
         angle: prac_encode_list[j].angle,
         data: {
-          phase: 'practice study',
+          phase: 'study',
+          block: -1,
           trial: j
         }
     });
@@ -286,6 +287,7 @@
     duration: maths_time,
     data: {
       phase: 'delay',
+      block: -1,
       trial: j
     }
   });
@@ -310,6 +312,7 @@
           post_trial_gap: isi,
           data: {
             phase: 'recognition',
+            block: -1,
             trial: j
           },
           on_finish: function(data){
@@ -336,6 +339,7 @@
           angle: prac_source_list[j].angle,
           data: {
             phase: 'recall',
+            block: -1,
             trial: j
           },
           on_finish: function(data){
