@@ -188,7 +188,57 @@
       source_list[i] = shuffle(encode_list[i])
   }
 
+  /* - - - - DATA SAVING AND SUBMISSION - - - - */
+  var DATA_SUBMITTED = false;
+  var NUM_RETRIES = 0;
 
+  function sendResolutionData(data) {
+      data.pixel_depth = window.screen.pixelDepth;
+      data.colour_depth = window.screen.colorDepth;
+      data.screen_height = window.screen.height;
+      data.screen_width = window.screen.width;
+      data.pixel_ratio = window.devicePixelRatio;
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', '/report-display-characteristics');
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.onload = function() {
+          console.log('Display characteristics reported');
+      }
+      xhr.send(JSON.stringify(data));
+  }
+  
+  function saveData() {
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', '/submit-data');
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.onload = function() {
+          DATA_SUBMITTED = true;
+          if(xhr.status == 200){
+              var response = JSON.parse(xhr.responseText);
+              console.log(response.success);
+          }
+      };
+      xhr.send(jsPsych.data.get().json());
+  }
+  
+  function moveOnward() {
+      if(DATA_SUBMITTED) { 
+          console.log('Data submitted. Moving forward to completion...'); 
+          window.location.replace('/dispatch');
+      } else {
+          if(NUM_RETRIES < 5) {
+              console.log('Data not yet submitted. Trying again...');
+              saveData();
+              setTimeout(function() {
+                  console.log('Data not yet submitted. Trying again...');        
+                  moveOnward();
+              }, 5000);
+              NUM_RETRIES = NUM_RETRIES + 1;
+          } else {
+              window.location.replace('/dispatch');
+          }
+      }
+  }
 
   /* - - - - TIMELINE - - - - */
   var TIMELINE = [welcome, instructions, instructions_sim, instructions_test, instructions_practice]
@@ -416,9 +466,7 @@
   /* create timeline */
   jsPsych.init({
       timeline: TIMELINE,
-      on_finish: function() {
-          jsPsych.data.displayData(); // Going to have to save this somewhere with a timestamp in the filename
-      }
+      on_finish: moveOnward
   });
 </script>
 {% endblock %}
