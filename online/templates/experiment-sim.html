@@ -35,7 +35,7 @@
   // Timing
   var isi = 250; // Inter-stimulus interval
   var post_trial = 750;
-  var maths_time = 12000;
+  var maths_time = 30000;
 
 
   /* - - - - INSTRUCTIONS - - - - */
@@ -211,7 +211,7 @@
       }
       xhr.send(JSON.stringify(data));
   }
-  
+
   function saveData() {
       var xhr = new XMLHttpRequest();
       xhr.open('POST', '/submit-data');
@@ -225,17 +225,17 @@
       };
       xhr.send(jsPsych.data.get().json());
   }
-  
+
   function moveOnward() {
-      if(DATA_SUBMITTED) { 
-          console.log('Data submitted. Moving forward to completion...'); 
+      if(DATA_SUBMITTED) {
+          console.log('Data submitted. Moving forward to completion...');
           window.location.replace('/dispatch');
       } else {
           if(NUM_RETRIES < 5) {
               console.log('Data not yet submitted. Trying again...');
               saveData();
               setTimeout(function() {
-                  console.log('Data not yet submitted. Trying again...');        
+                  console.log('Data not yet submitted. Trying again...');
                   moveOnward();
               }, 5000);
               NUM_RETRIES = NUM_RETRIES + 1;
