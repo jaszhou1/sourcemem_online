@@ -164,7 +164,7 @@ datastore indicating the nature of the error.
             trials.append(this_trial)
             recall_trials.append(this_trial)
         else:
-            return False, None, "Unexpected trial type in data"
+            return False, None, "Unexpected trial type in data: " + trial["trial_type"]
     return True, {
         "created": datetime.datetime.utcnow(),
         "session_id": session_id,
