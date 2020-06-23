@@ -77,7 +77,7 @@ jsPsych.plugins['contmemory-present'] = (function() {
             slow_trap_ms: {
                 type: jsPsych.plugins.parameterType.INT,
                 pretty_name: 'Longest valid response time (ms)',
-                default: 2000,
+                default: 5000,
                 description: 'The lower bound of the slow response time trap in milliseconds'
             },
             color: {
@@ -472,7 +472,7 @@ jsPsych.plugins['contmemory-present'] = (function() {
             // in a child of the response circle, not the response circle itself.
             mouse_x = e.clientX;
             mouse_y = e.clientY;
-            
+
             present_stimulus();
         };
 
