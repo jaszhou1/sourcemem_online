@@ -103,7 +103,8 @@ datastore indicating the nature of the error.
                 confidence_trials.append(this_trial)
             else:
                 continue
-        elif trial["trial_type"] == "contmemory-present":
+        elif trial["trial_type"] in ["contmemory-present",
+                                     "contmemory-present-seq"]:
             if missing_fields(trial, REQUIRED_PRESENT_FIELDS):
                 return False, None, "Missing fields in contmemory-present trials."
             this_trial = {
