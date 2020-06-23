@@ -103,11 +103,14 @@ datastore indicating the nature of the error.
                 confidence_trials.append(this_trial)
             else:
                 continue
-        elif trial["trial_type"] == "contmemory-present":
+        elif trial["trial_type"] in ["contmemory-present",
+                                     "contmemory-present-seq"]:
             if missing_fields(trial, REQUIRED_PRESENT_FIELDS):
                 return False, None, "Missing fields in contmemory-present trials."
+            sequential = trial["trial_type"] == "contmemory-present-seq"
             this_trial = {
                 "trial_type": "present",
+                "presentation_sequential": sequential,
                 "num_fast_attempts": trial["num_fast_attempts"],
                 "num_slow_attempts": trial["num_slow_attempts"],
                 "num_error_attempts": trial["num_error_attempts"],
@@ -161,7 +164,7 @@ datastore indicating the nature of the error.
             trials.append(this_trial)
             recall_trials.append(this_trial)
         else:
-            return False, None, "Unexpected trial type in data"
+            return False, None, "Unexpected trial type in data: " + trial["trial_type"]
     return True, {
         "created": datetime.datetime.utcnow(),
         "session_id": session_id,
