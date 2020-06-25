@@ -403,9 +403,9 @@ jsPsych.plugins['contmemory-recall'] = (function() {
                 feedback_text_element.innerHTML = 'Too fast';
                 feedback_display();
 
-                // After a delay, begin the trial again.
+                // After a delay, end the trial.
                 jsPsych.pluginAPI.setTimeout(function() {
-                    begin_presentation();
+                    end_trial_handle();
                 }, 2000);
                 return;
             }
@@ -417,9 +417,9 @@ jsPsych.plugins['contmemory-recall'] = (function() {
                 feedback_text_element.innerHTML = 'Too slow';
                 feedback_display();
 
-                // After a delay, begin the trial again.
+                // After a delay, end the trial.
                 jsPsych.pluginAPI.setTimeout(function() {
-                    begin_presentation();
+                    end_trial_handle();
                 }, 2000);
                 return;
             }

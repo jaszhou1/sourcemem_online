@@ -65,13 +65,13 @@ jsPsych.plugins['contmemory-recall'] = (function() {
             quick_trap_ms: {
                 type: jsPsych.plugins.parameterType.INT,
                 pretty_name: 'Shortest valid response time (ms)',
-                default: 200,
+                default: 300,
                 description: 'The upper bound of the quick response time trap in milliseconds'
             },
             slow_trap_ms: {
                 type: jsPsych.plugins.parameterType.INT,
                 pretty_name: 'Longest valid response time (ms)',
-                default: 2000,
+                default: 7000,
                 description: 'The lower bound of the slow response time trap in milliseconds'
             },
             color: {
@@ -394,9 +394,9 @@ jsPsych.plugins['contmemory-recall'] = (function() {
                 feedback_text_element.innerHTML = 'Too fast';
                 feedback_display();
 
-                // After a delay, begin the trial again.
+                // After a delay, end the trial.
                 jsPsych.pluginAPI.setTimeout(function() {
-                    begin_presentation();
+                    end_trial_handle();
                 }, 2000);
                 return;
             }
@@ -408,9 +408,9 @@ jsPsych.plugins['contmemory-recall'] = (function() {
                 feedback_text_element.innerHTML = 'Too slow';
                 feedback_display();
 
-                // After a delay, begin the trial again.
+                // After a delay, end the trial
                 jsPsych.pluginAPI.setTimeout(function() {
-                    begin_presentation();
+                    end_trial_handle();
                 }, 2000);
                 return;
             }
