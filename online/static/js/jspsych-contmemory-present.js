@@ -71,13 +71,13 @@ jsPsych.plugins['contmemory-present'] = (function() {
             quick_trap_ms: {
                 type: jsPsych.plugins.parameterType.INT,
                 pretty_name: 'Shortest valid response time (ms)',
-                default: 200,
+                default: 300,
                 description: 'The upper bound of the quick response time trap in milliseconds'
             },
             slow_trap_ms: {
                 type: jsPsych.plugins.parameterType.INT,
                 pretty_name: 'Longest valid response time (ms)',
-                default: 5000,
+                default: 7000,
                 description: 'The lower bound of the slow response time trap in milliseconds'
             },
             color: {
