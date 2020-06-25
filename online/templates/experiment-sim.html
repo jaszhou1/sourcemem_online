@@ -8,6 +8,7 @@
 <script src="static/js/jspsych.js" type="text/javascript"></script>
 <script src="static/js/jspsych-contmemory-present.js" type="text/javascript"></script>
 <script src="static/js/jspsych-math-distractor.js" type="text/javascript"></script>
+<script src="static/js/jspsych-call-function.js" type="text/javascript"></script>
 <script src="static/js/jspsych-contmemory-recall.js" type="text/javascript"></script>
 <script src="static/js/jspsych-html-keyboard-response.js" type="text/javascript"></script>
 <script src="static/stimuli/wordlist.js" type="text/javascript"></script>
@@ -73,11 +74,15 @@
   };
 
   // End message
-  var ending = {
-    type: "html-keyboard-response",
-    stimulus: '<p id="inst">You have now completed the study.</p><p>Thank you for participating! Press any key to submit your data and end the experiment.</p><p>Once you have done so, feel free to close your browser.</p>'
+  var ending_1 = {
+      type: "html-keyboard-response",
+      stimulus: '<p id="inst">You have now completed the study. Please press any key.</p>'
   };
-
+  var ending_2 = {
+      type: "html-keyboard-response",
+      stimulus '<p>In the next screen you will receive a completion code that you can return to the experimenter to receive compensation! Press any key to continue.</p>'
+  };
+  
   /* - - - - STIMULI - - - - */
 
   // Shuffle wordpool
@@ -471,10 +476,15 @@
     });
 
   }
+  
+  var send_data_trial = {
+      type: 'call-function',
+      func: saveData
+  };
 
-
-  TIMELINE[TIMELINE.length-1] = ending; // Replace continue instructions from final list with ending screen
-
+  TIMELINE[TIMELINE.length-1] = ending_1; // Replace continue instructions from final list with the first ending screen
+  TIMELINE.push(send_data_trial);
+  TIMELINE.push(ending_2);
 
 
   /* create timeline */
