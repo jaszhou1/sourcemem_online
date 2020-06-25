@@ -30,8 +30,7 @@
   var num_trials = 10; // Subject to pilot testing for session timing
   var num_stim = num_blocks * num_trials; // Total number of words needed for the session
   var num_foil = num_stim; // Number of foil words for the recognition task
-  var num_prac = num_stim; // Number of practice words (same for stim and foil)
-
+  var num_prac = Math.round(num_trials/2); // Number of practice trials
 
   // Timing
   var isi = 250; // Inter-stimulus interval
@@ -49,28 +48,37 @@
 
   var instructions = {
     type: "html-keyboard-response",
-    stimulus: '<p style = "colour:white"> This experiment is made up of 14 blocks. In each block you will be asked to complete four steps:<br><br> (1) STUDY: Study a series of words and locations<br>(2) MATH: Complete a series of math problems<br>(3) RECOGNITION: Rate your confidence that words were presented in the STUDY step <br> (4) LOCATION: Reproduce the locations of words that were studied in (1) <br><br> Press any key to contiue.</p>'
+    stimulus: '<p style = "colour:white"> This experiment is made up of 14 blocks. In each block you will be asked to complete four steps:<br><br> (1) STUDY: Study a series of words and locations<br>(2) MATH: Complete a series of math problems<br>(3) RECOGNITION: Rate your confidence that words were presented in the STUDY step <br> (4) SOURCE: Reproduce the locations of words that were studied in (1) <br><br> Press any key to contiue.</p>'
   };
 
-  var instructions_sim = {
+  var instructions_practice_start = {
     type: "html-keyboard-response",
-    stimulus: '<p style = "colour:white"> You will first be shown a series of words located along a circle. After each word, you will be asked to confirm you saw its location by moving your cursor from the center of the circle to the location. <br><br> Each study list will be immediately followed by a series of math problems of the form A + B + C = D, where A, B, C, and D are numbers. You will be asked whether D is the true sum of these numbers, pressing "1" for TRUE and "0" for FALSE. Try to perform these math problems as quickly and accurately as possible. <br><br> Press any key to contiue. </p>'
+    stimulus: '<p style = "colour:white"> You will now have the chance to familiarize yourself with the task by completing a practice block. <br><br> Before each step in the practice block, you will be shown detailed instructions for that step. <br><br> Press any key to begin the practice block.</p>'
   };
 
-  var instructions_test = {
+  var instructions_study = {
     type: "html-keyboard-response",
-    stimulus: '<p style = "colour:white"> Once you have finished the math problems, you will then be asked to use the numbers from 1 to 6 on your keyboard to rate a list on words on how confident you are that they were in the study list, where 1 means that you are sure it was not on the list (a NEW word), and 6 means you are sure it was on the list (an OLD word) <br><br> After rating each word, you will then be shown the words that were studied, and use your cursor to reproduce the locations that each of the words were originally presented in during the study phase. <br><br> Press any key to continue.</p>'
+    stimulus: '<p style = "colour:white"> STEP 1: STUDY <br><br> You will first be shown a series of words located along a circle. After each word, you will be asked to confirm you saw its location by moving your cursor from the center of the circle to the location. <br><br> Press any key to contiue. </p>'
   };
 
-
-  var instructions_practice = {
+  var instructions_math = {
     type: "html-keyboard-response",
-    stimulus: '<p style = "colour:white"> You will now have the chance to familiarize yourself with the task by completing a practice block. <br><br>Remember there are FOUR steps in each block. <br><br>STUDY: You will study a list of words and locations. <br>MATH: You will be presented with a series of math tasks. <br>RECOGNITION: You will rate a list of words from 1 to 6 on how confident you are that you saw it at study. <br>LOCATION: You will be shown the list of words and use the cursor to indicate the associated location for each word. <br><br> Press any key to begin the practice block.</p>'
+    stimulus:'<p style = "colour:white"> STEP 2: MATH <br><br> You will now be shown a series of math problems of the form A + B + C = D, where A, B, C, and D are numbers. You will be asked whether D is the true sum of these numbers, pressing "1" for TRUE and "0" for FALSE. Try to perform these math problems as quickly and accurately as possible. <br><br> Press any key to continue.</p>'
+  };
+
+  var instructions_recog = {
+    type: "html-keyboard-response",
+    stimulus:'<p style = "colour:white"> STEP 3: RECOGNITION <br><br> You will now be asked to use the numbers from 1 to 6 on your keyboard to rate a list on words on how confident you are that they were in the study list, where 1 means that you are sure it was not on the list (a NEW word), and 6 means you are sure it was on the list (an OLD word). <br><br> Press any key to continue. </p>'
+  };
+
+  var instructions_source = {
+    type: "html-keyboard-response",
+    stimulus:'<p style = "colour:white"> STEP 4: SOURCE <br><br> You will now be shown the words that were studied. Please use your cursor to reproduce the locations that each of the words were originally presented in during the study phase. <br><br> Press any key to continue.</p>'
   };
 
   var instructions_practice_end = {
     type: "html-keyboard-response",
-    stimulus: '<p style = "colour:white"> You have now completed the practice block. <br><br> Press any key to begin the experiment.</p>'
+    stimulus: '<p style = "colour:white"> You have now completed the practice block. <br><br> The experimental blocks to follow will be longer than the practice block. <br><br> Press any key to begin the experiment.</p>'
   };
 
   // End message
@@ -82,7 +90,7 @@
       type: "html-keyboard-response",
       stimulus: '<p>In the next screen you will receive a completion code that you can return to the experimenter to receive compensation! Press any key to continue.</p>'
   };
-  
+
   /* - - - - STIMULI - - - - */
 
   // Shuffle wordpool
@@ -137,13 +145,13 @@
   // Generate a practice block
   // Encode
    var prac_encode_list = [];
-   for (j = 0; j <num_trials; j++) {
+   for (j = 0; j <num_prac; j++) {
      prac_encode_list[j] = {word: prac_stim_words[j],
                        angle: prac_stim_angles[j]};
    }
    // Recognition
    var prac_recog_list = [];
-   for (j = 0; j <num_trials; j++) {
+   for (j = 0; j <num_prac; j++) {
      prac_recog_list[j] = {word: prac_foil_words[j],
                        angle: "N/A"};
    }
@@ -252,10 +260,12 @@
 
 
   /* - - - - TIMELINE - - - - */
-  var TIMELINE = [welcome, instructions, instructions_sim, instructions_test, instructions_practice]
+  var TIMELINE = [welcome, instructions, instructions_practice_start]
 
 // Practice block
-
+// STUDY
+  // Instructions
+  TIMELINE.push(instructions_study);
   TIMELINE.push({
         type: 'html-keyboard-response',
         stimulus: '<p style="color:white">STUDY</p>',
@@ -264,7 +274,7 @@
     });
 
     // Trial
-  for(j = 0; j < num_trials; j++){
+  for(j = 0; j < num_prac; j++){
     TIMELINE.push({
         type: 'contmemory-present',
         stimulus: prac_encode_list[j].word,
@@ -279,6 +289,7 @@
 
   // MATHS
   // Instructions
+  TIMELINE.push(instructions_math);
   TIMELINE.push({
       type: 'html-keyboard-response',
       stimulus: '<p style="color:white">MATH</p>',
@@ -286,7 +297,7 @@
       trial_duration: 2000,
   });
 
-  // TODO: this plug-in was originally written for an older version of jspsych, ISI is defined within the function. Neater to treat as a parameter.
+  // Trial
   TIMELINE.push({
     type: 'math-distractor',
     duration: maths_time,
@@ -300,6 +311,7 @@
 
   // RECOGNITION
   // Instructions
+  TIMELINE.push(instructions_recog);
   TIMELINE.push({
       type: 'html-keyboard-response',
       stimulus: '<p style="color:white">RECOGNITION</p>',
@@ -308,7 +320,7 @@
   });
 
     // Trial
-    for(j = 0; j < num_trials*2; j++){
+    for(j = 0; j < prac_recog_list.length; j++){
       TIMELINE.push({
           type: 'html-keyboard-response',
           stimulus: prac_recog_list[j].word,
@@ -328,6 +340,7 @@
 
   // SOURCE
   // Instructions
+  TIMELINE.push(instructions_source);
   TIMELINE.push({
       type: 'html-keyboard-response',
       stimulus: '<p style="color:white">SOURCE</p>',
@@ -337,7 +350,7 @@
 
   //  var correct_trials = [];
     // Trial
-    for(j = 0; j < num_trials; j++){
+    for(j = 0; j < num_prac; j++){
       TIMELINE.push({
           type: 'contmemory-recall',
           stimulus: prac_source_list[j].word,
@@ -356,8 +369,6 @@
   TIMELINE.push(instructions_practice_end);
 
   // Main experiment loop here
-
-
   // For each block
   for (i = 0; i < num_blocks; i++) {
 
@@ -476,7 +487,7 @@
     });
 
   }
-  
+
   var send_data_trial = {
       type: 'call-function',
       func: saveData
