@@ -57,8 +57,8 @@ datastore indicating the nature of the error.
         return False, None, "JSON did not contain list"
     ## The required fields for each type of trial.
     REQUIRED_CONF_FIELDS = ["trial_type", "rt", "block",
-                            "trial", "index", "response", "stimulus",
-                            "keycode", "time_elapsed"]
+                            "trial", "trial_index", "response", "stimulus",
+                            "key_press", "time_elapsed"]
     REQUIRED_PRESENT_FIELDS = ["trial_type", "num_fast_attempts",
                                "num_slow_attempts", "num_error_attempts",
                                "stimulus_word", "stimulus_angle",
@@ -150,7 +150,7 @@ datastore indicating the nature of the error.
             this_trial = {
                 "trial_type": "recall",
                 "num_fast_attempts": trial["num_fast_attempts"],
-                "num_slow_attempts": trial["num_slot_attempts"],
+                "num_slow_attempts": trial["num_slow_attempts"],
                 "hitting_position_x": trial["hitting_position"][0],
                 "hitting_position_y": trial["hitting_position"][1],
                 "hitting_angle": trial["hitting_angle"],
