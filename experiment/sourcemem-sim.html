@@ -8,7 +8,7 @@
     <script src="js/jspsych-math-distractor.js" type="text/javascript"></script>
     <script src="js/jspsych-contmemory-recall.js" type="text/javascript"></script>
     <script src="js/jspsych-html-keyboard-response.js" type="text/javascript"></script>
-    <script src="stimuli/wordlist.js"></script>
+    <script src="stimuli/wordlist_session1.js"></script>
     <title>Source Memory Experiment</title>
     <link rel="stylesheet" href="css/jspsych.css" type="text/css" />
     <link rel="stylesheet" href="css/custom.css" type="text/css" />
@@ -89,7 +89,7 @@
   /* - - - - STIMULI - - - - */
 
   // Shuffle wordpool
-  wordlist = jsPsych.randomization.shuffle(wordlist);
+  wordlist = jsPsych.randomization.shuffle(wordlist_session1);
   stim_words = wordlist.slice(0,num_stim) // Assign words as stimuli
   foil_words = wordlist.slice(num_stim, num_stim + num_foil) // Assign words unused as stimuli as foils
 
