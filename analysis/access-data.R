@@ -12,8 +12,8 @@ library(rjson)
 ## server-side API.
 MASTER.API.FIELD <- "API_ACCESS_KEY"
 STATUS.EXTENSION <- "server-status"
-USER.ID.EXTENSION <- "completed-user-ids"
-DATA.ACCESS.EXTENSION <- "get-experimental-data"
+USER.ID.EXTENSION <- "completed-users"
+DATA.ACCESS.EXTENSION <- "get-user-data"
 
 ## Construct a URL from its constitutive components.
 construct.url <- function(server.base, server.port=NULL,
@@ -50,6 +50,60 @@ get.server.status <- function(server.base.url, server.port=NULL,
     if(status_code(r) != 200) {
         ## We have a non-OK status for a completed HTTP response. This
         ## is some error we have not otherwise caught.
+        return(list(status="Unknown error"))
+    }
+    return(content(r))
+}
+
+## Get completed users.
+get.completed.users <- function(server.base.url, server.port=NULL,
+                                api.key=NULL) {
+    status.url <- construct.url(server.base.url, server.port,
+                                USER.ID.EXTENSION)
+    if(!is.null(api.key)) {
+        auth.string <- paste0(MASTER.API.FIELD, "=", api.key)
+        r <- GET(status.url, add_headers(Authorization=auth.string))
+    } else {
+        r <- GET(status.url)
+    }
+    if(status_code(r)==404) {
+        ## If we have a 404, this means either the server base URL is
+        ## not correct, the status path is not correct, or both.
+        return(list(status="Not found"))
+    }
+    if(status_code(r)==403) {
+        ## If we have a 403, it means the server API path is not
+        ## correct.
+        return(list(status="Forbidden"))
+    }
+    if(status_code(r)!=200) {
+        return(list(status="Unknown error"))
+    }
+    return(content(r))
+}
+
+get.last.experiment.data.by.user.id <- function(server.base.url,
+                                                user.id, server.port=NULL,
+                                                api.key=NULL) {
+    status.url <- construct.url(server.base.url, server.port,
+                                c(DATA.ACCESS.EXTENSION, user.id))
+    if(!is.null(api.key)) {
+        auth.string <- paste0(MASTER.API.FIELD, "=", api.key)
+        r <- GET(status.url, add_headers(Authorization=auth.string))
+    } else {
+        r <- GET(status.url)
+    }
+    if(status_code(r)==404) {
+        ## If we have a 404, this means either the server base URL is
+        ## not correct, the status path is not correct, or both.
+        return(list(status="Not found"))
+    }
+    if(status_code(r)==403) {
+        ## If we have a 403, it means the server API path is not
+        ## correct.
+        return(list(status="Forbidden"))
+    }
+    if(status_code(r)!=200) {
         return(list(status="Unknown error"))
     }
     return(content(r))

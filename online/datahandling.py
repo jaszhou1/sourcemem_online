@@ -276,14 +276,14 @@ of the user. Returns a version of the data that can be stored to disk as a backu
         ## Create a valid data entry
         data_dictionary["user"] = user.key
         data_key = datastore_client.key(EXPERIMENTAL_DATA_KEY)
-        session_data = datastore.Entity(data_key,
-                                        exclude_from_indexes=("trials",
-                                                              "present_trials",
-                                                              "recall_trials",
-                                                              "math_distractors",
-                                                              "confidence_trials"))
-        session_data.update(data_dictionary)
-        datastore_client.put(session_data)
+        experiment_data = datastore.Entity(data_key,
+                                           exclude_from_indexes=("trials",
+                                                                 "present_trials",
+                                                                 "recall_trials",
+                                                                 "math_distractors",
+                                                                 "confidence_trials"))
+        experiment_data.update(data_dictionary)
+        datastore_client.put(experiment_data)
 
         ## Update the user entity.
         user["completion_code"] = generate_completion_code()
@@ -291,6 +291,16 @@ of the user. Returns a version of the data that can be stored to disk as a backu
         user["events"].append(construct_event("experiment", "complete"))
         datastore_client.put(user)
     return True
+
+def get_last_experiment_data_by_user(datastore_client, user_id):
+    """Return the last experimental data added by the user."""
+    data_query = datastore_client.query(kind=EXPERIMENTAL_DATA_KEY)
+    data_query.add_filter("user", "=", datastore_client.key(CLIENT_SESSION_KEY, user_id))
+    data_query.order = ["-created"]
+    query_result = list(data_query.fetch(1))
+    if data_query and len(query_result) > 0:
+        return data_to_json_safe(query_result[0])
+    return False
 
 def set_ethics_done(datastore_client, session_id):
     """Set the ethics flag on the most recent client session associated

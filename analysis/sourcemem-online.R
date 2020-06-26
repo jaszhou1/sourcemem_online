@@ -11,14 +11,16 @@
 ## Connection parameters
 SERVER.BASE.URL <- "https://jzhou-sourcemem-online.appspot.com"
 SERVER.PORT <- NULL
-SERVER.MASTER.API.KEY <- "" # <-- This needs to be in agreement with
-                            # whatever is on the server.
-
+SERVER.MASTER.API.KEY <- "zjFdXfQ64sgAVwQMx84IhzqzUPygpSguUkeLKLqQBIyxo8kP3yphBqF9ysd4IQsA" # <-- This needs to be in agreement with
+                                                                                            # whatever is on the server.
 #####
 
 source("access-data.R")
 
-## Check the experiment status.
-server.status <- get.server.status(SERVER.BASE.URL,
-                                   SERVER.PORT,
-                                   SERVER.MASTER.API.KEY)
+## Get the completed users.
+completed.users <- get.completed.users(SERVER.BASE.URL, SERVER.PORT,
+                                       SERVER.MASTER.API.KEY)
+
+
+test.user.data <- get.last.experiment.data.by.user.id(SERVER.BASE.URL, completed.users[[3]],
+                                                      SERVER.PORT, SERVER.MASTER.API.KEY)

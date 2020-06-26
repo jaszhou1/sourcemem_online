@@ -166,6 +166,9 @@ def completed_users():
     """Get a list of completed user IDs."""
     return datahandling.completed_user_ids(DATASTORE_CLIENT)
 
+def get_experiment_data(userid):
+    """Query the datastore for the user's data if it exists."""
+    return datahandling.get_last_experiment_data_by_user(DATASTORE_CLIENT, userid)
 
 ## Error and template responses
 ## ============================
@@ -198,6 +201,29 @@ def clear_sid():
                                         msg="Your SID has been cleared."))
     unset_cookie(res)
     return res
+
+## Experimenter endpoints
+## ======================
+##
+## Endpoints for the experimenter to get access to the completed
+## datasets.
+@app.route("/completed-users")
+def completed_users_endpoint():
+    """Return a list of all completed user IDs."""
+    if not check_master_api_key(request):
+        return jsonify({
+            "status": "Forbidden"
+        }), 403
+    return jsonify(completed_users())
+
+@app.route("/get-user-data/<int:userid>")
+def get_user_data_handler(userid):
+    """Return the specified user data if it exists."""
+    if not check_master_api_key(request):
+        return jsonify({
+            "status": "Forbidden"
+        }), 403
+    return jsonify(get_experiment_data(userid))
 
 ## Public endpoints
 ## ================
