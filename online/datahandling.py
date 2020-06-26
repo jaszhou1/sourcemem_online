@@ -293,7 +293,6 @@ of the user. Returns a version of the data that can be stored to disk as a backu
     return True
 
 def set_ethics_done(datastore_client, session_id):
-
     """Set the ethics flag on the most recent client session associated
     with a session ID to True, indicating that ethics has been
     obtained. This also adds a client event to the event array to the
