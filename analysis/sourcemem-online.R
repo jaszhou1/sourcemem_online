@@ -22,5 +22,14 @@ completed.users <- get.completed.users(SERVER.BASE.URL, SERVER.PORT,
                                        SERVER.MASTER.API.KEY)
 
 
-test.user.data <- get.last.experiment.data.by.user.id(SERVER.BASE.URL, completed.users[[3]],
+this.user.data <- get.last.experiment.data.by.user.id(SERVER.BASE.URL, completed.users[[1]],
                                                       SERVER.PORT, SERVER.MASTER.API.KEY)
+
+## Extract the required information for each stimuli across the trial types.
+data <- data.frame(matrix(ncol=9,nrow=length(this.user.data$present_trials), dimnames=list(NULL, c("word", "stimulus", "contition",
+                                                               "recog_rating","recog_RT","target_angle",
+                                                               "response_angle","response_error","response_RT"))))
+
+for(i in length(this.user.data$present_trials)){
+  data$word[i] <- this.user.data$present_trials[[i]]$target_word
+}
