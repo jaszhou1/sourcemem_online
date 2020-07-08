@@ -250,14 +250,14 @@ def entry():
         new_sid = generate_sid()
         is_sim_present = get_best_user_allocation()
         if datahandling.is_valid_external_id(external_id):
-            _ = datahandling.make_session(DATASTORE_CLIENT,
-                                          new_sid,
-                                          external_id,
-                                          user_agent,
-                                          x_forwarded,
-                                          is_sim_present)
+            _, sid = datahandling.make_or_get_session(DATASTORE_CLIENT,
+                                                      new_sid,
+                                                      external_id,
+                                                      user_agent,
+                                                      x_forwarded,
+                                                      is_sim_present)
             response = redirect(url_for(".pls"))
-            set_cookie(response, new_sid) # either do this or "after_this_request"
+            set_cookie(response, sid) # either do this or "after_this_request"
             return response
         return render_template("entry.html",
                                exp_name=EXPERIMENT_NAME,

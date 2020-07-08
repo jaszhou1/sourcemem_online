@@ -15,3 +15,8 @@ indexes:
   - name: user
   - name: created
     direction: desc
+- kind: ClientSession
+  properties:
+  - name: external_id
+  - name: created
+    direction: desc

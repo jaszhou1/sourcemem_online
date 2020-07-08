@@ -186,46 +186,60 @@ def construct_event(event_type, event):
         "time": datetime.datetime.utcnow()
     }
 
-def make_session(datastore_client,
-                 session_id, external_id,
-                 user_agent_string, xforwarded,
-                 is_sim_present):
-    """Construct a ClientSession entity and insert it into the datastore.
-    This entity corresponds to a participant, and should be able to be
-    accessed via their `session_id`, which is also stored on the
-    client's computer in a cookie (and, so, accessible in the HTTP
-    headers to determine who is who). This ClientSession also contains
-    some information about the client display properties, the user
-    agent and IP address of the client, as well as the stages of the
+def make_or_get_session(datastore_client,
+                        session_id, external_id,
+                        user_agent_string, xforwarded,
+                        is_sim_present):
+    """Check whether an external ID is in the database. If it is, retrieve
+    the session ID, and return it. Otherwise, construct a
+    ClientSession entity and insert it into the datastore. This entity
+    corresponds to a participant, and should be able to be accessed
+    via their `session_id`, which is also stored on the client's
+    computer in a cookie (and, so, accessible in the HTTP headers to
+    determine who is who). This ClientSession also contains some
+    information about the client display properties, the user agent
+    and IP address of the client, as well as the stages of the
     experiment the participant has gone through.
 
     """
-    key = datastore_client.key(CLIENT_SESSION_KEY)
-    client_session = datastore.Entity(key,
-                                      exclude_from_indexes=("xforwarded", "user_agent",
-                                                            "completions", "events",
-                                                            "resolution"))
-    client_session.update({
-        "created": datetime.datetime.utcnow(),
-        "session_id": session_id,
-        "external_id": external_id,
-        "xforwarded": xforwarded,
-        "completed": False,
-        "completion_code": False,
-        "user_agent": user_agent_string,
-        "ethics": False,
-        "pls": False,
-        "sim_present": is_sim_present,
-        "events": [construct_event("user", "created")],
-        "resolution": {"reported": "<unknown>",
-                       "height": "<unknown>",
-                       "width": "<unknown>",
-                       "pixel_depth": "<unknown>",
-                       "pixel_ratio": "<unknown>",
-                       "colour_depth": "<unknown>"}
-    })
-    datastore_client.put(client_session)
-    return client_session.key
+    with datastore_client.transaction():
+        ## Check whether the external ID already exists in the
+        ## datastore.
+        user_query = datastore_client.query(kind=CLIENT_SESSION_KEY)
+        user_query.add_filter("external_id", "=", external_id)
+        user_query.order = ["-created"]
+        user_entities = list(user_query.fetch(1))
+        if len(user_entities) > 0:
+            return user_entities[0].key, user_entities[0]["session_id"]
+
+        ## Create a database entity if the external ID does not exist
+        ## in the datastore.
+        key = datastore_client.key(CLIENT_SESSION_KEY)
+        client_session = datastore.Entity(key,
+                                          exclude_from_indexes=("xforwarded", "user_agent",
+                                                                "completions", "events",
+                                                                "resolution"))
+        client_session.update({
+            "created": datetime.datetime.utcnow(),
+            "session_id": session_id,
+            "external_id": external_id,
+            "xforwarded": xforwarded,
+            "completed": False,
+            "completion_code": False,
+            "user_agent": user_agent_string,
+            "ethics": False,
+            "pls": False,
+            "sim_present": is_sim_present,
+            "events": [construct_event("user", "created")],
+            "resolution": {"reported": "<unknown>",
+                           "height": "<unknown>",
+                           "width": "<unknown>",
+                           "pixel_depth": "<unknown>",
+                           "pixel_ratio": "<unknown>",
+                           "colour_depth": "<unknown>"}
+        })
+        datastore_client.put(client_session)
+    return client_session.key, session_id
 
 def data_id_from_session_id(datastore_client, session_id):
     """Get the key for the most recent datastore entry associated with the
