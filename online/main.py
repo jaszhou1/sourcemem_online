@@ -170,6 +170,13 @@ def get_experiment_data(userid):
     """Query the datastore for the user's data if it exists."""
     return datahandling.get_last_experiment_data_by_user(DATASTORE_CLIENT, userid)
 
+def get_user_information(userid):
+    """Query the datastore for the user's information (session, ID, etc.
+    as opposed to experimental data) if it exists.
+
+    """
+    return datahandling.get_user_information(DATASTORE_CLIENT, userid)
+
 ## Error and template responses
 ## ============================
 ##
@@ -224,6 +231,16 @@ def get_user_data_handler(userid):
             "status": "Forbidden"
         }), 403
     return jsonify(get_experiment_data(userid))
+
+@app.route("/get-user-information/<int:userid>")
+def get_user_information_handler(userid):
+    """Return the specified user information if it exists."""
+    if not check_master_api_key(request):
+        return jsonify({
+            "status": "Forbidden"
+        }), 403
+    return jsonify(get_user_information(userid))
+
 
 ## Public endpoints
 ## ================
