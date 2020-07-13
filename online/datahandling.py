@@ -314,8 +314,17 @@ def get_last_experiment_data_by_user(datastore_client, user_id):
     data_query.add_filter("user", "=", datastore_client.key(CLIENT_SESSION_KEY, user_id))
     data_query.order = ["-created"]
     query_result = list(data_query.fetch(1))
-    if data_query and len(query_result) > 0:
+    if query_result and len(query_result) > 0:
         return data_to_json_safe(query_result[0])
+    return False
+
+def get_user_information(datastore_client, user_id):
+    """Return the user as specified by the `user_id`, if they exist."""
+    #user_query = datastore_client.query(kind=CLIENT_SESSION_KEY)
+    user_key = datastore_client.key(CLIENT_SESSION_KEY, user_id)
+    user = datastore_client.get(user_key)
+    if user:
+        return data_to_json_safe(user)
     return False
 
 def set_ethics_done(datastore_client, session_id):
