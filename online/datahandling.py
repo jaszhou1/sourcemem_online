@@ -157,6 +157,7 @@ datastore indicating the nature of the error.
                 "block": trial["block"],
                 "trial": trial["trial"],
                 "correct": trial["correct"],
+                "target_word": trial["stimulus_word"],
                 "response_time": trial["response_time"],
                 "time_elapsed": trial["time_elapsed"],
                 "index": trial["trial_index"]
