@@ -342,6 +342,7 @@ jsPsych.plugins['contmemory-recall'] = (function() {
                 num_fast_attempts: num_fast_attempts,
                 num_slow_attempts: num_slow_attempts,
                 stimulus_word: stimulus_word,
+                stimulus_angle: target_angle,
                 hitting_position: hitting_position,
                 hitting_angle: hitting_angle,
                 angular_error: angular_error,

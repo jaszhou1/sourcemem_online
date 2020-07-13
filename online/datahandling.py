@@ -70,7 +70,7 @@ datastore indicating the nature of the error.
                                   "rts", "block", "trial",
                                   "trial_index", "time_elapsed"]
     REQUIRED_RECALL_FIELDS = ["trial_type", "num_fast_attempts",
-                              "num_slow_attempts", "stimulus_word",
+                              "num_slow_attempts", "stimulus_word", "stimulus_angle",
                               "hitting_position", "hitting_angle",
                               "response_time", "trial_index", "time_elapsed",
                               "correct", "angular_error"]
@@ -158,6 +158,7 @@ datastore indicating the nature of the error.
                 "trial": trial["trial"],
                 "correct": trial["correct"],
                 "target_word": trial["stimulus_word"],
+                "target_angle": trial["stimulus_angle"],
                 "response_time": trial["response_time"],
                 "time_elapsed": trial["time_elapsed"],
                 "index": trial["trial_index"]
