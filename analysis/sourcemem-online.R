@@ -29,9 +29,9 @@ this.user.info <- get.user.information(SERVER.BASE.URL, completed.users[[9]],
                                        SERVER.PORT, SERVER.MASTER.API.KEY)
 
 ## Extract the required information for each stimuli across the trial types.
-data <- data.frame(matrix(ncol=8,nrow=length(this.user.data$present_trials), dimnames=list(NULL, c("word", "is_sequential",
+data <- data.frame(matrix(ncol=9,nrow=length(this.user.data$present_trials), dimnames=list(NULL, c("word", "is_sequential",
                                                                "recog_rating","recog_RT","target_angle",
-                                                               "response_angle","response_error","source_RT"))))
+                                                               "response_angle","response_error","source_RT", "valid_RT"))))
 
 ## Extract presentation data
   for(i in 1:length(this.user.data$present_trials)){
@@ -74,7 +74,10 @@ data <- data.frame(matrix(ncol=8,nrow=length(this.user.data$present_trials), dim
     data$response_angle[i] <- this.user.data$recall_trials[[index]]$hitting_angle
     data$response_error[i] <- abs(this.user.data$recall_trials[[index]]$target_angle - this.user.data$recall_trials[[index]]$hitting_angle)
     data$source_RT[i] <- this.user.data$recall_trials[[index]]$response_time
+    if (this.user.data$recall_trials[[index]]$num_fast_attempts == 0 &&
+        this.user.data$recall_trials[[index]]$num_slow_attempts == 0){
+      data$valid_RT <- TRUE
+    } else {
+      data$valid_RT <- FALSE
+    }
   } 
-
-
-  
