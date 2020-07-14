@@ -313,6 +313,44 @@ jsPsych.plugins['contmemory-present-seq'] = (function() {
 
         };
 
+        var set_coordinates = function(e) {
+            var posx = 0;
+	    var posy = 0;
+	    if (!e) var e = window.event;
+	    if (e.pageX || e.pageY) 	{
+		posx = e.pageX;
+		posy = e.pageY;
+	    }
+	    else if (e.clientX || e.clientY) 	{
+		posx = e.clientX + document.body.scrollLeft
+		     + document.documentElement.scrollLeft;
+		posy = e.clientY + document.body.scrollTop
+		     + document.documentElement.scrollTop;
+	    }
+	    mouse_x = posx;
+            mouse_y = posy;
+        }
+
+        var set_hitting_position = function(e) {
+            var posx = 0;
+	    var posy = 0;
+            var fixation_position = fixation_element.getBoundingClientRect();
+            var fixation_midx = (fixation_position.right - fixation_position.width/2),
+                fixation_midy = (fixation_position.bottom - fixation_position.height/2); 
+	    if (!e) var e = window.event;
+	    if (e.pageX || e.pageY) 	{
+		posx = e.pageX;
+		posy = e.pageY;
+	    }
+	    else if (e.clientX || e.clientY) 	{
+		posx = e.clientX + document.body.scrollLeft
+		     + document.documentElement.scrollLeft;
+		posy = e.clientY + document.body.scrollTop
+		     + document.documentElement.scrollTop;
+	    }
+            hitting_position = [posx-fixation_midx, posy-fixation_midy];
+        }
+
         // Set up all of the elements for the trial. First, clear
         // whatever is already in the container element.
         display_element.innerHTML = '';
@@ -423,8 +461,7 @@ jsPsych.plugins['contmemory-present-seq'] = (function() {
             response_circle_element.removeEventListener('mouseout', response_circle_exited);
 
             // Compute position.
-            hitting_position = [e.offsetX - MIDPOINT_X,
-                                e.offsetY - MIDPOINT_Y];
+            set_hitting_position(e);
             console.log(hitting_position);
             hitting_angle = cart_to_pol(hitting_position[0], hitting_position[1]).theta;
             angular_error = angular_difference(hitting_angle, trial.angle);
@@ -439,16 +476,14 @@ jsPsych.plugins['contmemory-present-seq'] = (function() {
 
             // Update the position (so that the intersection query works even though we're
             // in a child of the response circle, not the response circle itself.
-            mouse_x = e.clientX;
-            mouse_y = e.clientY;
+            set_coordinates(e);
 
             present_angle();
         };
 
         // The event listener to track the mouse position.
         var response_circle_moved = function(e) {
-            mouse_x = e.clientX;
-            mouse_y = e.clientY;
+            set_coordinates(e);
         };
 
         // A routine for the presentation of each stage of the experiment.
