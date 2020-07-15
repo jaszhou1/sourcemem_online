@@ -15,6 +15,10 @@ from google.cloud import datastore
 
 CLIENT_SESSION_KEY = "ClientSession"
 EXPERIMENTAL_DATA_KEY = "ExperimentalData"
+TOTAL_NUM_SESSIONS = 2 ## <-- this is the number of sessions that need to be
+                       ##     associated with a client session until they
+                       ##     have the "completed" switch turned on their
+                       ##     session entity.
 
 # Large (but not insanely large) numbers for upper limit on query
 # results.
@@ -227,7 +231,7 @@ def make_or_get_session(datastore_client,
             "external_id": external_id,
             "xforwarded": xforwarded,
             "completed": False,
-            "completion_code": False,
+            "completions": {},
             "user_agent": user_agent_string,
             "ethics": False,
             "pls": False,
@@ -242,6 +246,54 @@ def make_or_get_session(datastore_client,
         })
         datastore_client.put(client_session)
     return client_session.key, session_id
+
+def get_completed_experimental_sessions(datastore_client, session_id):
+    """Get the completed experimental sessions for a client session
+    associated with a particular session ID.
+
+    """
+    user_query = datastore_client.query(kind=CLIENT_SESSION_KEY)
+    user_query.add_filter("session_id", "=", session_id)
+    user_query.order = ["-created"]
+    user_entities = list(user_query.fetch(1))
+    if user_entities and len(user_entities) > 0:
+        return user_entities[0].get("completions", {})
+    return False
+
+def add_completed_experimental_session(datastore_client, session_id,
+                                       experimental_session_id):
+    """Add a completed experimental session for a client associated with a
+    particular session ID. This is normally handled through the
+    valid_data_received function.
+
+    """
+    with datastore_client.transaction():
+        user_query = datastore_client.query(kind=CLIENT_SESSION_KEY)
+        user_query.add_filter("session_id", "=", session_id)
+        user_query.order = ["-created"]
+        user_entities = list(user_query.fetch(1))
+        if len(user_entities) < 1:
+            return False
+        user = user_entities[0]
+        user["completions"][experimental_session_id] = {
+            "experimental_session_id": experimental_session_id,
+            "completed": datetime.datetime.utcnow(),
+            "completion_code": generate_completion_code()
+        }
+        datastore_client.put(user)
+    return True
+
+def get_completed_experimental_sessions_by_id(datastore_client,
+                                              session_id, experimental_session_id):
+    """Get only the completed experimental sessions for a specific user,
+    filtering by a particular experimental session ID.
+
+    """
+    completed_sessions = get_completed_experimental_sessions(datastore_client,
+                                                             session_id)
+    if completed_sessions:
+        return completed_sessions.get(experimental_session_id)
+    return False
 
 def data_id_from_session_id(datastore_client, session_id):
     """Get the key for the most recent datastore entry associated with the
@@ -273,9 +325,14 @@ def last_session_from_session_id(datastore_client, session_id):
 def get_completion_code(datastore_client, session_id):
     """Get the completion code from the user session."""
     session = last_session_from_session_id(datastore_client, session_id)
-    return session["completion_code"]
+    ## Get the last completion.
+    if len(session["completions"]) > 0:
+        last_completion = max(session["completions"].values(), key=lambda x: x["completed"])
+        return last_completion["completion_code"]
+    return False
 
-def valid_data_received(datastore_client, session_id, data_dictionary):
+def valid_data_received(datastore_client, session_id, experimental_session_id,
+                        data_dictionary):
     """We have received valid experimental session data. Update the status
 of the user. Returns a version of the data that can be stored to disk as a backup.
     """
@@ -302,9 +359,14 @@ of the user. Returns a version of the data that can be stored to disk as a backu
         datastore_client.put(experiment_data)
 
         ## Update the user entity.
-        user["completion_code"] = generate_completion_code()
-        user["completed"] = True
-        user["events"].append(construct_event("experiment", "complete"))
+        user["completions"][experimental_session_id] = {
+            "experimental_session_id": experimental_session_id,
+            "completed": datetime.datetime.utcnow(),
+            "completion_code": generate_completion_code()
+        }
+        if len(user["completions"]) >= TOTAL_NUM_SESSIONS:
+            user["completed"] = True
+        user["events"].append(construct_event("experiment-session", "complete"))
         datastore_client.put(user)
     return True
 
@@ -458,7 +520,7 @@ def get_user_status_from_session(session_entry):
     try:
         if session_entry["pls"]:
             if session_entry["ethics"]:
-                if session_entry["completion_code"]:
+                if session_entry["completed"]:
                     state = "complete"
                 else:
                     state = "experiment"
