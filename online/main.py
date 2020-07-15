@@ -326,10 +326,18 @@ def experiment():
     user_status = next_step_from_request(request).lower()
     if user_status != "experiment":
         return redirect(url_for(".dispatch"))
+    sid = get_cookie(request)
     user_is_sim = get_user_between_subjects_status(request)
+    ## Check the whether we have session 1.
+    completed_sessions = datahandling.get_completed_experimental_sessions(DATASTORE_CLIENT, sid)
+    has_completed_first_session = 1 in completed_sessions.keys()
     if user_is_sim:
-        return render_template("experiment-sim.html")
-    return render_template("experiment-seq.html")
+        if has_completed_first_session:
+            return render_template("experiment-sim-s2.html")
+        return render_template("experiment-sim-s1.html")
+    if has_completed_first_session:
+        return render_template("experiment-seq-s2.html")
+    return render_template("experiment-seq-s1.html")
 
 @app.route("/complete", methods=["GET"])
 def complete():
@@ -346,13 +354,15 @@ def complete():
     return render_template("completion.html",
                            completion_code=completion_code)
 
-@app.route("/submit-data", methods=["POST"])
-def submit_data_handler():
+@app.route("/submit-data/<int:sessionid>", methods=["POST"])
+def submit_data_handler(sessionid):
     """POST requests to this endpoint will be add the final experimental
 data, if valid, to the database."""
     if next_step_from_request(request).lower() != "experiment":
         return "Experimental data received from invalid user", 403
     sid = get_cookie(request)
+    if sessionid not in [1, 2]:
+        return "Invalid session ID", 403
     is_valid, data_dict, data_str = \
         datahandling.convert_experimental_data(sid, request.json)
     if not is_valid:
@@ -360,7 +370,7 @@ data, if valid, to the database."""
                         data_str)
         return "Invalid data: " + data_str, 403
     success = datahandling.valid_data_received(DATASTORE_CLIENT, sid,
-                                               data_dict)
+                                               sessionid, data_dict)
     if not success:
         return jsonify({
             "success": False,

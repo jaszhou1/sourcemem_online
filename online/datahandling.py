@@ -334,7 +334,9 @@ def get_completion_code(datastore_client, session_id):
 def valid_data_received(datastore_client, session_id, experimental_session_id,
                         data_dictionary):
     """We have received valid experimental session data. Update the status
-of the user. Returns a version of the data that can be stored to disk as a backup.
+    of the user. Returns a version of the data that can be stored to
+    disk as a backup.
+
     """
     with datastore_client.transaction():
         ## Get the user entity
