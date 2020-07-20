@@ -252,7 +252,8 @@ jsPsych.plugins['contmemory-present-seq'] = (function() {
 
         var angle_display = function() {
             console.log('Stimulus angle display');
-
+            // Debugging for browser compatibility issues in Firefox
+            console.log(trial.angle);
             // Set the non-calibration elements to visibility: hidden.
             fixation_element.style.visibility = 'hidden';
             feedback_marker_element.style.visibility = 'hidden';
@@ -336,7 +337,7 @@ jsPsych.plugins['contmemory-present-seq'] = (function() {
 	    var posy = 0;
             var fixation_position = fixation_element.getBoundingClientRect();
             var fixation_midx = (fixation_position.right - fixation_position.width/2),
-                fixation_midy = (fixation_position.bottom - fixation_position.height/2); 
+                fixation_midy = (fixation_position.bottom - fixation_position.height/2);
 	    if (!e) var e = window.event;
 	    if (e.pageX || e.pageY) 	{
 		posx = e.pageX;
