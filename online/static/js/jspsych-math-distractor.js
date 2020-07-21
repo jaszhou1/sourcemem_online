@@ -76,7 +76,7 @@ jsPsych.plugins['math-distractor'] = (function() {
       jsPsych.pluginAPI.getKeyboardResponse({
         callback_function: gen_trial,
         valid_responses: [48,49],
-        rt_method: 'date',
+        rt_method: 'performance',
         persist: false,
         allow_held_key: false
       });
@@ -120,7 +120,7 @@ jsPsych.plugins['math-distractor'] = (function() {
         jsPsych.pluginAPI.getKeyboardResponse({
           callback_function: gen_trial,
           valid_responses: [48,49],
-          rt_method: 'date',
+          rt_method: 'performance',
           persist: false,
           allow_held_key: false
         });
