@@ -223,7 +223,7 @@
 
   function saveData() {
       var xhr = new XMLHttpRequest();
-      xhr.open('POST', '/submit-data');
+      xhr.open('POST', '/submit-data/2');
       xhr.setRequestHeader('Content-Type', 'application/json');
       xhr.onload = function() {
           DATA_SUBMITTED = true;
