@@ -14,7 +14,7 @@ SERVER.PORT <- NULL
 SERVER.MASTER.API.KEY <- "zjFdXfQ64sgAVwQMx84IhzqzUPygpSguUkeLKLqQBIyxo8kP3yphBqF9ysd4IQsA" # <-- This needs to be in agreement with
                                                                                             # whatever is on the server.
 #####
-
+setwd("~/GitHub/sourcemem_online/analysis")
 source("access-data.R")
 
 ## Get the completed users.
