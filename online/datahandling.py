@@ -350,6 +350,7 @@ def valid_data_received(datastore_client, session_id, experimental_session_id,
 
         ## Create a valid data entry
         data_dictionary["user"] = user.key
+        data_dictionary["session_number"] = session_id
         data_key = datastore_client.key(EXPERIMENTAL_DATA_KEY)
         experiment_data = datastore.Entity(data_key,
                                            exclude_from_indexes=("trials",
