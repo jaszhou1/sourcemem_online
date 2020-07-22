@@ -6,18 +6,17 @@
 %%
 
 % load in some data
-load('p2data_split.mat');
-data = p2data_split;
+load('data.mat');
 badix = 5;
 
 % Set starting parameters
     
-v1 = normrnd(1,0.25);           % Drift norm, low imageability, x
+v1 = 1;                         % Drift norm, low imageability, x
 v2 = 0;                         % Drift norm, low imageability, y
-eta = normrnd(0.5,0.25);        % Drift variability, low
-a = normrnd(1.6,0.4);           % Criterion (same for both low and high)
-Ter = normrnd(0,0.05);          % Non decision time
-st = abs(normrnd(0.05,0.01));   % Non decision time variability
+eta = 0.5;                      % Drift variability, low
+a = 2;                          % Criterion (same for both low and high)
+Ter = 0.1;                      % Non decision time
+st = 0.05;                      % Non decision time variability
 sa = 0;                         % Criterion variability
 
 % Assemble parameter vector
@@ -29,5 +28,9 @@ Sel = [1,0,1,1,1,1,0];
 nlow = length(data{1,1});
 nhigh = length(data{1,2});
 
+% Get model predictions and fit statistics
 [ll,bic,Pred,Gstuff, penalty, pest_penalty] = ...
     fitdcircle4x(P(Sel==1), P(Sel==0), Sel, data, nlow, nhigh, badix);
+
+% Plot model predictions against data
+fitplot(data, Pred);
