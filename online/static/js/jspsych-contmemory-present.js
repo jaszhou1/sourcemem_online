@@ -296,6 +296,11 @@ jsPsych.plugins['contmemory-present'] = (function() {
             calibration_marker_element.style.visibility = 'visible';
             response_circle_element.style.visibility = 'visible';
             feedback_text_element.style.visibility = 'visible';
+
+            // Add an event handler to switch when the mouse is inside
+            // the calibration marker.
+            calibration_marker_element.addEventListener('mouseenter',
+                                                        calibration_circle_entered_no_restart);
         };
 
         var stimulus_display = function() {
@@ -313,6 +318,11 @@ jsPsych.plugins['contmemory-present'] = (function() {
             angle_marker_element.style.visibility = 'visible';
             response_circle_element.style.visibility = 'visible';
             stimulus_text_element.style.visibility = 'visible';
+
+            // Add an event handler to switch when the mouse is inside
+            // the calibration marker.
+            calibration_marker_element.addEventListener('mouseenter',
+                                                        calibration_circle_entered_no_restart);
         };
 
         var response_display = function() {
@@ -511,6 +521,18 @@ jsPsych.plugins['contmemory-present'] = (function() {
             set_coordinates(e);
 
             present_stimulus();
+        };
+        
+        // The event listener for entering the calibration circle when
+        // we don't want to restart the presentation.
+        var calibration_circle_entered_no_restart = function(e) {
+            console.log('Calibration element entered (no restart)');
+            // Remove the event listener.
+            calibration_marker_element.removeEventListener('mouseenter', calibration_circle_entered_no_restart);
+
+            // Update the position (so that the intersection query works even though we're
+            // in a child of the response circle, not the response circle itself.
+            set_coordinates(e);
         };
 
         // The event listener to track the mouse position.
