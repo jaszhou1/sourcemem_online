@@ -169,6 +169,8 @@ datastore indicating the nature of the error.
             }
             trials.append(this_trial)
             recall_trials.append(this_trial)
+        elif trial["trial_type"] == "call-function":
+            continue ## Ignore this type of trial
         else:
             return False, None, "Unexpected trial type in data: " + trial["trial_type"]
     return True, {
@@ -350,7 +352,7 @@ def valid_data_received(datastore_client, session_id, experimental_session_id,
 
         ## Create a valid data entry
         data_dictionary["user"] = user.key
-        data_dictionary["session_number"] = session_id
+        data_dictionary["session_number"] = experimental_session_id
         data_key = datastore_client.key(EXPERIMENTAL_DATA_KEY)
         experiment_data = datastore.Entity(data_key,
                                            exclude_from_indexes=("trials",
@@ -362,7 +364,7 @@ def valid_data_received(datastore_client, session_id, experimental_session_id,
         datastore_client.put(experiment_data)
 
         ## Update the user entity.
-        user["completions"][experimental_session_id] = {
+        user["completions"][str(experimental_session_id)] = {
             "experimental_session_id": experimental_session_id,
             "completed": datetime.datetime.utcnow(),
             "completion_code": generate_completion_code()

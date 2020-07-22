@@ -330,7 +330,12 @@ def experiment():
     user_is_sim = get_user_between_subjects_status(request)
     ## Check the whether we have session 1.
     completed_sessions = datahandling.get_completed_experimental_sessions(DATASTORE_CLIENT, sid)
-    has_completed_first_session = 1 in completed_sessions.keys()
+    ## Are we allowed to continue on? Has the last session been
+    ## completed too recently?
+    has_completed_first_session = "1" in completed_sessions.keys()
+    has_completed_second_session = "2" in completed_sessions.keys()
+    if has_completed_first_session and has_completed_second_session:
+        logging.warning("User completed both sessions in experiment handler")
     if user_is_sim:
         if has_completed_first_session:
             return render_template("experiment-sim-s2.html")
@@ -353,6 +358,17 @@ def complete():
                                                        sid)
     return render_template("completion.html",
                            completion_code=completion_code)
+
+@app.route("/session-complete", methods=["GET"])
+def session_complete():
+    """Display a message which indicates that a session is complete, not
+    the entire experiment.
+
+    """
+    next_step = next_step_from_request(request)
+    if next_step != "experiment":
+        return redirect(url_for(".dispatch"))
+    return render_template("session-complete.html")
 
 @app.route("/submit-data/<int:sessionid>", methods=["POST"])
 def submit_data_handler(sessionid):

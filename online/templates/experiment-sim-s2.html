@@ -241,7 +241,7 @@
   function moveOnward() {
       if(DATA_SUBMITTED) {
           console.log('Data submitted. Moving forward to completion...');
-          window.location.replace('/dispatch');
+          window.location.replace('/session-complete');
       } else {
           if(NUM_RETRIES < 5) {
               console.log('Data not yet submitted. Trying again...');
@@ -252,7 +252,7 @@
               }, 5000);
               NUM_RETRIES = NUM_RETRIES + 1;
           } else {
-              window.location.replace('/dispatch');
+              window.location.replace('/session-complete');
           }
       }
   }
