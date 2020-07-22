@@ -11,6 +11,7 @@ handling the request to download the data as JSON.
 
 """
 
+import datetime
 import logging
 import random
 import string
@@ -31,6 +32,10 @@ import datahandling
 
 ## Experiment name (for the browser title)
 EXPERIMENT_NAME = "Source Memory Experiment"
+
+## Minimum rest period between sessions (in hours)
+MINIMUM_SESSION_REST_HRS = 20
+WAIT_UNTIL_TOMORROW_HRS = 10
 
 ## Google Cloud Storage parameters.
 STORAGE_BUCKET_NAME = "jzhou-sourcemem-online"
@@ -330,8 +335,30 @@ def experiment():
     user_is_sim = get_user_between_subjects_status(request)
     ## Check the whether we have session 1.
     completed_sessions = datahandling.get_completed_experimental_sessions(DATASTORE_CLIENT, sid)
-    ## Are we allowed to continue on? Has the last session been
-    ## completed too recently?
+    if len(completed_sessions) > 0:
+        WAIT_PERIOD = datetime.timedelta(hours=MINIMUM_SESSION_REST_HRS)
+        ## Are we allowed to continue on? Has the last session been
+        ## completed too recently?
+        last_completed_session = max(completed_sessions.values(),
+                                     key=lambda x: x["completed"])
+        current_utc_time = datetime.datetime.now(datetime.timezone.utc)
+        time_rested = current_utc_time - last_completed_session["completed"]
+        if time_rested < WAIT_PERIOD:
+            ALMOST_READY = datetime.timedelta(hours=MINIMUM_SESSION_REST_HRS - 1)
+            rested_hours = time_rested.seconds / (60 * 60)
+            time_text = ""
+            if time_rested > ALMOST_READY:
+                time_text += "You are almost ready to begin the next" + \
+                    "session. Please wait at least one more hour."
+            elif time_rested < datetime.timedelta(hours=WAIT_UNTIL_TOMORROW_HRS):
+                time_text += "You will need to wait until tomorrow before the next session."
+            else:
+                time_text += "You must wait " + \
+                    str(round(MINIMUM_SESSION_REST_HRS - rested_hours)) + \
+                    " more hours."
+            return render_template("you-need-rest.html",
+                                   wait_time=MINIMUM_SESSION_REST_HRS+4,
+                                   time_text=time_text)
     has_completed_first_session = "1" in completed_sessions.keys()
     has_completed_second_session = "2" in completed_sessions.keys()
     if has_completed_first_session and has_completed_second_session:
