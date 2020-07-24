@@ -282,7 +282,7 @@ jsPsych.plugins['contmemory-recall'] = (function() {
             feedback_text_element.style.visibility = 'visible';
 
         };
-        
+
         var set_coordinates = function(e) {
             var posx = 0;
 	    var posy = 0;
@@ -306,7 +306,7 @@ jsPsych.plugins['contmemory-recall'] = (function() {
 	    var posy = 0;
             var fixation_position = fixation_element.getBoundingClientRect();
             var fixation_midx = (fixation_position.right - fixation_position.width/2),
-                fixation_midy = (fixation_position.bottom - fixation_position.height/2); 
+                fixation_midy = (fixation_position.bottom - fixation_position.height/2);
 	    if (!e) var e = window.event;
 	    if (e.pageX || e.pageY) 	{
 		posx = e.pageX;
@@ -413,6 +413,7 @@ jsPsych.plugins['contmemory-recall'] = (function() {
             // Compute position.
             set_hitting_position(e);
             hitting_angle = cart_to_pol(hitting_position[0], hitting_position[1]).theta;
+            hitting_angle = normalise_angle(hitting_angle);
             angular_error = angular_difference(hitting_angle, trial.angle);
             present_feedback();
         };
@@ -429,7 +430,7 @@ jsPsych.plugins['contmemory-recall'] = (function() {
 
             present_stimulus();
         };
-        
+
         // The event listener for entering the calibration circle when
         // we don't want to restart the presentation.
         var calibration_circle_entered_no_restart = function(e) {

@@ -479,6 +479,7 @@ jsPsych.plugins['contmemory-present-seq'] = (function() {
             set_hitting_position(e);
             console.log(hitting_position);
             hitting_angle = cart_to_pol(hitting_position[0], hitting_position[1]).theta;
+            hitting_angle = normalise_angle(hitting_angle);
             angular_error = angular_difference(hitting_angle, trial.angle);
             present_feedback();
         };
@@ -508,7 +509,7 @@ jsPsych.plugins['contmemory-present-seq'] = (function() {
             set_coordinates(e);
         };
 
-        
+
         // The event listener to track the mouse position.
         var response_circle_moved = function(e) {
             set_coordinates(e);

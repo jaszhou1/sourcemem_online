@@ -506,6 +506,7 @@ jsPsych.plugins['contmemory-present'] = (function() {
             set_hitting_position(e);
             console.log(hitting_position);
             hitting_angle = cart_to_pol(hitting_position[0], hitting_position[1]).theta;
+            hitting_angle = normalise_angle(hitting_angle);
             angular_error = angular_difference(hitting_angle, trial.angle);
             present_feedback();
         };
@@ -522,7 +523,7 @@ jsPsych.plugins['contmemory-present'] = (function() {
 
             present_stimulus();
         };
-        
+
         // The event listener for entering the calibration circle when
         // we don't want to restart the presentation.
         var calibration_circle_entered_no_restart = function(e) {

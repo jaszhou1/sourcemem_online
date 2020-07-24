@@ -70,7 +70,7 @@ datastore indicating the nature of the error.
                                "response_time", "block", "trial",
                                "trial_index", "time_elapsed"]
     REQUIRED_DISTRACTOR_FIELDS = ["trial_type", "subj_responses",
-                                  "num1", "num2", "num3", "sums", 
+                                  "num1", "num2", "num3", "sums",
                                   "rts", "block", "trial",
                                   "trial_index", "time_elapsed"]
     REQUIRED_RECALL_FIELDS = ["trial_type", "num_fast_attempts",
@@ -158,6 +158,7 @@ datastore indicating the nature of the error.
                 "hitting_position_x": trial["hitting_position"][0],
                 "hitting_position_y": trial["hitting_position"][1],
                 "hitting_angle": trial["hitting_angle"],
+                "angular_error": trial["angular_error"],
                 "block": trial["block"],
                 "trial": trial["trial"],
                 "correct": trial["correct"],

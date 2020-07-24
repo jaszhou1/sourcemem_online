@@ -22,10 +22,10 @@ completed.users <- get.completed.users(SERVER.BASE.URL, SERVER.PORT,
                                        SERVER.MASTER.API.KEY)
 
 
-this.user.data <- get.last.experiment.data.by.user.id(SERVER.BASE.URL, completed.users[[9]],
+this.user.data <- get.last.experiment.data.by.user.id(SERVER.BASE.URL, completed.users[[11]],
                                                       SERVER.PORT, SERVER.MASTER.API.KEY)
 
-this.user.info <- get.user.information(SERVER.BASE.URL, completed.users[[9]],
+this.user.info <- get.user.information(SERVER.BASE.URL, completed.users[[11]],
                                        SERVER.PORT, SERVER.MASTER.API.KEY)
 
 ## Extract the required information for each stimuli across the trial types.
@@ -72,12 +72,17 @@ data <- data.frame(matrix(ncol=9,nrow=length(this.user.data$present_trials), dim
     index <- find_source_index(words[i],this.user.data$recall_trials)
     data$target_angle[i] <- this.user.data$recall_trials[[index]]$target_angle
     data$response_angle[i] <- this.user.data$recall_trials[[index]]$hitting_angle
-    data$response_error[i] <- abs(this.user.data$recall_trials[[index]]$target_angle - this.user.data$recall_trials[[index]]$hitting_angle)
+    data$response_error[i] <- this.user.data$recall_trials[[index]]$target_angle - this.user.data$recall_trials[[index]]$hitting_angle
     data$source_RT[i] <- this.user.data$recall_trials[[index]]$response_time
-    if (this.user.data$recall_trials[[index]]$num_fast_attempts == 0 &&
-        this.user.data$recall_trials[[index]]$num_slow_attempts == 0){
-      data$valid_RT <- TRUE
-    } else {
-      data$valid_RT <- FALSE
-    }
+    data$valid_RT [i] <- (this.user.data$recall_trials[[index]]$num_fast_attempts == 0 &&
+        this.user.data$recall_trials[[index]]$num_slow_attempts == 0)
   } 
+  
+  
+## Plot a histogram of response error and response times
+  library(ggplot2)
+  
+  error <- ggplot(data = data, aes(x = response_error)) + 
+    geom_histogram(bins = 30) + 
+    labs(title ="All Recognition Ratings", x = "Response Error (radians)", y = "Frequency") + 
+    theme_classic()
