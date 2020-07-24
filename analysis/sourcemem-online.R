@@ -48,6 +48,15 @@ data <- data.frame(matrix(ncol=9,nrow=length(this.user.data$present_trials), dim
     }
   }
   
+## Function to normalise angles to be between 0 and 2*pi 
+## (This should only be necessary for "test03" pilot data, as angles in subsequent datasets should be normalised)
+  normalise_angle <- function(angle){
+    if (angle < 0){
+      angle <- angle + 2*pi
+    }
+    return(angle)
+  }
+  
 ## The stimulus word is called "target_angle" for the recall trials. Could change how it is named in the database, 
 ## but easier for now to just use the different name here
   find_source_index <- function(x, list){
@@ -71,18 +80,27 @@ data <- data.frame(matrix(ncol=9,nrow=length(this.user.data$present_trials), dim
   for (i in 1:length(words)){
     index <- find_source_index(words[i],this.user.data$recall_trials)
     data$target_angle[i] <- this.user.data$recall_trials[[index]]$target_angle
-    data$response_angle[i] <- this.user.data$recall_trials[[index]]$hitting_angle
-    data$response_error[i] <- this.user.data$recall_trials[[index]]$target_angle - this.user.data$recall_trials[[index]]$hitting_angle
+    data$response_angle[i] <- normalise_angle(this.user.data$recall_trials[[index]]$hitting_angle)
+##  For future datasets, this should be read directly in as:
+##  data$response_error[i] <- this.user.data$recall_trials[[index]]$angular_error
+    data$response_error[i] <- data$target_angle[i] - data$response_angle[i]
     data$source_RT[i] <- this.user.data$recall_trials[[index]]$response_time
     data$valid_RT [i] <- (this.user.data$recall_trials[[index]]$num_fast_attempts == 0 &&
         this.user.data$recall_trials[[index]]$num_slow_attempts == 0)
   } 
-  
-  
-## Plot a histogram of response error and response times
+
+## Aggregate performance as reciprocal of the SD of angular error.  
+  prec <- 1/sd(data$response_error)
+    
+## Plot histograms of response error and response times for this participant
   library(ggplot2)
   
   error <- ggplot(data = data, aes(x = response_error)) + 
-    geom_histogram(bins = 30) + 
+    geom_histogram(bins = 50) + 
     labs(title ="All Recognition Ratings", x = "Response Error (radians)", y = "Frequency") + 
+    theme_classic()
+  
+  rt <- ggplot(data = data, aes(x = source_RT)) + 
+    geom_histogram(bins = 50) + 
+    labs(title ="All Recognition Ratings", x = "Response Time (ms)", y = "Frequency") + 
     theme_classic()
