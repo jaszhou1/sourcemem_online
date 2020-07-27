@@ -234,6 +234,7 @@ def make_or_get_session(datastore_client,
             "external_id": external_id,
             "xforwarded": xforwarded,
             "completed": False,
+            "started": False,
             "completions": {},
             "user_agent": user_agent_string,
             "ethics": False,
@@ -262,29 +263,6 @@ def get_completed_experimental_sessions(datastore_client, session_id):
     if user_entities and len(user_entities) > 0:
         return user_entities[0].get("completions", {})
     return False
-
-def add_completed_experimental_session(datastore_client, session_id,
-                                       experimental_session_id):
-    """Add a completed experimental session for a client associated with a
-    particular session ID. This is normally handled through the
-    valid_data_received function.
-
-    """
-    with datastore_client.transaction():
-        user_query = datastore_client.query(kind=CLIENT_SESSION_KEY)
-        user_query.add_filter("session_id", "=", session_id)
-        user_query.order = ["-created"]
-        user_entities = list(user_query.fetch(1))
-        if len(user_entities) < 1:
-            return False
-        user = user_entities[0]
-        user["completions"][experimental_session_id] = {
-            "experimental_session_id": experimental_session_id,
-            "completed": datetime.datetime.utcnow(),
-            "completion_code": generate_completion_code()
-        }
-        datastore_client.put(user)
-    return True
 
 def get_completed_experimental_sessions_by_id(datastore_client,
                                               session_id, experimental_session_id):
@@ -365,6 +343,7 @@ def valid_data_received(datastore_client, session_id, experimental_session_id,
         datastore_client.put(experiment_data)
 
         ## Update the user entity.
+        user["started"] = True
         user["completions"][str(experimental_session_id)] = {
             "experimental_session_id": experimental_session_id,
             "completed": datetime.datetime.utcnow(),
@@ -386,6 +365,21 @@ def get_last_experiment_data_by_user(datastore_client, user_id):
         return data_to_json_safe(query_result[0])
     return False
 
+def get_last_experiment_data_by_user_by_id(datastore_client, user_id,
+                                           session_id):
+    """Return the last experimental data added by the user with the
+    experimental session ID constraint.
+
+    """
+    data_query = datastore_client.query(kind=EXPERIMENTAL_DATA_KEY)
+    data_query.add_filter("user", "=", datastore_client.key(CLIENT_SESSION_KEY, user_id))
+    data_query.add_filter("session_number", "=", session_id)
+    data_query.order = ["-created"]
+    query_result = list(data_query.fetch(1))
+    if query_result and len(query_result) > 0:
+        return data_to_json_safe(query_result[0])
+    return False
+
 def get_user_information(datastore_client, user_id):
     """Return the user as specified by the `user_id`, if they exist."""
     #user_query = datastore_client.query(kind=CLIENT_SESSION_KEY)
@@ -394,6 +388,21 @@ def get_user_information(datastore_client, user_id):
     if user:
         return data_to_json_safe(user)
     return False
+
+def get_sessions_complete(datastore_client):
+    """Return a dictionary of the sessions complete by users who have started."""
+    data_query = datastore_client.query(kind=CLIENT_SESSION_KEY)
+    data_query.add_filter("started", "=", True)
+    query_result = list(data_query.fetch(MAX_USER_SESSIONS))
+    res = {}
+    for user in query_result:
+        res[str(user.key.id_or_name)] = {
+            "completed_sessions": list(map(lambda x: x.get("experimental_session_id",
+                                                           "Missing session ID"),
+                                           user["completions"].values())),
+            "external_id": user.get("external_id", "Missing external ID")
+        }
+    return res
 
 def set_ethics_done(datastore_client, session_id):
     """Set the ethics flag on the most recent client session associated
@@ -491,6 +500,18 @@ def num_complete_datasets(datastore_client, is_sim_present):
     """Return the number of completed datasets."""
     query = datastore_client.query(kind=EXPERIMENTAL_DATA_KEY)
     query.add_filter("sim_present", "=", is_sim_present)
+    query.add_filter("completed", "=", True)
+    query.keys_only()
+    num_datasets = query.fetch(MAX_DATASETS)
+    if num_datasets is None:
+        return 0
+    return len(list(num_datasets))
+
+def num_started_datasets(datastore_client, is_sim_present):
+    """Return the number of completed datasets."""
+    query = datastore_client.query(kind=EXPERIMENTAL_DATA_KEY)
+    query.add_filter("sim_present", "=", is_sim_present)
+    query.add_filter("started", "=", True)
     query.keys_only()
     num_datasets = query.fetch(MAX_DATASETS)
     if num_datasets is None:
@@ -511,6 +532,16 @@ def completed_user_ids(datastore_client):
     """Return a list of the ClientSessions that have a completion code."""
     query = datastore_client.query(kind=CLIENT_SESSION_KEY)
     query.add_filter("completed", "=", True)
+    query.keys_only()
+    user_ids = query.fetch(MAX_DATASETS)
+    if user_ids is None:
+        return []
+    return list(map(lambda x: str(x.key.id_or_name), user_ids))
+
+def started_user_ids(datastore_client):
+    """Return a list of the ClientSessions that have any data code."""
+    query = datastore_client.query(kind=CLIENT_SESSION_KEY)
+    query.add_filter("started", "=", True)
     query.keys_only()
     user_ids = query.fetch(MAX_DATASETS)
     if user_ids is None:

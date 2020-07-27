@@ -47,6 +47,7 @@ SID_COOKIE_KEY = "SID"
 ## download data.
 MASTER_API_KEY = "zjFdXfQ64sgAVwQMx84IhzqzUPygpSguUkeLKLqQBIyxo8kP3yphBqF9ysd4IQsA"
 MASTER_API_FIELD = "API_ACCESS_KEY"
+CHECK_MASTER_API = True
 
 ## Global setup
 ## ============
@@ -88,6 +89,8 @@ def check_master_api_key(req):
     this file.
 
     """
+    if not CHECK_MASTER_API:
+        return True
     expected = MASTER_API_FIELD + "=" + MASTER_API_KEY
     return req.headers.get("Authorization") == expected
 
@@ -171,9 +174,19 @@ def completed_users():
     """Get a list of completed user IDs."""
     return datahandling.completed_user_ids(DATASTORE_CLIENT)
 
+def started_users():
+    """Get a list of user IDs that have any data stored."""
+    return datahandling.started_user_ids(DATASTORE_CLIENT)
+
 def get_experiment_data(userid):
     """Query the datastore for the user's data if it exists."""
     return datahandling.get_last_experiment_data_by_user(DATASTORE_CLIENT, userid)
+
+def get_experiment_data_by_session_id(userid, sessionid):
+    """Query the datastore for the user's data if it exists."""
+    return datahandling.get_last_experiment_data_by_user_by_id(DATASTORE_CLIENT,
+                                                               userid,
+                                                               sessionid)
 
 def get_user_information(userid):
     """Query the datastore for the user's information (session, ID, etc.
@@ -228,6 +241,25 @@ def completed_users_endpoint():
         }), 403
     return jsonify(completed_users())
 
+@app.route("/started-users")
+def started_users_endpoint():
+    """Return a list of all user IDs with some data."""
+    if not check_master_api_key(request):
+        return jsonify({
+            "status": "Forbidden"
+        }), 403
+    return jsonify(started_users())
+
+@app.route("/get-user-data/<int:userid>/<int:sessionid>")
+def get_user_data_by_id_handler(userid, sessionid):
+    """Return the specified user data if it exists."""
+    if not check_master_api_key(request):
+        return jsonify({
+            "status": "Forbidden"
+        }), 403
+    return jsonify(get_experiment_data_by_session_id(userid,
+                                                     sessionid))
+
 @app.route("/get-user-data/<int:userid>")
 def get_user_data_handler(userid):
     """Return the specified user data if it exists."""
@@ -246,6 +278,13 @@ def get_user_information_handler(userid):
         }), 403
     return jsonify(get_user_information(userid))
 
+@app.route("/get-user-completions")
+def get_user_completion_handler():
+    if not check_master_api_key(request):
+        return jsonify({
+            "status": "Forbidden"
+        }), 403
+    return jsonify(datahandling.get_sessions_complete(DATASTORE_CLIENT))
 
 ## Public endpoints
 ## ================
