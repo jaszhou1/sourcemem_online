@@ -67,8 +67,8 @@ datastore indicating the nature of the error.
                                "num_slow_attempts", "num_error_attempts",
                                "stimulus_word", "stimulus_angle",
                                "hitting_angle", "hitting_position", "angular_error",
-                               "response_time", "block", "trial",
-                               "trial_index", "time_elapsed"]
+                               "response_time", "display_angle_time", "display_word_time",
+                               "block", "trial","trial_index", "time_elapsed"]
     REQUIRED_DISTRACTOR_FIELDS = ["trial_type", "subj_responses",
                                   "num1", "num2", "num3", "sums",
                                   "rts", "block", "trial",
@@ -76,7 +76,7 @@ datastore indicating the nature of the error.
     REQUIRED_RECALL_FIELDS = ["trial_type", "num_fast_attempts",
                               "num_slow_attempts", "stimulus_word", "stimulus_angle",
                               "hitting_position", "hitting_angle",
-                              "response_time", "trial_index", "time_elapsed",
+                              "response_time", "display_time", "trial_index", "time_elapsed",
                               "correct", "angular_error"]
     trials = []
     present_trials = []
@@ -125,6 +125,8 @@ datastore indicating the nature of the error.
                 "hitting_angle": trial["hitting_angle"],
                 "angular_error": trial["angular_error"],
                 "rt": trial["response_time"],
+                "display_angle_time": trial["display_angle_time"],
+                "display_word_time": trial["display_word_time"],
                 "block": trial["block"],
                 "trial": trial["trial"],
                 "index": trial["trial_index"],
@@ -165,6 +167,7 @@ datastore indicating the nature of the error.
                 "target_word": trial["stimulus_word"],
                 "target_angle": trial["stimulus_angle"],
                 "response_time": trial["response_time"],
+                "display_time": trial["display_time"],
                 "time_elapsed": trial["time_elapsed"],
                 "index": trial["trial_index"]
             }
