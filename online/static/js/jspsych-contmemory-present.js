@@ -486,10 +486,8 @@ jsPsych.plugins['contmemory-present'] = (function() {
                 hitting_angle: hitting_angle,
                 angular_error: angular_error,
                 response_time: response_time,
-            // Angle and word are displayed simultaneously,
-            // but two fields are recorded for consistency with sequential condition in the server backend
                 display_angle_time: display_time,
-                display_word_time: display_time;
+                display_word_time: display_time
             };
 
             console.log(trial_data);
