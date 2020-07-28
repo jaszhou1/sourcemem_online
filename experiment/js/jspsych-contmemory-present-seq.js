@@ -98,7 +98,8 @@ jsPsych.plugins['contmemory-present-seq'] = (function() {
     plugin.trial = function(display_element, trial) {
         // Start the timer for the trial.
         var start_trial = performance.now(),
-            start_stimulus = -1.0,
+            start_stimulus_angle = -1.0,
+            start_stimulus_word = -1.0,
             start_response = -1.0,
             start_feedback = -1.0;
 
@@ -121,7 +122,9 @@ jsPsych.plugins['contmemory-present-seq'] = (function() {
             hitting_position = [0, 0],
             hitting_angle = null,
             angular_error = null,
-            response_time = null;
+            response_time = null,
+            display_angle_time = null,
+            display_word_time = null;
 
         // Variables for tracking the mouse position.
         var mouse_x = null,
@@ -397,7 +400,9 @@ jsPsych.plugins['contmemory-present-seq'] = (function() {
                 hitting_position: hitting_position,
                 hitting_angle: hitting_angle,
                 angular_error: angular_error,
-                response_time: response_time
+                response_time: response_time,
+                display_angle_time: display_angle_time,
+                display_word_time: display_word_time
             };
 
             console.log(trial_data);
@@ -502,7 +507,7 @@ jsPsych.plugins['contmemory-present-seq'] = (function() {
             angle_display();
 
             // Set the stimulus time.
-            start_stimulus = performance.now();
+            start_stimulus_angle = performance.now();
 
             // Set up the stimulus display to be removed.
             jsPsych.pluginAPI.setTimeout(function() {
@@ -515,7 +520,10 @@ jsPsych.plugins['contmemory-present-seq'] = (function() {
             word_display();
 
             // Set the stimulus time.
-            start_stimulus = performance.now();
+            start_stimulus_word = performance.now();
+
+            // Calculate angle display time
+            display_angle_time = start_stimulus_word - start_stimulus_angle;
 
             // Set up the stimulus display to be removed.
             jsPsych.pluginAPI.setTimeout(function() {
@@ -537,6 +545,9 @@ jsPsych.plugins['contmemory-present-seq'] = (function() {
 
             // Set the response timestamp.
             start_response = performance.now();
+
+            // Calculate word display time
+            display_word_time = start_response - start_stimulus_word;
 
             // Set up the response circle.
             response_circle_element.addEventListener('mouseout',

@@ -107,7 +107,8 @@ jsPsych.plugins['contmemory-recall'] = (function() {
             hitting_position = [0, 0],
             hitting_angle = null,
             angular_error = null,
-            response_time = null;
+            response_time = null,
+            display_time = null;
 
         // Variables for tracking the mouse position.
         var mouse_x = null,
@@ -341,7 +342,8 @@ jsPsych.plugins['contmemory-recall'] = (function() {
                 hitting_position: hitting_position,
                 hitting_angle: hitting_angle,
                 angular_error: angular_error,
-                response_time: response_time
+                response_time: response_time,
+                display_time: display_time
             };
 
             // Indicate to jsPsych that the trial is over.
@@ -455,6 +457,9 @@ jsPsych.plugins['contmemory-recall'] = (function() {
 
             // Set the response timestamp.
             start_response = performance.now();
+
+            // Calculate stimulus display time
+            display_time = start_response - start_stimulus;
 
             // Set up the response circle.
             response_circle_element.addEventListener('mouseout',
