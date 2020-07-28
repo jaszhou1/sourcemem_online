@@ -116,7 +116,8 @@ jsPsych.plugins['contmemory-present'] = (function() {
             hitting_angle = null,
             angular_error = null,
             response_time = null,
-            display_time = null;
+            display_angle_time = null,
+            display_word_time = null;
 
         // Variables for tracking the mouse position.
         var mouse_x = null,
@@ -485,7 +486,10 @@ jsPsych.plugins['contmemory-present'] = (function() {
                 hitting_angle: hitting_angle,
                 angular_error: angular_error,
                 response_time: response_time,
-                display_time: display_time
+            // Angle and word are displayed simultaneously,
+            // but two fields are recorded for consistency with sequential condition in the server backend
+                display_angle_time: display_time,
+                display_word_time: display_time;
             };
 
             console.log(trial_data);
