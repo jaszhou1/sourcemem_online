@@ -21,7 +21,6 @@ source("access-data.R")
 completed.users <- get.completed.users(SERVER.BASE.URL, SERVER.PORT,
                                        SERVER.MASTER.API.KEY)
 
-
 this.user.data <- get.last.experiment.data.by.user.id(SERVER.BASE.URL, completed.users[[11]],
                                                       SERVER.PORT, SERVER.MASTER.API.KEY)
 
@@ -102,3 +101,12 @@ data <- data.frame(matrix(ncol=9,nrow=length(this.user.data$present_trials), dim
     geom_histogram(bins = 50) + 
     labs(title ="All Recognition Ratings", x = "Response Time (ms)", y = "Frequency") + 
     theme_classic()
+  
+  
+  ## Save all users data
+  # for(i in 1:length(completed.users)){
+  #   this.user.data <- get.last.experiment.data.by.user.id(SERVER.BASE.URL, completed.users[[i]],
+  #                                                         SERVER.PORT, SERVER.MASTER.API.KEY)
+  #   filename = sprintf('Subject%s.RData', i)
+  #   save(this.user.data, file = filename)
+  # }
