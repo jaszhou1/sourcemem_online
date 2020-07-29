@@ -159,7 +159,11 @@ jsPsych.plugins['contmemory-recall'] = (function() {
         var angular_difference = function(first, second) {
             var diff = second - first;
             if(Math.abs(diff) > Math.PI) {
+              if(diff > 0){
                 return diff - Math.PI * 2.0;
+              } else {
+                return diff + Math.PI * 2.0;
+              }
             }
             return diff;
         };

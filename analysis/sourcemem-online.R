@@ -81,9 +81,7 @@ data <- data.frame(matrix(ncol=9,nrow=length(this.user.data$present_trials), dim
     index <- find_source_index(words[i],this.user.data$recall_trials)
     data$target_angle[i] <- this.user.data$recall_trials[[index]]$target_angle
     data$response_angle[i] <- normalise_angle(this.user.data$recall_trials[[index]]$hitting_angle)
-##  For future datasets, this should be read directly in as:
-##  data$response_error[i] <- this.user.data$recall_trials[[index]]$angular_error
-    data$response_error[i] <- data$target_angle[i] - data$response_angle[i]
+    data$response_error[i] <- this.user.data$recall_trials[[index]]$angular_error
     data$source_RT[i] <- this.user.data$recall_trials[[index]]$response_time
     data$valid_RT [i] <- (this.user.data$recall_trials[[index]]$num_fast_attempts == 0 &&
         this.user.data$recall_trials[[index]]$num_slow_attempts == 0)
