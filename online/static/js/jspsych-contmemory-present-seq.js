@@ -172,22 +172,15 @@ jsPsych.plugins['contmemory-present-seq'] = (function() {
         };
 
         // Function to compute angular difference.
-        var angular_difference = function(first, second) {
-            var diff = second - first;
-            if(Math.abs(diff) > Math.PI) {
-              if(diff > 0){
-                return diff - Math.PI * 2.0;
-              } else {
-                return diff + Math.PI * 2.0;
-              }
-            }
-            return diff;
-        };
+        var angular_difference = function(a, b) {
+          diff = Math.atan2(Math.sin(a-b), Math.cos(a-b))
+          return diff
+          };
 
         // Function to check whether an angle is sufficiently close to
         // the target angle.
         var angle_within_limits = function(angle) {
-            return Math.abs(angular_difference(angle, trial.angle)) <= Math.PI / 8;
+            return Math.abs(angular_difference(trial.angle, angle)) <= Math.PI / 8;
         }
 
         // Function to check whether the mouse cursor's current
@@ -486,10 +479,9 @@ jsPsych.plugins['contmemory-present-seq'] = (function() {
 
             // Compute position.
             set_hitting_position(e);
-            console.log(hitting_position);
             hitting_angle = cart_to_pol(hitting_position[0], hitting_position[1]).theta;
             hitting_angle = normalise_angle(hitting_angle);
-            angular_error = angular_difference(hitting_angle, trial.angle);
+            angular_error = angular_difference(trial.angle, hitting_angle); // Find the signed angular distance between the target and the response
             present_feedback();
         };
 
