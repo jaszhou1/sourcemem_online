@@ -26,10 +26,10 @@ started.users <- get.started.users(SERVER.BASE.URL, SERVER.PORT,
 completed.users <- get.completed.users(SERVER.BASE.URL, SERVER.PORT,
                                        SERVER.MASTER.API.KEY)
 
-this.user.data <- get.last.experiment.data.by.user.id(SERVER.BASE.URL, completed.users[[1]],
+this.user.data <- get.last.experiment.data.by.user.id(SERVER.BASE.URL, completed.users[[2]],
                                                       SERVER.PORT, SERVER.MASTER.API.KEY)
 
-this.user.info <- get.user.information(SERVER.BASE.URL, completed.users[[1]],
+this.user.info <- get.user.information(SERVER.BASE.URL, completed.users[[2]],
                                        SERVER.PORT, SERVER.MASTER.API.KEY)
 
 ## Extract the required information for each stimuli across the trial types.
@@ -50,15 +50,6 @@ data <- data.frame(matrix(ncol=9,nrow=length(this.user.data$present_trials), dim
         return(i)
       } 
     }
-  }
-  
-## Function to normalise angles to be between 0 and 2*pi 
-## (This should only be necessary for "test03" pilot data, as angles in subsequent datasets should be normalised)
-  normalise_angle <- function(angle){
-    if (angle < 0){
-      angle <- angle + 2*pi
-    }
-    return(angle)
   }
   
 ## The stimulus word is called "target_angle" for the recall trials. Could change how it is named in the database, 
@@ -84,8 +75,12 @@ data <- data.frame(matrix(ncol=9,nrow=length(this.user.data$present_trials), dim
   for (i in 1:length(words)){
     index <- find_source_index(words[i],this.user.data$recall_trials)
     data$target_angle[i] <- this.user.data$recall_trials[[index]]$target_angle
-    data$response_angle[i] <- normalise_angle(this.user.data$recall_trials[[index]]$hitting_angle)
+    data$response_angle[i] <- this.user.data$recall_trials[[index]]$hitting_angle
     data$response_error[i] <- this.user.data$recall_trials[[index]]$angular_error
+    ## Correcting for an error in the old javascript calculation of angular error  
+    if(data$response_error[i] < -pi){
+        data$response_error[i] <- data$response_error[i] + 4*pi 
+      }
     data$source_RT[i] <- this.user.data$recall_trials[[index]]$response_time
     data$valid_RT [i] <- (this.user.data$recall_trials[[index]]$num_fast_attempts == 0 &&
         this.user.data$recall_trials[[index]]$num_slow_attempts == 0)
@@ -98,12 +93,12 @@ data <- data.frame(matrix(ncol=9,nrow=length(this.user.data$present_trials), dim
   library(ggplot2)
   
   error <- ggplot(data = data, aes(x = response_error)) + 
-    geom_histogram(bins = 50) + 
+    geom_histogram(bins = 30) + 
     labs(title ="All Recognition Ratings", x = "Response Error (radians)", y = "Frequency") + 
     theme_classic()
   
   rt <- ggplot(data = data, aes(x = source_RT)) + 
-    geom_histogram(bins = 50) + 
+    geom_histogram(bins = 30) + 
     labs(title ="All Recognition Ratings", x = "Response Time (ms)", y = "Frequency") + 
     theme_classic()
   
