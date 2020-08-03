@@ -10,15 +10,14 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ```{r}
-setwd('C:/Users/jason/Documents/GitHub/sourcemem/EXPSIM/experiment/code/simultaneous/word-lists')
-dataset <- data.frame()
+setwd('C:/Users/jason/Documents/GitHub/sourcemem_online/experiment/stimuli')
 
 all_words <- read.csv("subtlexLength.csv")
-words_length_4 <- all_words[all_words$length == 4,]
+words_length <- all_words[all_words$length == 4,]
 
-words_length_4_freq <- words_length_4[(words_length_4$Lg10WF<5),]
-words_length_4_freq <- words_length_4_freq[(words_length_4_freq$Lg10WF>1),]
+words_length_freq <- words_length[(words_length$SUBTLWF<7),]
+words_length_freq <- words_length_freq[(words_length_freq$SUBTLWF>0.75),]
 
-write.csv(words_length_4_freq, file = "word_list_filtered.csv")
+write.csv(words_length_freq, file = "wordlist_WF7.csv")
 
 ```

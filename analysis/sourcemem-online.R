@@ -17,14 +17,19 @@ SERVER.MASTER.API.KEY <- "zjFdXfQ64sgAVwQMx84IhzqzUPygpSguUkeLKLqQBIyxo8kP3yphBq
 setwd("~/GitHub/sourcemem_online/analysis")
 source("access-data.R")
 
+
+## Get the started users
+started.users <- get.started.users(SERVER.BASE.URL, SERVER.PORT,
+                                       SERVER.MASTER.API.KEY)
+
 ## Get the completed users.
 completed.users <- get.completed.users(SERVER.BASE.URL, SERVER.PORT,
                                        SERVER.MASTER.API.KEY)
 
-this.user.data <- get.last.experiment.data.by.user.id(SERVER.BASE.URL, completed.users[[11]],
+this.user.data <- get.last.experiment.data.by.user.id(SERVER.BASE.URL, completed.users[[1]],
                                                       SERVER.PORT, SERVER.MASTER.API.KEY)
 
-this.user.info <- get.user.information(SERVER.BASE.URL, completed.users[[11]],
+this.user.info <- get.user.information(SERVER.BASE.URL, completed.users[[1]],
                                        SERVER.PORT, SERVER.MASTER.API.KEY)
 
 ## Extract the required information for each stimuli across the trial types.
