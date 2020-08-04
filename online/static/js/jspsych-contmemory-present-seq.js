@@ -35,7 +35,7 @@ jsPsych.plugins['contmemory-present-seq'] = (function() {
             word_display_ms: {
                 type: jsPsych.plugins.parameterType.INT,
                 pretty_name: 'Stimulus word display time (ms)',
-                default: 1500,
+                default: 1000,
                 description: 'The time to present the stimulus word before the response in milliseconds.'
             },
             svg_size_px: {

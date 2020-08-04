@@ -11,7 +11,7 @@
 <script src="static/js/jspsych-call-function.js" type="text/javascript"></script>
 <script src="static/js/jspsych-contmemory-recall.js" type="text/javascript"></script>
 <script src="static/js/jspsych-html-keyboard-response.js" type="text/javascript"></script>
-<script src="static/stimuli/wordlist_session1.js" type="text/javascript"></script>
+<script src="static/stimuli/s1_stimuli.js" type="text/javascript"></script>
 {% endblock %}
 {% block main %}
 {% endblock %}
@@ -92,7 +92,7 @@
 
   /* - - - - STIMULI - - - - */
   // Shuffle wordpool
-  wordlist = jsPsych.randomization.shuffle(wordlist_session1);
+  wordlist = jsPsych.randomization.shuffle(s1_stimuli);
   stim_words = wordlist.slice(0,num_stim) // Assign words as stimuli
   foil_words = wordlist.slice(num_stim, num_stim + num_foil) // Assign words unused as stimuli as foils
 
