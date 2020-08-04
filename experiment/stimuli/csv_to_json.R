@@ -14,7 +14,7 @@ num_sessions <- 3
 chunk <- function(x,n) split(x, cut(seq_along(x), n, labels = FALSE))
 sessions <- chunk(words,num_sessions)
 
-#jsonwords <- toJSON(words, pretty = TRUE)
+jsonwords <- toJSON(words, pretty = TRUE)
 
 json_s1 <- toJSON(sessions[1], pretty = TRUE)
 json_s2 <- toJSON(sessions[2], pretty = TRUE)
