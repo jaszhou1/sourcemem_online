@@ -15,7 +15,7 @@ from google.cloud import datastore
 
 CLIENT_SESSION_KEY = "ClientSession"
 EXPERIMENTAL_DATA_KEY = "ExperimentalData"
-TOTAL_NUM_SESSIONS = 2 ## <-- this is the number of sessions that need to be
+TOTAL_NUM_SESSIONS = 3 ## <-- this is the number of sessions that need to be
                        ##     associated with a client session until they
                        ##     have the "completed" switch turned on their
                        ##     session entity.
