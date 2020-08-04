@@ -402,18 +402,18 @@ def experiment():
     has_completed_second_session = "2" in completed_sessions.keys()
     has_completed_third_session = "3" in completed_sessions.keys()
     if has_completed_first_session and has_completed_second_session and has_completed_third_session:
-        logging.warning("User completed all three sessions in experiment handler")
+        logging.warning("User completed all sessions in experiment handler")
     if user_is_sim:
-        if has_completed_first_session and has_completed_second_session:
-            return render_template("experiment-sim-s3.html")
-        if has_completed_first_session:
+        if not has_completed_first_session:
+            return render_template("experiment-sim-s1.html")
+        if not has_completed_second_session:
             return render_template("experiment-sim-s2.html")
-        return render_template("experiment-sim-s1.html")
-    if has_completed_first_session and has_completed_second_session: # User is sequential
-        return render_template("experiment-seq-s3.html")
-    if has_completed_first_session:
+        return render_template("experiment-sim-s3.html")
+    if not has_completed_first_session:
+        return render_template("experiment-seq-s1.html")
+    if not has_completed_second_session:
         return render_template("experiment-seq-s2.html")
-    return render_template("experiment-seq-s1.html")
+    return render_template("experiment-seq-s3.html")
 
 @app.route("/complete", methods=["GET"])
 def complete():
