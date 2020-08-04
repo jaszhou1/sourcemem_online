@@ -400,15 +400,20 @@ def experiment():
                                    time_text=time_text)
     has_completed_first_session = "1" in completed_sessions.keys()
     has_completed_second_session = "2" in completed_sessions.keys()
-    if has_completed_first_session and has_completed_second_session:
-        logging.warning("User completed both sessions in experiment handler")
+    has_completed_third_session = "3" in completed_sessions.keys()
+    if has_completed_first_session and has_completed_second_session and has_completed_third_session:
+        logging.warning("User completed all sessions in experiment handler")
     if user_is_sim:
-        if has_completed_first_session:
+        if not has_completed_first_session:
+            return render_template("experiment-sim-s1.html")
+        if not has_completed_second_session:
             return render_template("experiment-sim-s2.html")
-        return render_template("experiment-sim-s1.html")
-    if has_completed_first_session:
+        return render_template("experiment-sim-s3.html")
+    if not has_completed_first_session:
+        return render_template("experiment-seq-s1.html")
+    if not has_completed_second_session:
         return render_template("experiment-seq-s2.html")
-    return render_template("experiment-seq-s1.html")
+    return render_template("experiment-seq-s3.html")
 
 @app.route("/complete", methods=["GET"])
 def complete():
@@ -443,7 +448,7 @@ data, if valid, to the database."""
     if next_step_from_request(request).lower() != "experiment":
         return "Experimental data received from invalid user", 403
     sid = get_cookie(request)
-    if sessionid not in [1, 2]:
+    if sessionid not in [1, 2, 3]:
         return "Invalid session ID", 403
     is_valid, data_dict, data_str = \
         datahandling.convert_experimental_data(sid, request.json)
