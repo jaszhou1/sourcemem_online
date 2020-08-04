@@ -15,9 +15,9 @@ setwd('C:/Users/jason/Documents/GitHub/sourcemem_online/experiment/stimuli')
 all_words <- read.csv("subtlexLength.csv")
 words_length <- all_words[all_words$length == 4,]
 
-words_length_freq <- words_length[(words_length$SUBTLWF<7),]
-words_length_freq <- words_length_freq[(words_length_freq$SUBTLWF>0.75),]
+words_length_freq <- words_length[(words_length$SUBTLWF<8),]
+words_length_freq <- words_length_freq[(words_length_freq$SUBTLWF>7.5),]
 
-write.csv(words_length_freq, file = "wordlist_WF7.csv")
+write.csv(words_length_freq, file = "additional_words.csv")
 
 ```
