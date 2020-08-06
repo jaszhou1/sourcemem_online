@@ -198,6 +198,41 @@ def construct_event(event_type, event):
         "time": datetime.datetime.utcnow()
     }
 
+def update_resolution_data(datastore_client, session_id,
+                           reported_display_type,
+                           width, height, pixel_ratio,
+                           pixel_depth, colour_depth):
+    """Get a user's ClientSession entity by their session ID and update
+    the resolution/display characteristics data using the report from
+    the calibration trials.
+
+    """
+    with datastore_client.transaction():
+        ## Get the user entity
+        user_query = datastore_client.query(kind=CLIENT_SESSION_KEY)
+        user_query.add_filter("session_id", "=", session_id)
+        user_query.order = ["-created"]
+        user = list(user_query.fetch(1))
+        if user is None or len(user) < 1:
+            return False
+        user = user[0]
+
+        res_dict = {
+            "reported": reported_display_type,
+            "height": height,
+            "width": width,
+            "pixel_depth": pixel_depth,
+            "pixel_ratio": pixel_ratio,
+            "colour_depth": colour_depth
+        }
+
+        if "resolution" in user:
+            user["resolution"].update(res_dict)
+        else:
+            user["resolution"] = res_dict
+
+        datastore_client.put(user)
+
 def make_or_get_session(datastore_client,
                         session_id, external_id,
                         user_agent_string, xforwarded,

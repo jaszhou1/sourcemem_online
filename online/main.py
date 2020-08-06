@@ -520,6 +520,39 @@ def dispatch():
                         "Cite: SID = %s / user_status = %s" % (str(get_cookie(request)),
                                                                current_status)), 500
 
+@app.route("/report-display-characteristics", methods=["POST"])
+def report_display_characteristics():
+    # pylint: disable=invalid-name
+    """POST requests to this endpoint will store some basic details about
+    the client's display characteristics.
+
+    """
+    DISPLAY_TYPES = {
+        '0': "Laptop",
+        '1': "Desktop"
+    }
+    if next_step_from_request(request).lower() != "calibration":
+        return "Calibration data received from invalid user", 403
+    sid = get_cookie(request)
+    display_data = request.json
+    if "button_pressed" in display_data:
+        reported_display_type = DISPLAY_TYPES.get(display_data["button_pressed"],
+                                                  "<unknown>")
+    else:
+        reported_display_type = "<unknown>"
+
+    width = display_data.get("screen_width", "<unknown>")
+    height = display_data.get("screen_height", "<unknown>")
+    pixel_ratio = display_data.get("pixel_ratio", "<unknown>")
+    pixel_depth = display_data.get("pixel_depth", "<unknown>")
+    colour_depth = display_data.get("colour_depth", "<unknown>")
+    datahandling.update_resolution_data(DATASTORE_CLIENT, sid,
+                                        reported_display_type,
+                                        width, height, pixel_ratio,
+                                        pixel_depth,
+                                        colour_depth)
+    return jsonify({"status": "OK"})
+
 @app.route("/")
 def hello():
     """The handler for requests made to the root URL of the experiment.

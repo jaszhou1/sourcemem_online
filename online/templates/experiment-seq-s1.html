@@ -79,7 +79,7 @@
     type: "html-keyboard-response",
     stimulus: '<p style = "colour:white"> You have now completed the practice block. <br><br> The experimental blocks to follow will be longer than the practice block.<br><br> Press any key to begin the experiment.</p>'
   };
-
+  
   // End message
   var ending_1 = {
       type: "html-keyboard-response",
@@ -253,20 +253,21 @@
           }
       }
   }
-
+  
   /* - - - - TIMELINE - - - - */
-  var TIMELINE = [welcome, instructions, instructions_practice_start]
+  var TIMELINE = [welcome, instructions, resolution_check, instructions_practice_start]
 
  // Practice block
  // STUDY
  // Instructions
   TIMELINE.push(instructions_study);
   TIMELINE.push({
-         type: 'html-keyboard-response',
-         stimulus: '<p style="color:white">STUDY</p>',
-         choices: jsPsych.NO_KEYS,
-         trial_duration: 2000,
-     });
+      type: 'html-keyboard-response',
+      stimulus: '<p style="color:white">STUDY</p>',
+      choices: jsPsych.NO_KEYS,
+      trial_duration: 2000,
+      on_finish: sendResolutionData
+  });
 
      // Trial
    for(j = 0; j < num_prac; j++){
