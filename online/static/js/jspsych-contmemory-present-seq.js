@@ -257,8 +257,6 @@ jsPsych.plugins['contmemory-present-seq'] = (function() {
 
         var angle_display = function() {
             console.log('Stimulus angle display');
-            // Debugging for browser compatibility issues in Firefox
-            console.log(trial.angle);
             // Set the non-calibration elements to visibility: hidden.
             fixation_element.style.visibility = 'hidden';
             feedback_marker_element.style.visibility = 'hidden';
@@ -460,7 +458,7 @@ jsPsych.plugins['contmemory-present-seq'] = (function() {
                 display_word_time: display_word_time
             };
 
-            console.log(trial_data);
+            //console.log(trial_data);
 
             // Indicate to jsPsych that the trial is over.
             jsPsych.finishTrial(trial_data);
