@@ -531,7 +531,7 @@ def report_display_characteristics():
         '0': "Laptop",
         '1': "Desktop"
     }
-    if next_step_from_request(request).lower() != "calibration":
+    if next_step_from_request(request).lower() != "experiment":
         return "Calibration data received from invalid user", 403
     sid = get_cookie(request)
     display_data = request.json
