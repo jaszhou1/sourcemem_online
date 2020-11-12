@@ -16,7 +16,7 @@ SERVER.MASTER.API.KEY <- "zjFdXfQ64sgAVwQMx84IhzqzUPygpSguUkeLKLqQBIyxo8kP3yphBq
 #####
 setwd("~/GitHub/sourcemem_online/analysis")
 source("access-data.R")
-
+sessions <- c(1,2,3)
 
 ## Get the started users
 started.users <- get.started.users(SERVER.BASE.URL, SERVER.PORT,
@@ -25,83 +25,114 @@ started.users <- get.started.users(SERVER.BASE.URL, SERVER.PORT,
 ## Get the completed users.
 completed.users <- get.completed.users(SERVER.BASE.URL, SERVER.PORT,
                                        SERVER.MASTER.API.KEY)
+# 
+# last.session.data <- get.last.experiment.data.by.user.id(SERVER.BASE.URL, completed.users[[1]],
+#                                                       SERVER.PORT, SERVER.MASTER.API.KEY)
+# 
+# this.user.info <- get.user.information(SERVER.BASE.URL, started.users[[1]],
+#                                        SERVER.PORT, SERVER.MASTER.API.KEY)
 
-this.user.data <- get.last.experiment.data.by.user.id(SERVER.BASE.URL, completed.users[[2]],
-                                                      SERVER.PORT, SERVER.MASTER.API.KEY)
 
-this.user.info <- get.user.information(SERVER.BASE.URL, completed.users[[2]],
-                                       SERVER.PORT, SERVER.MASTER.API.KEY)
-
-## Extract the required information for each stimuli across the trial types.
-data <- data.frame(matrix(ncol=9,nrow=length(this.user.data$present_trials), dimnames=list(NULL, c("word", "is_sequential",
-                                                               "recog_rating","recog_RT","target_angle",
-                                                               "response_angle","response_error","source_RT", "valid_RT"))))
-
-## Extract presentation data
-  for(i in 1:length(this.user.data$present_trials)){
-    data$word[i] <- this.user.data$present_trials[[i]]$target_word
-    data$is_sequential[i] <- this.user.data$present_trials[[i]]$presentation_sequential
-  }
-
-## Function to sort through the scrambled blocks and find the index needed for extraction
-  find_recog_index <- function(x, list){
-    for (i in 1:length(list)){
-      if (list[[i]]$stimulus == x){
-        return(i)
-      } 
+all.data = data.frame()
+# Participant Loop
+for(h in 1:length(completed.users)){
+  this.user.data = data.frame()
+  # Session Loop
+  for(j in 1:length(sessions)){
+    
+    this.session.data <- get.session.data.by.user.id(SERVER.BASE.URL, completed.users[[h]], j,
+                                                     SERVER.PORT, SERVER.MASTER.API.KEY)
+    
+    ## Extract the required information for each stimuli across the trial types.
+    data <- data.frame(matrix(ncol=9,nrow=length(this.session.data$present_trials), dimnames=list(NULL, c("word", "is_sequential",
+                                                                                                          "recog_rating","recog_RT","target_angle",
+                                                                                                          "response_angle","response_error","source_RT", "valid_RT"))))
+    
+    ## Extract presentation data
+    for(i in 1:length(this.session.data$present_trials)){
+      data$word[i] <- this.session.data$present_trials[[i]]$target_word
+      data$is_sequential[i] <- this.session.data$present_trials[[i]]$presentation_sequential
     }
-  }
-  
-## The stimulus word is called "target_angle" for the recall trials. Could change how it is named in the database, 
-## but easier for now to just use the different name here
-  find_source_index <- function(x, list){
-    for (i in 1:length(list)){
-      if (list[[i]]$target_word == x){
-        return(i)
-      } 
+    
+    ## Function to sort through the scrambled blocks and find the index needed for extraction
+    find_recog_index <- function(x, list){
+      for (i in 1:length(list)){
+        if (list[[i]]$stimulus == x){
+          return(i)
+        } 
+      }
     }
-  }
-
-## Extract recognition data
-  words <- unique(data$word)
-
-  for (i in 1:length(words)){
-    index <- find_recog_index(words[i],this.user.data$confidence_trials)
-    data$recog_rating[i] <- this.user.data$confidence_trials[[index]]$response
-    data$recog_RT[i] <- this.user.data$confidence_trials[[index]]$rt
-  } 
-  
-## Extract source recall data
-  for (i in 1:length(words)){
-    index <- find_source_index(words[i],this.user.data$recall_trials)
-    data$target_angle[i] <- this.user.data$recall_trials[[index]]$target_angle
-    data$response_angle[i] <- this.user.data$recall_trials[[index]]$hitting_angle
-    data$response_error[i] <- this.user.data$recall_trials[[index]]$angular_error
-    ## Correcting for an error in the old javascript calculation of angular error  
-    if(data$response_error[i] < -pi){
+    
+    ## The stimulus word is called "target_angle" for the recall trials. Could change how it is named in the database, 
+    ## but easier for now to just use the different name here
+    find_source_index <- function(x, list){
+      for (i in 1:length(list)){
+        if (list[[i]]$target_word == x){
+          return(i)
+        } 
+      }
+    }
+    
+    ## Extract recognition data
+    words <- unique(data$word)
+    
+    for (i in 1:length(words)){
+      index <- find_recog_index(words[i],this.session.data$confidence_trials)
+      data$recog_rating[i] <- this.session.data$confidence_trials[[index]]$response
+      data$recog_RT[i] <- this.session.data$confidence_trials[[index]]$rt
+    } 
+    
+    ## Extract source recall data
+    for (i in 1:length(words)){
+      index <- find_source_index(words[i],this.session.data$recall_trials)
+      data$target_angle[i] <- this.session.data$recall_trials[[index]]$target_angle
+      data$response_angle[i] <- this.session.data$recall_trials[[index]]$hitting_angle
+      data$response_error[i] <- this.session.data$recall_trials[[index]]$angular_error
+      ## Correcting for an error in the old javascript calculation of angular error  
+      if(data$response_error[i] < -pi){
         data$response_error[i] <- data$response_error[i] + 4*pi 
       }
-    data$source_RT[i] <- this.user.data$recall_trials[[index]]$response_time
-    data$valid_RT [i] <- (this.user.data$recall_trials[[index]]$num_fast_attempts == 0 &&
-        this.user.data$recall_trials[[index]]$num_slow_attempts == 0)
-  } 
+      data$source_RT[i] <- this.session.data$recall_trials[[index]]$response_time
+      data$valid_RT [i] <- (this.session.data$recall_trials[[index]]$num_fast_attempts == 0 &&
+                              this.session.data$recall_trials[[index]]$num_slow_attempts == 0)
+    } 
+    
+    # Bind sessions together
+    
+    this.user.data <- rbind(this.user.data, data)
+    # Filter out invalid RTs
+    this.user.data <- this.user.data[this.user.data$valid_RT == TRUE,]
+    
+  }
+ this.user.data$participant <- h
+ all.data <- rbind(all.data, this.user.data)
+}
 
-## Aggregate performance as reciprocal of the SD of angular error.  
-  prec <- 1/sd(data$response_error)
+# Recode the confidence ratings to be between 1 and 6
+all.data[all.data$recog_rating == 8,]$recog_rating <- 4
+all.data[all.data$recog_rating == 9,]$recog_rating <- 5
+all.data[all.data$recog_rating == 0,]$recog_rating <- 6
+
     
 ## Plot histograms of response error and response times for this participant
   library(ggplot2)
+
+plot_participant <- function(p){
+  this.data <- all.data[all.data$participant == p,]
   
-  error <- ggplot(data = data, aes(x = response_error)) + 
-    geom_histogram(bins = 30) + 
-    labs(title ="All Recognition Ratings", x = "Response Error (radians)", y = "Frequency") + 
+  error <- ggplot(data = this.data, aes(x = response_error)) +
+    geom_histogram(bins = 50) +
+    labs(title ="All Recognition Ratings", x = "Response Error (radians)", y = "Frequency") +
     theme_classic()
   
-  rt <- ggplot(data = data, aes(x = source_RT)) + 
-    geom_histogram(bins = 30) + 
-    labs(title ="All Recognition Ratings", x = "Response Time (ms)", y = "Frequency") + 
+  rt <- ggplot(data = this.data, aes(x = source_RT)) +
+    geom_histogram(bins = 50) +
+    labs(title ="All Recognition Ratings", x = "Response Time (ms)", y = "Frequency") +
     theme_classic()
   
+}
+
+
   
   ## Save all users data
   # for(i in 1:length(completed.users)){
