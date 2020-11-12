@@ -2,8 +2,8 @@
 % TODO: Implement this as a switch in an overall fitting script rather than
 % have two separate folders.
 %% Open Data
-data = read_data();
-
+%data = read_data();
+load('REP.mat')
 recognised = data(:,2);
 unrecognised = data(:,1);
 
