@@ -290,15 +290,15 @@ def get_user_completion_handler():
 ## ================
 ##
 ## Here are the public endpoints for enduser (participant) use.
-@app.route("/entry", methods=["GET", "POST"])
-def entry():
-    """The entry point for users from SOMA, REP, or Amazon Mechanical Turk."""
+@app.route("/entry-rep", methods=["GET", "POST"])
+def entry_rep():
+    """The entry point for users from REP."""
     user_status = next_step_from_request(request).lower()
     status_is_error = user_status_is_error(user_status)
     if user_status not in ("invalidsid", "nosession", "notfound"):
         return redirect(url_for(".dispatch"))
     if request.method == "GET" or status_is_error:
-        response = make_response(render_template("entry.html",
+        response = make_response(render_template("entry-rep.html",
                                                  exp_name=EXPERIMENT_NAME,
                                                  msg=""))
         if user_status == "invalidsid":
@@ -320,7 +320,43 @@ def entry():
             response = redirect(url_for(".pls"))
             set_cookie(response, sid) # either do this or "after_this_request"
             return response
-        return render_template("entry.html",
+        return render_template("entry-rep.html",
+                               exp_name=EXPERIMENT_NAME,
+                               msg="Please enter a valid external ID")
+    return render_template("message.html",
+                           msg="Invalid request type.")
+
+@app.route("/entry-public", methods=["GET", "POST"])
+def entry_public():
+    """The entry point for users from Prolific."""
+    user_status = next_step_from_request(request).lower()
+    status_is_error = user_status_is_error(user_status)
+    if user_status not in ("invalidsid", "nosession", "notfound"):
+        return redirect(url_for(".dispatch"))
+    if request.method == "GET" or status_is_error:
+        response = make_response(render_template("entry-public.html",
+                                                 exp_name=EXPERIMENT_NAME,
+                                                 msg=""))
+        if user_status == "invalidsid":
+            unset_cookie(response)
+        return response
+    if request.method == "POST":
+        external_id = request.form.get("extid")
+        x_forwarded = request.headers.getlist("X-Forwarded-For")
+        user_agent = request.headers.get("User-Agent")
+        new_sid = generate_sid()
+        is_sim_present = get_best_user_allocation()
+        if datahandling.is_valid_external_id(external_id):
+            _, sid = datahandling.make_or_get_session(DATASTORE_CLIENT,
+                                                      new_sid,
+                                                      external_id,
+                                                      user_agent,
+                                                      x_forwarded,
+                                                      is_sim_present)
+            response = redirect(url_for(".pls"))
+            set_cookie(response, sid) # either do this or "after_this_request"
+            return response
+        return render_template("entry-public.html",
                                exp_name=EXPERIMENT_NAME,
                                msg="Please enter a valid external ID")
     return render_template("message.html",
