@@ -236,7 +236,7 @@ def update_resolution_data(datastore_client, session_id,
 def make_or_get_session(datastore_client,
                         session_id, external_id,
                         user_agent_string, xforwarded,
-                        is_sim_present):
+                        is_sim_present, is_rep):
     """Check whether an external ID is in the database. If it is, retrieve
     the session ID, and return it. Otherwise, construct a
     ClientSession entity and insert it into the datastore. This entity
@@ -278,6 +278,7 @@ def make_or_get_session(datastore_client,
             "ethics": False,
             "pls": False,
             "sim_present": is_sim_present,
+            "is_rep": is_rep,
             "events": [construct_event("user", "created")],
             "resolution": {"reported": "<unknown>",
                            "height": "<unknown>",
