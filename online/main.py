@@ -310,13 +310,15 @@ def entry_rep():
         user_agent = request.headers.get("User-Agent")
         new_sid = generate_sid()
         is_sim_present = get_best_user_allocation()
+        is_rep = 1 #Entry point tag
         if datahandling.is_valid_external_id(external_id):
             _, sid = datahandling.make_or_get_session(DATASTORE_CLIENT,
                                                       new_sid,
                                                       external_id,
                                                       user_agent,
                                                       x_forwarded,
-                                                      is_sim_present)
+                                                      is_sim_present,
+                                                      is_rep)
             response = redirect(url_for(".pls"))
             set_cookie(response, sid) # either do this or "after_this_request"
             return response
@@ -346,13 +348,15 @@ def entry_public():
         user_agent = request.headers.get("User-Agent")
         new_sid = generate_sid()
         is_sim_present = get_best_user_allocation()
+        is_rep = 0
         if datahandling.is_valid_external_id(external_id):
             _, sid = datahandling.make_or_get_session(DATASTORE_CLIENT,
                                                       new_sid,
                                                       external_id,
                                                       user_agent,
                                                       x_forwarded,
-                                                      is_sim_present)
+                                                      is_sim_present,
+                                                      is_rep)
             response = redirect(url_for(".pls"))
             set_cookie(response, sid) # either do this or "after_this_request"
             return response
@@ -529,7 +533,7 @@ def dispatch():
     if current_status == "notfound":
         ## Session not found. Clear the session ID and redirect back
         ## to the entry portal.
-        return redirect(url_for(".entry"))
+        return redirect(url_for(".entry-rep"))
     if current_status == "experiment":
         ## Assigned to an experimental slot. Send to the experiment
         ## presentation.
@@ -539,7 +543,59 @@ def dispatch():
         return redirect(url_for(".complete"))
     if current_status == "nosession":
         ## No session found. Send to entry portal.
-        return redirect(url_for(".entry"))
+        return redirect(url_for(".entry-rep"))
+    if current_status == "invalidsid":
+        ## Invalid session ID. Clear the session ID and have a
+        ## redirect back to the entry portal.
+        raise NotImplementedError("Need to implement SID clearing and redirect here")
+    if current_status == "unknownstate":
+        logging.error("Unknown user status (%s) from next_step_from_request",
+                      current_status)
+    logging.error("Unknown user status (%s) in dispatch",
+                  current_status)
+    return server_error("Unknown server error. Please contact " + \
+                        "administrator at " + \
+                        "<a href=\"mailto:lilburns@unimelb.edu.au\">" + \
+                        "lilburns@unimelb.edu.au</a>. " + \
+                        "Cite: SID = %s / user_status = %s" % (str(get_cookie(request)),
+                                                               current_status)), 500
+
+@app.route("/dispatch-public")
+def dispatch_public():
+    """This is the general user dispatch procedure that sends a user to
+    the default location (public version) based on the latest ClientSession entity in
+    the datastored associated with their session ID.
+
+    """
+    current_status = next_step_from_request(request).lower()
+    if current_status == "pls":
+        ## The user needs to acknowledge having sighted the Plain
+        ## Language Statement. Redirect there.
+        return redirect(url_for(".pls"))
+    if current_status == "ethics":
+        ## The user needs to agree to the ethics statement to proceed.
+        ## Redirect there.
+        return redirect(url_for(".ethics"))
+    if current_status == "error":
+        ## Some (unspecified) error. Send to error screen.
+        return server_error("Unknown server error. Please contact " + \
+                            "administrator at " + \
+                            "<a href=\"mailto:lilburns@unimelb.edu.au\">" + \
+                            "lilburns@unimelb.edu.au</a>."), 500
+    if current_status == "notfound":
+        ## Session not found. Clear the session ID and redirect back
+        ## to the entry portal.
+        return redirect(url_for(".entry-public"))
+    if current_status == "experiment":
+        ## Assigned to an experimental slot. Send to the experiment
+        ## presentation.
+        return redirect(url_for(".experiment"))
+    if current_status == "complete":
+        ## Experiment complete. Get the completion code.
+        return redirect(url_for(".complete"))
+    if current_status == "nosession":
+        ## No session found. Send to entry portal.
+        return redirect(url_for(".entry-public"))
     if current_status == "invalidsid":
         ## Invalid session ID. Clear the session ID and have a
         ## redirect back to the entry portal.
