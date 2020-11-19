@@ -113,19 +113,35 @@ all.data[all.data$recog_rating == 8,]$recog_rating <- 4
 all.data[all.data$recog_rating == 9,]$recog_rating <- 5
 all.data[all.data$recog_rating == 0,]$recog_rating <- 6
 
+# Save data as .csv file
+write.csv(all.data,"~/GitHub/sourcemem_online/analysis/rep_data.csv", row.names = FALSE)
     
 ## Plot histograms of response error and response times for this participant
   library(ggplot2)
 
 plot_participant <- function(p){
-  this.data <- all.data[all.data$participant == p,]
+  data <- all.data[all.data$participant == p,]
   
-  error <- ggplot(data = this.data, aes(x = response_error)) +
+  data$recog_band <- ifelse(data$recog_rating >= 0 & data$recog_rating <= 3, 'Unrecognized',
+                            ifelse(data$recog_rating >=4 & data$recog_rating <=5, 'Low',
+                                   ifelse(data$recog_rating ==6, 'High','N/A')))
+  
+  high_error <- ggplot(data = data[data$recog_band == 'High',], aes(x = response_error)) +
     geom_histogram(bins = 50) +
-    labs(title ="All Recognition Ratings", x = "Response Error (radians)", y = "Frequency") +
+    labs(title ="High Recognition Ratings", x = "Response Error (radians)", y = "Frequency") +
     theme_classic()
   
-  rt <- ggplot(data = this.data, aes(x = source_RT)) +
+  low_error <- ggplot(data = data[data$recog_band == 'Low',], aes(x = response_error)) +
+    geom_histogram(bins = 50) +
+    labs(title ="Low Recognition Ratings", x = "Response Error (radians)", y = "Frequency") +
+    theme_classic()
+  
+  unrecog_error <- ggplot(data = data[data$recog_band == 'Unrecognized',], aes(x = response_error)) +
+    geom_histogram(bins = 50) +
+    labs(title ="Unrecognized Recognition Ratings", x = "Response Error (radians)", y = "Frequency") +
+    theme_classic()
+  
+  rt <- ggplot(data = data, aes(x = source_RT)) +
     geom_histogram(bins = 50) +
     labs(title ="All Recognition Ratings", x = "Response Time (ms)", y = "Frequency") +
     theme_classic()

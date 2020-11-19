@@ -1,40 +1,43 @@
-function [ll,bic,Pred, Gstuff, penalty, pest_penalty] = fitdcircle4x(Pvar, Pfix, Sel, Data, n, badix, trace)
+function [ll,bic,Pred, Gstuff, penalty, pest_penalty] = fitmixture4x(Pvar, Pfix, Sel, Data, n, badix, trace)
 % ========================================================================
-% Circular diffusion with drift variability for Jason's source memory task
-
-% Assumes the eta components in the x and y directions are the
+% Circular diffusion with drift variability for Jason's source memory task.
+% Across-trial variability in criterion.
+% Mixture of memory based and guessing based process with different
+% criteria. Assumes the eta components in the x and y directions are the
 % same.
-
-%    [ll,bic,Pred] = fitdcircle3(Pvar, Pfix, Sel, Data)
-%    P = [v1a, v2a, v1b, v2b, eta1, eta2, a, Ter, st,sa]
-%          1    2    3    4    5      6   7   8   9   10
+%    [ll,bic,Pred] = fitmixture4x(Pvar, Pfix, Sel, Data)
+%    P = [v1a, v2a, v1b, v2b, eta1, eta2, a1, a2, pi1, pi2, Ter  st sa]
+%          1    2    3    4    5      6    7   8   9   10    11  12 13
+%    a1, a2 are criteria for memory and guessing process, pi1, pi2 are
+%    mixing proportions for long and short.
 %    'Data' is cell array structure created by <makelike>
 % ========================================================================
-name = 'FITDCIRCLE4x: ';
+name = 'FITMIXTURE4X: ';
 errmg1 = 'Incorrect number of parameters for model, exiting...';
 errmg2 = 'Incorrect length selector vector, exiting...';
-errmg3 = 'Data should be a 1 x 1 cell array...';
+errmg3 = 'Data should be a 1 x 2 cell array from <makelike>...';
 
 tmax = 5.1;
-nt = 301;
-np = 7; % Number of parameters
-n_sz_step =  11; % Criterion variability.
-% nlong = 320;
-% nshort = 360;
-epsx = 1e-9;
-cden = 0.05;  % Contaminant density.
-epsilon = 0.0001;
-% These used by Matlab version of vdcircle by not the C version.
-nw = 50;
+np = 9;
+nt = 300;
 h = tmax / nt;
-w = 2 * pi / nw;
 
+n_sz_step =  11; % Criterion variability.
+epsx = 1e-9;
+epsilon = 0.0001;
+cden = 0.05;  % Contaminant density.
+
+nw = 50;
+w = 2 * pi / nw;
+%h = tmax / 300;
 
 % Set manually if needed - 30/1/19
-%badix = 5;
+%This affects the leading edge of the model RT predictions. If criterion is
+%high, then badix should increase to avoid big discontinuity at quick RT
+%badix = 5; %default is 5
 
 
-if nargin < 8
+if nargin < 7
     trace = 0;
 end;
 lp = length(Pvar) + length(Pfix);
@@ -44,7 +47,7 @@ end
 if length(Sel) ~= np
     [name, errmg2], length(Sel), return;
 end
-if size(Data) ~= [1,1]
+if size(Data) ~= [1,2]
     [name, errmg3], size(Data), return;
 end
 
@@ -57,29 +60,39 @@ P(Sel==0) = Pfix;
 Ptemp = P;
 save Ptemp Ptemp
 
-v1 = P(1); % Mean drift in the x direction
-v2 = P(2); % Mean drift in the y direction
-eta1 = P(3); % Drift variability x
-eta2 = P(3); % Drift variability y
-a= P(4);
-ter = P(5);
-st = P(6);
-sa = P(7);
+v1 = P(1);
+v2 = P(2);
+eta = P(3);
+a1 = P(4);
+a2 = P(5);
+pmem = P(6);
+ter = P(7);
+st = P(8);
+sa = P(9);
 
+
+% Components of drift variability.
+eta1 = eta;
+eta2 = eta;
 sigma = 1.0;
 
-%% Bounds and Penalties
+% Putting this here so that pest_penalty has a value assigned to it when
+% boundaries return early
+pest_penalty(1,:) = P;
 
 % Cleaned up penalty calculation, hard and soft bounds - 30/1/19
 penalty = 0;
-
 % ---------------------------------------------------------------------------
-%   v1, v2, eta  a,  Ter  st sa]
+%   v1, v2, eta,   a1, a2, pi,    Ter  st, sa]
 % ---------------------------------------------------- ----------------------
-Ub= [ 3, 3, 3, 4.0, 1.0, 0.7, 3.0];
-Lb= [0, 0, 0, 0.5, -0.35, 0,  0];
-Pub=[ 2.5, 2.5, 3.5,  4.5, 0.8, 0.65, 2.8];
-Plb=[0, 0, 0,  0.7, -0.40, 0.01, 0];
+
+Ub= [ 7, 7,  1,  6, 6,  1,   1.0, 0.8, 0];
+Lb= [0, 0, 0,  0.3*ones(1,2), 0 , -0.5, 0, 0];
+
+Pub=[ 6, 6, 0.7, 5.5, 5.5, 1,  0.8, 0.7, 0];
+
+Plb=[0, 0, 0,  0.4*ones(1,2), 0.01, -0.4, 0, 0];
+
 Pred = cell(1,2);
 if any(P - Ub > 0) | any(Lb - P > 0)
     ll = 1e7 + ...
@@ -100,20 +113,23 @@ else
     end
 end
 
+% Saving the full vector of parameters and an indication of whether or not
+% a penalty was applied.
 pest_penalty(1,:) = P;
 pest_penalty(2,:) = max(P - Pub, 0).^2 + max(Plb - P, 0).^2;
 
-
 if sa < epsilon % No criterion variability
-    [t, gt, theta, ptheta, mt] = vdcircle300cls(P, tmax, badix);
-
+    % Memory-based process
+    %[t, gt, theta, ptheta, mt] = vdcircle300cls(P, tmax, badix);
+    [t, gt, theta, ptheta, mt] = vdcircle3cls(P, nw, h, tmax, badix);
+    
 else  % Criterion variability
     % Rectangular mass for starting point variability.
     U = ones(n_sz_step, 1);
     Rmass = U / n_sz_step ;
     Rstep = [-(n_sz_step-1)/2:(n_sz_step-1)/2]' / (n_sz_step-1);
-    A = a + Rstep * sa; %used to be sz
-    gt = zeros(nw+1, nt);
+    A = a1 + Rstep * sa;
+    gt = zeros(nw+1, nt+1);
     ptheta = zeros(1, nw+1);
     mt = zeros(1, nw+1);
     for i = 1:n_sz_step
@@ -126,10 +142,19 @@ else  % Criterion variability
     gt = gt / n_sz_step;
     mt = mt ./ ptheta;
     ptheta = ptheta / n_sz_step;
-end
+end;
+% Parameters for guessing process - zero drift, different criterion
+P_guess = [0, 0, 0, 0, sigma, a2];
+%[tc, gtc, thetac, pthetac, mtc] = vdcircle300cls(P_guess, tmax, badix);
+[tc, gtc, thetac, pthetac, mtc] = vdcircle3cls(P_guess, nw, h, tmax, badix);
+
+% Mixture of memory-based processes and guesses
+gt =  pmem * gt + (1 - pmem) * gtc;
+ptheta =  pmem * ptheta + (1 - pmem) * pthetac;
+
 % Filter zeros
 gt = max(gt, epsx);
-%plot(ta, gta);
+
 % Add nondecision times
 t = t + ter;
 
@@ -139,7 +164,7 @@ t = t + ter;
 h = t(2) - t(1);
 if st > 2 * h
     m = round(st/h);
-    n = length(ta);
+    n = length(t);
     fe = ones(1, m) / m;
     for i = 1:nw + 1
         gti = conv(gt(i, :), fe);
@@ -152,38 +177,35 @@ end
 
 % Interpolate in joint density to get likelihoods of each data point.
 % 1 is long, 2 is short
-l0 = interp2(angle, time, gt, Data{1}(:,2),Data{1}(:,1), 'linear');
+l0a = interp2(angle, time, gt,  Data(:,2),Data(:,1), 'linear');
 
-% Pass out joint density for use in quantile plot 8/4
+% Out of range values returned as NaN's. Treat as contaminants - set small.
+ixa = isnan(l0a);
+l0a(ixa) = cden;
+% Log-likelihoods.
+ll0a = log(l0a);
+
+
+
+% Pass out joint density for use in quantile plot
 Gstuff = cell(3,1);
 Gstuff{1,1} = t;
 Gstuff{2,1} = theta;
 Gstuff{3,1} = gt;
 
-% Out of range values returned as NaN's. Treat as contaminants - set small.
-ix = isnan(l0);
-l0(ix) = cden;
-
-% Log-likelihoods.
-ll0 = log(l0);
-
-% Minimize sum of minus LL's across two conditions.
-ll = sum(-ll0) + penalty;
-
-
-%% Resume with Fit statistics
+% Minimize sum of minus LL's across two conditions. Added penalty term 30/1/19
+ll = sum(-ll0a) + penalty;
 
 bic = 2 * ll + sum(Sel) * log(n);
-%    if trace
-%       Vala = [Data{1}, l0a, ixa]
-%       Valb = [Data{2}, l0b, ixb]
-%    end
+if trace > 1
+    Val = [Data, l0a, ixa]
+end
 
 % Predictions for plot
 gtm = sum(gt) * w;
-Pgt = [t;gtm];
-Pth = [theta;ptheta];
-Pred{1} = Pgt;
-Pred{2} = Pgtb;
+Pgta = [t;gtm];
+Ptha = [theta;ptheta];
+Pred{1} = Pgta;
+Pred{2} = Ptha;
 
-end
+

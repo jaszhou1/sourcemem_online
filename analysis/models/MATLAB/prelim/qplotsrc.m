@@ -1,4 +1,4 @@
-function qplotsrc(fitfunc, Pvar, Pfix, Sel, Data);
+function qplotsrc(Gstuff, Data);
 % ----------------------------------------------------------------------
 % Empirical and RT fitted RT quantiles as a function of theta.
 % for source memory experiment.
@@ -29,18 +29,14 @@ function qplotsrc(fitfunc, Pvar, Pfix, Sel, Data);
     massm = 1.0/nmass; % 10 bins
 
     % Generic fit function call.
-    [ll,bic,Pred,Gstuff] = fitfunc(Pvar, Pfix, Sel, Data)
+    %[ll,bic,Pred,Gstuff] = fitfunc(Pvar, Pfix, Sel, Data)
 
-    ta = Gstuff{1,1};
-    thetaa = Gstuff{2,1};
-    gtma = Gstuff{3,1};
-    tb = Gstuff{1,2};
-    thetab = Gstuff{2,2};
-    gtmb = Gstuff{3,2};
+    ta = Gstuff{1,1}{1,1};
+    thetaa = Gstuff{1,1}{2,1};
+    gtma = Gstuff{1,1}{3,1};
 
-    axhandle =setfig2;
-    qploti(co, axhandle(1), Data{1}, gtma, ta, thetaa, tmax, minrt, maxrt, 'Long', 0);
-    qploti(co, axhandle(2), Data{2}, gtma, ta, thetaa, tmax, minrt, maxrt, 'Short', 0);
+    axhandle =setfig1;
+    qploti(co, axhandle(1), Data{1,1}{1,2}, gtma, ta, thetaa, tmax, minrt, maxrt, '', 0);
 end
 
 function qploti(co, axi, Datai, Gt, T, thetai, tmax, minrt, maxrt, labi, do_xlabel)

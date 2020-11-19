@@ -12,11 +12,11 @@ setopt;
 %    P = [v1a, v2a, v1b, v2b, eta1, eta2, a, Ter, st, sa]
 %          1    2    3    4     5      6  7   8    9   10 
     
-v1 = normrnd(1,0.25); % Drift norm, low imageability, x
+v1 = normrnd(0.5,0.25); % Drift norm, low imageability, x
 v2 = 0;        % Drift norm, low imageability, y
 eta = normrnd(0.5,0.25);   % Drift variability, low
 a = normrnd(1.6,0.4);   % Criterion (same for both low and high)
-Ter = normrnd(0,0.05);     % Non decision time
+Ter = normrnd(0.1,0.05);     % Non decision time
 st = abs(normrnd(0.05,0.01));   % Non decision time variability
 sa = 0;     % Criterion variability
 

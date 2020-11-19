@@ -75,10 +75,10 @@ penalty = 0;
 % ---------------------------------------------------------------------------
 %   v1, v2, eta  a,  Ter  st sa]
 % ---------------------------------------------------- ----------------------
-Ub= [ 3, 3, 3, 4.0, 1.0, 0.7, 3.0];
-Lb= [0, 0, 0, 0.5, -0.35, 0,  0];
-Pub=[ 2.5, 2.5, 3.5,  4.5, 0.8, 0.65, 2.8];
-Plb=[0, 0, 0,  0.7, -0.40, 0.01, 0];
+Ub= [ 4, 3, 3, 7.0, 1.0, 0.7, 3.0];
+Lb= [0, 0, 0, 0.5, 0, 0,  0];
+Pub=[ 3.5, 2, 2.5,  6.5, 0.8, 0.65, 2.8];
+Plb=[0, 0, 0,  0.75, 0, 0.01, 0];
 Pred = cell(1,2);
 if any(P - Ub > 0) | any(Lb - P > 0)
     ll = 1e7 + ...
@@ -104,8 +104,9 @@ pest_penalty(2,:) = max(P - Pub, 0).^2 + max(Plb - P, 0).^2;
 
 
 if sa < epsilon % No criterion variability
-    [t, gt, theta, ptheta, mt] = vdcircle300cls(P, tmax, badix);
-
+    %     [t, gt, theta, ptheta, mt] = vdcircle300cls(P, tmax, badix);
+    [t, gt, theta, ptheta, mt] = vdcircle3cls(P, nw, h, tmax, badix);
+    
 else  % Criterion variability
     % Rectangular mass for starting point variability.
     U = ones(n_sz_step, 1);
@@ -138,7 +139,7 @@ t = t + ter;
 h = t(2) - t(1);
 if st > 2 * h
     m = round(st/h);
-    n = length(ta);
+    n = length(t);
     fe = ones(1, m) / m;
     for i = 1:nw + 1
         gti = conv(gt(i, :), fe);
@@ -151,7 +152,7 @@ end
 
 % Interpolate in joint density to get likelihoods of each data point.
 % 1 is long, 2 is short
-l0 = interp2(angle, time, gt, Data{1}(:,2),Data{1}(:,1), 'linear');
+l0 = interp2(angle, time, gt, Data(:,2),Data(:,1), 'linear');
 
 % Pass out joint density for use in quantile plot 8/4
 Gstuff = cell(3,1);
