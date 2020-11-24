@@ -626,3 +626,10 @@ def get_between_subject_allocation_from_session_id(datastore_client,
     session_entry = last_session_from_session_id(datastore_client,
                                                  session_id)
     return session_entry.get("sim_present")
+
+def get_entry_point_from_session_id(datastore_client,
+                                    session_id):
+    """Get the user entry point type from the session ID."""
+    session_entry = last_session_from_session_id(datastore_client,
+                                                 session_id)
+    return session_entry.get("is_rep")
