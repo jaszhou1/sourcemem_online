@@ -34,8 +34,8 @@ import datahandling
 EXPERIMENT_NAME = "Source Memory Experiment"
 
 ## Minimum rest period between sessions (in hours)
-MINIMUM_SESSION_REST_HRS = 20
-WAIT_UNTIL_TOMORROW_HRS = 10
+MINIMUM_SESSION_REST_HRS = 20 #20
+WAIT_UNTIL_TOMORROW_HRS = 10 #10
 
 ## Google Cloud Storage parameters.
 STORAGE_BUCKET_NAME = "jzhou-sourcemem-online"
@@ -159,7 +159,14 @@ def get_user_between_subjects_status(req):
     sid = get_cookie(req)
     return datahandling.get_between_subject_allocation_from_session_id(DATASTORE_CLIENT,
                                                                        sid)
+def get_user_entry_point(req):
+    """Get the entry point type of the user associated with the current
+    request.
 
+    """
+    sid = get_cookie(req)
+    return datahandling.get_entry_point_from_session_id(DATASTORE_CLIENT,
+                                                        sid)
 def num_users():
     """Get the number of user sessions."""
     return datahandling.num_user_sessions(DATASTORE_CLIENT, True), \
@@ -476,10 +483,26 @@ def session_complete():
     the entire experiment.
 
     """
+    user_is_rep = get_user_entry_point(request) # 1 = REP, 0 = Public
     next_step = next_step_from_request(request)
-    if next_step != "experiment":
-        return redirect(url_for(".dispatch"))
-    return render_template("session-complete.html")
+    if user_is_rep:
+        if next_step != "experiment": # No sessions remaining to complete?
+            return redirect(url_for(".dispatch"))
+        return render_template("session-complete.html")
+    else:
+        # Redirect participant to Prolific Completion URL (assigned by Prolific.co)
+        completed_sessions = datahandling.get_completed_experimental_sessions(DATASTORE_CLIENT, sid)
+            has_completed_first_session = "1" in completed_sessions.keys()
+            has_completed_second_session = "2" in completed_sessions.keys()
+            has_completed_third_session = "3" in completed_sessions.keys()
+            if has_completed_first_session and has_completed_second_session and has_completed_third_session:
+                return redirect("https://en.wikipedia.org/wiki/3")
+            elif has_completed_first_session and has_completed_second_session:
+                return redirect("https://en.wikipedia.org/wiki/2")
+            elif has_completed_first_session:
+                return redirect("https://en.wikipedia.org/wiki/1")
+            else
+                return redirect(url_for(".dispatch")) # Catch-all?
 
 @app.route("/submit-data/<int:sessionid>", methods=["POST"])
 def submit_data_handler(sessionid):
@@ -515,6 +538,7 @@ def dispatch():
     the datastored associated with their session ID.
 
     """
+    user_is_rep = get_user_entry_point(request) # 1 = REP, 0 = Public
     current_status = next_step_from_request(request).lower()
     if current_status == "pls":
         ## The user needs to acknowledge having sighted the Plain
@@ -530,72 +554,38 @@ def dispatch():
                             "administrator at " + \
                             "<a href=\"mailto:lilburns@unimelb.edu.au\">" + \
                             "lilburns@unimelb.edu.au</a>."), 500
-    if current_status == "notfound":
-        ## Session not found. Clear the session ID and redirect back
-        ## to the entry portal.
-        return redirect(url_for(".entry-rep"))
-    if current_status == "experiment":
-        ## Assigned to an experimental slot. Send to the experiment
-        ## presentation.
-        return redirect(url_for(".experiment"))
-    if current_status == "complete":
-        ## Experiment complete. Get the completion code.
-        return redirect(url_for(".complete"))
-    if current_status == "nosession":
-        ## No session found. Send to entry portal.
-        return redirect(url_for(".entry-rep"))
-    if current_status == "invalidsid":
-        ## Invalid session ID. Clear the session ID and have a
-        ## redirect back to the entry portal.
-        raise NotImplementedError("Need to implement SID clearing and redirect here")
-    if current_status == "unknownstate":
-        logging.error("Unknown user status (%s) from next_step_from_request",
-                      current_status)
-    logging.error("Unknown user status (%s) in dispatch",
-                  current_status)
-    return server_error("Unknown server error. Please contact " + \
-                        "administrator at " + \
-                        "<a href=\"mailto:lilburns@unimelb.edu.au\">" + \
-                        "lilburns@unimelb.edu.au</a>. " + \
-                        "Cite: SID = %s / user_status = %s" % (str(get_cookie(request)),
-                                                               current_status)), 500
-
-@app.route("/dispatch-public")
-def dispatch_public():
-    """This is the general user dispatch procedure that sends a user to
-    the default location (public version) based on the latest ClientSession entity in
-    the datastored associated with their session ID.
-
-    """
-    current_status = next_step_from_request(request).lower()
-    if current_status == "pls":
-        ## The user needs to acknowledge having sighted the Plain
-        ## Language Statement. Redirect there.
-        return redirect(url_for(".pls"))
-    if current_status == "ethics":
-        ## The user needs to agree to the ethics statement to proceed.
-        ## Redirect there.
-        return redirect(url_for(".ethics"))
-    if current_status == "error":
-        ## Some (unspecified) error. Send to error screen.
-        return server_error("Unknown server error. Please contact " + \
-                            "administrator at " + \
-                            "<a href=\"mailto:lilburns@unimelb.edu.au\">" + \
-                            "lilburns@unimelb.edu.au</a>."), 500
-    if current_status == "notfound":
-        ## Session not found. Clear the session ID and redirect back
-        ## to the entry portal.
-        return redirect(url_for(".entry-public"))
-    if current_status == "experiment":
-        ## Assigned to an experimental slot. Send to the experiment
-        ## presentation.
-        return redirect(url_for(".experiment"))
-    if current_status == "complete":
-        ## Experiment complete. Get the completion code.
-        return redirect(url_for(".complete"))
-    if current_status == "nosession":
-        ## No session found. Send to entry portal.
-        return redirect(url_for(".entry-public"))
+    if user_is_rep:
+        ## If the user came in through the REP entry point
+        if current_status == "notfound":
+            ## Session not found. Clear the session ID and redirect back
+            ## to the entry portal.
+            return redirect(url_for(".entry-rep"))
+        if current_status == "experiment":
+            ## Assigned to an experimental slot. Send to the experiment
+            ## presentation.
+            return redirect(url_for(".experiment"))
+        if current_status == "complete":
+            ## Experiment complete. Get the completion code.
+            return redirect(url_for(".complete"))
+        if current_status == "nosession":
+            ## No session found. Send to entry portal.
+            return redirect(url_for(".entry-rep"))
+    else:
+        ## If the user came in through the public entry point
+        if current_status == "notfound":
+            ## Session not found. Clear the session ID and redirect back
+            ## to the entry portal.
+            return redirect(url_for(".entry-public"))
+        if current_status == "experiment":
+            ## Assigned to an experimental slot. Send to the experiment
+            ## presentation.
+            return redirect(url_for(".experiment"))
+        if current_status == "complete":
+            ## Experiment complete. Get the completion code.
+            return redirect(url_for(".complete"))
+        if current_status == "nosession":
+            ## No session found. Send to entry portal.
+            return redirect(url_for(".entry-public"))
     if current_status == "invalidsid":
         ## Invalid session ID. Clear the session ID and have a
         ## redirect back to the entry portal.
