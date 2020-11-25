@@ -492,17 +492,17 @@ def session_complete():
     else:
         # Redirect participant to Prolific Completion URL (assigned by Prolific.co)
         completed_sessions = datahandling.get_completed_experimental_sessions(DATASTORE_CLIENT, sid)
-            has_completed_first_session = "1" in completed_sessions.keys()
-            has_completed_second_session = "2" in completed_sessions.keys()
-            has_completed_third_session = "3" in completed_sessions.keys()
-            if has_completed_first_session and has_completed_second_session and has_completed_third_session:
-                return redirect("https://en.wikipedia.org/wiki/3")
-            elif has_completed_first_session and has_completed_second_session:
-                return redirect("https://en.wikipedia.org/wiki/2")
-            elif has_completed_first_session:
-                return redirect("https://en.wikipedia.org/wiki/1")
-            else
-                return redirect(url_for(".dispatch")) # Catch-all?
+        has_completed_first_session = "1" in completed_sessions.keys()
+        has_completed_second_session = "2" in completed_sessions.keys()
+        has_completed_third_session = "3" in completed_sessions.keys()
+        if has_completed_first_session and has_completed_second_session and has_completed_third_session:
+            return redirect("https://en.wikipedia.org/wiki/3")
+        elif has_completed_first_session and has_completed_second_session:
+            return redirect("https://en.wikipedia.org/wiki/2")
+        elif has_completed_first_session:
+            return redirect("https://en.wikipedia.org/wiki/1")
+        else
+            return redirect(url_for(".dispatch")) # Catch-all?
 
 @app.route("/submit-data/<int:sessionid>", methods=["POST"])
 def submit_data_handler(sessionid):
