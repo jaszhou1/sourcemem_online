@@ -485,6 +485,7 @@ def session_complete():
     """
     user_is_rep = get_user_entry_point(request) # 1 = REP, 0 = Public
     next_step = next_step_from_request(request)
+    sid = get_cookie(request)
     if user_is_rep:
         if next_step != "experiment": # No sessions remaining to complete?
             return redirect(url_for(".dispatch"))
@@ -501,7 +502,7 @@ def session_complete():
             return redirect("https://en.wikipedia.org/wiki/2")
         elif has_completed_first_session:
             return redirect("https://en.wikipedia.org/wiki/1")
-        else
+        else:
             return redirect(url_for(".dispatch")) # Catch-all?
 
 @app.route("/submit-data/<int:sessionid>", methods=["POST"])
@@ -538,7 +539,6 @@ def dispatch():
     the datastored associated with their session ID.
 
     """
-    user_is_rep = get_user_entry_point(request) # 1 = REP, 0 = Public
     current_status = next_step_from_request(request).lower()
     if current_status == "pls":
         ## The user needs to acknowledge having sighted the Plain
@@ -554,38 +554,20 @@ def dispatch():
                             "administrator at " + \
                             "<a href=\"mailto:lilburns@unimelb.edu.au\">" + \
                             "lilburns@unimelb.edu.au</a>."), 500
-    if user_is_rep:
-        ## If the user came in through the REP entry point
-        if current_status == "notfound":
-            ## Session not found. Clear the session ID and redirect back
-            ## to the entry portal.
-            return redirect(url_for(".entry-rep"))
-        if current_status == "experiment":
-            ## Assigned to an experimental slot. Send to the experiment
-            ## presentation.
-            return redirect(url_for(".experiment"))
-        if current_status == "complete":
-            ## Experiment complete. Get the completion code.
-            return redirect(url_for(".complete"))
-        if current_status == "nosession":
-            ## No session found. Send to entry portal.
-            return redirect(url_for(".entry-rep"))
-    else:
-        ## If the user came in through the public entry point
-        if current_status == "notfound":
-            ## Session not found. Clear the session ID and redirect back
-            ## to the entry portal.
-            return redirect(url_for(".entry-public"))
-        if current_status == "experiment":
-            ## Assigned to an experimental slot. Send to the experiment
-            ## presentation.
-            return redirect(url_for(".experiment"))
-        if current_status == "complete":
-            ## Experiment complete. Get the completion code.
-            return redirect(url_for(".complete"))
-        if current_status == "nosession":
-            ## No session found. Send to entry portal.
-            return redirect(url_for(".entry-public"))
+    if current_status == "notfound":
+        ## Session not found. Clear the session ID and redirect back
+        ## to the entry portal.
+        return redirect(url_for(".entry-rep"))
+    if current_status == "experiment":
+        ## Assigned to an experimental slot. Send to the experiment
+        ## presentation.
+        return redirect(url_for(".experiment"))
+    if current_status == "complete":
+        ## Experiment complete. Get the completion code.
+        return redirect(url_for(".complete"))
+    if current_status == "nosession":
+        ## No session found. Send to entry portal.
+        return redirect(url_for(".entry-rep"))
     if current_status == "invalidsid":
         ## Invalid session ID. Clear the session ID and have a
         ## redirect back to the entry portal.
