@@ -297,6 +297,22 @@ def get_user_completion_handler():
 ## ================
 ##
 ## Here are the public endpoints for enduser (participant) use.
+
+@app.route("/entry-direct", methods=["GET", "POST"])
+def entry_direct():
+    """Ask client what entry point they should be getting with a button
+    and direct them to the appropriate route.
+    """
+    if request.method == "POST":
+        entry_value = request.form.get("entrypoint")
+        if entry_value == "rep":
+            redirect(url_for(".entry-rep"))
+            #return redirect("https://jzhou-sourcemem-online.uc.r.appspot.com/entry-rep") #Seems to redirect to dispatch if I use redirect(url_for(".entry-rep"))
+        else:
+            #return redirect("https://jzhou-sourcemem-online.uc.r.appspot.com/entry-public")
+            redirect(url_for(".entry-public"))
+    return render_template("entry-direct.html")
+
 @app.route("/entry-rep", methods=["GET", "POST"])
 def entry_rep():
     """The entry point for users from REP."""
@@ -557,7 +573,7 @@ def dispatch():
     if current_status == "notfound":
         ## Session not found. Clear the session ID and redirect back
         ## to the entry portal.
-        return redirect(url_for(".entry-rep"))
+        return redirect(url_for(".entry-direct"))
     if current_status == "experiment":
         ## Assigned to an experimental slot. Send to the experiment
         ## presentation.
@@ -567,7 +583,7 @@ def dispatch():
         return redirect(url_for(".complete"))
     if current_status == "nosession":
         ## No session found. Send to entry portal.
-        return redirect(url_for(".entry-rep"))
+        return redirect(url_for(".entry-direct"))
     if current_status == "invalidsid":
         ## Invalid session ID. Clear the session ID and have a
         ## redirect back to the entry portal.
