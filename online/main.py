@@ -513,11 +513,11 @@ def session_complete():
         has_completed_second_session = "2" in completed_sessions.keys()
         has_completed_third_session = "3" in completed_sessions.keys()
         if has_completed_first_session and has_completed_second_session and has_completed_third_session:
-            return redirect("https://en.wikipedia.org/wiki/3")
+            return redirect("https://app.prolific.co/submissions/complete?cc=492748A9")
         elif has_completed_first_session and has_completed_second_session:
-            return redirect("https://en.wikipedia.org/wiki/2")
+            return redirect("https://app.prolific.co/submissions/complete?cc=EA13C396")
         elif has_completed_first_session:
-            return redirect("https://en.wikipedia.org/wiki/1")
+            return redirect("https://app.prolific.co/submissions/complete?cc=20C47418")
         else:
             return redirect(url_for(".dispatch")) # Catch-all?
 
