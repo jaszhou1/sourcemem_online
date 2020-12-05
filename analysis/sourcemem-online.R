@@ -211,6 +211,12 @@ plot_participant <- function(p){
 plot_session <- function(p,s){
   
   data <- get_session(p,s)
+  
+  # Recode Confidence Ratings
+  data[data$recog_rating == 8,]$recog_rating <- 4
+  data[data$recog_rating == 9,]$recog_rating <- 5
+  data[data$recog_rating == 0,]$recog_rating <- 6
+  
   data$recog_band <- ifelse(data$recog_rating >= 0 & data$recog_rating <= 3, 'Unrecognized',
                             ifelse(data$recog_rating >=4 & data$recog_rating <=5, 'Low',
                                    ifelse(data$recog_rating ==6, 'High','N/A')))
@@ -243,6 +249,7 @@ plot_session <- function(p,s){
   print(high_error)
   print(error)
   print(rt)
+  return(data)
 }  
   ## Save all users data
   # for(i in 1:length(completed.users)){
