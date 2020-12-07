@@ -12,7 +12,7 @@
 SERVER.BASE.URL <- "https://jzhou-sourcemem-online.appspot.com"
 SERVER.PORT <- NULL
 SERVER.MASTER.API.KEY <- "zjFdXfQ64sgAVwQMx84IhzqzUPygpSguUkeLKLqQBIyxo8kP3yphBqF9ysd4IQsA" # <-- This needs to be in agreement with
-                                                                                            # whatever is on the server.
+# whatever is on the server.
 #####
 setwd("~/GitHub/sourcemem_online/analysis")
 library(ggplot2)
@@ -21,7 +21,7 @@ sessions <- c(1,2,3)
 
 ## Get the started users
 started.users <- get.started.users(SERVER.BASE.URL, SERVER.PORT,
-                                       SERVER.MASTER.API.KEY)
+                                   SERVER.MASTER.API.KEY)
 
 ## Get the completed users.
 completed.users <- get.completed.users(SERVER.BASE.URL, SERVER.PORT,
@@ -90,8 +90,117 @@ get_session <- function(p,s){
     data$valid_RT [i] <- (this.session.data$recall_trials[[index]]$num_fast_attempts == 0 &&
                             this.session.data$recall_trials[[index]]$num_slow_attempts == 0)
   }
+  
+  data$recog_band <- ifelse(data$recog_rating >= 1 & data$recog_rating <= 3, 'Unrecognized',
+                            ifelse(data$recog_rating >=8 & data$recog_rating <9, 'Low',
+                                   ifelse(data$recog_rating ==0, 'High','N/A')))
   return(data)
 }
+
+
+# Plot a particular session for a participant
+plot_session <- function(p,s){
+  
+  data <- get_session(p,s)
+  
+  high_error <- ggplot(data = data[data$recog_band == 'High',], aes(x = response_error)) +
+    geom_histogram(bins = 50) +
+    labs(title ="High Recognition Ratings", x = "Response Error (radians)", y = "Frequency") +
+    theme_classic()
+  
+  low_error <- ggplot(data = data[data$recog_band == 'Low',], aes(x = response_error)) +
+    geom_histogram(bins = 50) +
+    labs(title ="Low Recognition Ratings", x = "Response Error (radians)", y = "Frequency") +
+    theme_classic()
+  
+  unrecog_error <- ggplot(data = data[data$recog_band == 'Unrecognized',], aes(x = response_error)) +
+    geom_histogram(bins = 50) +
+    labs(title ="Unrecognized Recognition Ratings", x = "Response Error (radians)", y = "Frequency") +
+    theme_classic()
+  
+  error <- ggplot(data = data, aes(x = response_error)) +
+    geom_histogram(bins = 50) +
+    labs(title ="All Recognition Ratings", x = "Response Error (radians)", y = "Frequency") +
+    theme_classic()
+  
+  rt <- ggplot(data = data, aes(x = source_RT)) +
+    geom_histogram(bins = 50) +
+    labs(title ="All Recognition Ratings", x = "Response Time (ms)", y = "Frequency") +
+    theme_classic()
+  
+  print(high_error)
+  print(error)
+  print(rt)
+  return(data)
+}  
+
+## Plot histograms of response error and response times for all sessions for this participant
+
+plot_participant <- function(p){
+  this.user.data = data.frame()
+  for(s in 1:length(sessions)){
+    
+    this.session.data <- get_session(p,s)
+    # Bind sessions together
+    
+    this.user.data <- rbind(this.user.data, this.session.data)
+    
+    # Filter out invalid RTs
+    this.user.data <- this.user.data[this.user.data$valid_RT == TRUE,]
+  }
+  
+  
+  
+  # high_error <- ggplot(data = this.user.data[this.user.data$recog_band == 'High',], aes(x = response_error)) +
+  #   geom_histogram(bins = 50) +
+  #   labs(title ="High Recognition Ratings", x = "Response Error (radians)", y = "Frequency") +
+  #   theme_classic()
+  # 
+  # low_error <- ggplot(data = this.user.data[this.user.data$recog_band == 'Low',], aes(x = response_error)) +
+  #   geom_histogram(bins = 50) +
+  #   labs(title ="Low Recognition Ratings", x = "Response Error (radians)", y = "Frequency") +
+  #   theme_classic()
+  # 
+  # unrecog_error <- ggplot(data = this.user.data[this.user.data$recog_band == 'Unrecognized',], aes(x = response_error)) +
+  #   geom_histogram(bins = 50) +
+  #   labs(title ="Unrecognized Recognition Ratings", x = "Response Error (radians)", y = "Frequency") +
+  #   theme_classic()
+  
+  if (this.user.data$is_sequential){
+    cond = "Sequential"
+  } else {
+    cond = "Simultaneous"
+  }
+  
+  title <- sprintf("Participant ID: %.0f \nCondition: %s \nResponse Times", p, cond)
+  
+  rt <- ggplot(data = this.user.data[this.user.data$recog_band != 'Unrecognized',], aes(x = source_RT)) +
+    geom_histogram(bins = 50) +
+    labs(title = title, x = "Response Time (ms)", y = "Frequency") +
+    theme_classic()
+  
+  title <- sprintf("Participant ID: %.0f \nCondition: %s \nResponse Error", p, cond)
+  
+  error <- ggplot(data = this.user.data[this.user.data$recog_band != 'Unrecognized',], aes(x = response_error)) +
+    geom_histogram(bins = 50) +
+    labs(title = title, x = "Response Error (radians)", y = "Frequency") +
+    theme_classic()
+  
+  print(error)
+  print(rt)
+  
+  # Save Plots
+  
+  filename = sprintf('Subject_%.0f_Error.png', p)
+  ggsave(filename, plot = error)
+
+  filename = sprintf('Subject_%.0f_RT.png', p)
+  ggsave(filename, plot = rt)
+
+  return(this.user.data)
+}
+
+## Save all the data as one csv
 
 # all.data = data.frame()
 # # Participant Loop
@@ -175,86 +284,11 @@ get_session <- function(p,s){
 # 
 # # Save data as .csv file
 # write.csv(all.data,"~/GitHub/sourcemem_online/analysis/rep_data.csv", row.names = FALSE)
-    
-## Plot histograms of response error and response times for this participant
 
-plot_participant <- function(p){
-  data <- all.data[all.data$participant == p,]
-  
-  data$recog_band <- ifelse(data$recog_rating >= 0 & data$recog_rating <= 3, 'Unrecognized',
-                            ifelse(data$recog_rating >=4 & data$recog_rating <=5, 'Low',
-                                   ifelse(data$recog_rating ==6, 'High','N/A')))
-  
-  high_error <- ggplot(data = data[data$recog_band == 'High',], aes(x = response_error)) +
-    geom_histogram(bins = 50) +
-    labs(title ="High Recognition Ratings", x = "Response Error (radians)", y = "Frequency") +
-    theme_classic()
-  
-  low_error <- ggplot(data = data[data$recog_band == 'Low',], aes(x = response_error)) +
-    geom_histogram(bins = 50) +
-    labs(title ="Low Recognition Ratings", x = "Response Error (radians)", y = "Frequency") +
-    theme_classic()
-  
-  unrecog_error <- ggplot(data = data[data$recog_band == 'Unrecognized',], aes(x = response_error)) +
-    geom_histogram(bins = 50) +
-    labs(title ="Unrecognized Recognition Ratings", x = "Response Error (radians)", y = "Frequency") +
-    theme_classic()
-  
-  rt <- ggplot(data = data, aes(x = source_RT)) +
-    geom_histogram(bins = 50) +
-    labs(title ="All Recognition Ratings", x = "Response Time (ms)", y = "Frequency") +
-    theme_classic()
-  
-}
-
-
-plot_session <- function(p,s){
-  
-  data <- get_session(p,s)
-  
-  # Recode Confidence Ratings
-  data[data$recog_rating == 8,]$recog_rating <- 4
-  data[data$recog_rating == 9,]$recog_rating <- 5
-  data[data$recog_rating == 0,]$recog_rating <- 6
-  
-  data$recog_band <- ifelse(data$recog_rating >= 0 & data$recog_rating <= 3, 'Unrecognized',
-                            ifelse(data$recog_rating >=4 & data$recog_rating <=5, 'Low',
-                                   ifelse(data$recog_rating ==6, 'High','N/A')))
-  
-  high_error <- ggplot(data = data[data$recog_band == 'High',], aes(x = response_error)) +
-    geom_histogram(bins = 50) +
-    labs(title ="High Recognition Ratings", x = "Response Error (radians)", y = "Frequency") +
-    theme_classic()
-  
-  low_error <- ggplot(data = data[data$recog_band == 'Low',], aes(x = response_error)) +
-    geom_histogram(bins = 50) +
-    labs(title ="Low Recognition Ratings", x = "Response Error (radians)", y = "Frequency") +
-    theme_classic()
-  
-  unrecog_error <- ggplot(data = data[data$recog_band == 'Unrecognized',], aes(x = response_error)) +
-    geom_histogram(bins = 50) +
-    labs(title ="Unrecognized Recognition Ratings", x = "Response Error (radians)", y = "Frequency") +
-    theme_classic()
-  
-  error <- ggplot(data = data, aes(x = response_error)) +
-    geom_histogram(bins = 50) +
-    labs(title ="All Recognition Ratings", x = "Response Error (radians)", y = "Frequency") +
-    theme_classic()
-  
-  rt <- ggplot(data = data, aes(x = source_RT)) +
-    geom_histogram(bins = 50) +
-    labs(title ="All Recognition Ratings", x = "Response Time (ms)", y = "Frequency") +
-    theme_classic()
-  
-  print(high_error)
-  print(error)
-  print(rt)
-  return(data)
-}  
-  ## Save all users data
-  # for(i in 1:length(completed.users)){
-  #   this.user.data <- get.last.experiment.data.by.user.id(SERVER.BASE.URL, completed.users[[i]],
-  #                                                         SERVER.PORT, SERVER.MASTER.API.KEY)
-  #   filename = sprintf('Subject%s.RData', i)
-  #   save(this.user.data, file = filename)
-  # }
+## Save all users data
+# for(i in 1:length(completed.users)){
+#   this.user.data <- get.last.experiment.data.by.user.id(SERVER.BASE.URL, completed.users[[i]],
+#                                                         SERVER.PORT, SERVER.MASTER.API.KEY)
+#   filename = sprintf('Subject%s.RData', i)
+#   save(this.user.data, file = filename)
+# }
