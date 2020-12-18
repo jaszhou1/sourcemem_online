@@ -5,7 +5,7 @@ function [data] = read_data()
 %Read Data in
 % % J2 and J3 are auxiliary, tells you what the column headers are.
 % % MATLAB doesnt like having strings and numbers together
-[J1, J2, J3] = xlsread("rep_data.csv");
+[J1, J2, J3] = xlsread("sourcemem_data.csv");
 
 % Rescale RTs to be measured in s rather than ms for compatability with
 % MATLAB version of this code

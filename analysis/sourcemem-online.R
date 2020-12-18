@@ -94,6 +94,8 @@ get_session <- function(p,s){
   data$recog_band <- ifelse(data$recog_rating >= 1 & data$recog_rating <= 3, 'Unrecognized',
                             ifelse(data$recog_rating >=8 & data$recog_rating <9, 'Low',
                                    ifelse(data$recog_rating ==0, 'High','N/A')))
+  
+  data <- data[data$valid_RT == TRUE,]
   return(data)
 }
 
@@ -128,7 +130,7 @@ plot_session <- function(p,s){
     labs(title ="All Recognition Ratings", x = "Response Time (ms)", y = "Frequency") +
     theme_classic()
   
-  print(high_error)
+  #print(high_error)
   print(error)
   print(rt)
   return(data)

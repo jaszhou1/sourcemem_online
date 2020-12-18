@@ -1,39 +1,14 @@
 %% Open Data
-%data = read_data();
-load('REP.mat')
+data = read_data();
+%load('REP.mat')
 recognised = data(:,2);
 unrecognised = data(:,1);
 
 %Fit the data, generate predictions.
 
-participants = 1:5;
+participants = 1:length(data);
 
 nruns = 10; %Number of times I want to run fits on each participant to find the best fit
-
-% % %Empty array for Log Likelihoods and Predictions to live.
-VP_Recognised = cell(length(participants),9);
-for i = participants
-    ll = 1e7;
-    badix = 5;
-    % Multiple Starts
-    for j = 1:nruns
-        [llnew, bic, Pred, pest, Gstuff, penalty, pest_penalty] = Fit_VP(recognised{i},badix);
-        disp(i);
-        
-        if (llnew < ll && llnew > 0)
-            ll = llnew;
-            VP_Recognised{i,1} = ll;
-            VP_Recognised{i,2} = bic;
-            VP_Recognised{i,3} = Pred;
-            VP_Recognised{i,4} = pest;
-            VP_Recognised{i,5} = Gstuff;
-            VP_Recognised{i,6} = recognised {i};
-            VP_Recognised{i,7} = penalty;
-            VP_Recognised{i,8} = pest_penalty;
-            VP_Recognised{i,9} = data{i,3};
-        end
-    end
-end
 
 MX_Recognised = cell(length(participants),9);
 for i = participants
@@ -58,6 +33,32 @@ for i = participants
         end
     %end
 end
+
+% % %Empty array for Log Likelihoods and Predictions to live.
+VP_Recognised = cell(length(participants),9);
+for i = participants
+    ll = 1e7;
+    badix = 5;
+    % Multiple Starts
+    for j = 1:nruns
+        [llnew, bic, Pred, pest, Gstuff, penalty, pest_penalty] = Fit_VP(recognised{i},badix);
+        disp(i);
+        
+%        if (llnew < ll && llnew > 0)
+            ll = llnew;
+            VP_Recognised{i,1} = ll;
+            VP_Recognised{i,2} = bic;
+            VP_Recognised{i,3} = Pred;
+            VP_Recognised{i,4} = pest;
+            VP_Recognised{i,5} = Gstuff;
+            VP_Recognised{i,6} = recognised {i};
+            VP_Recognised{i,7} = penalty;
+            VP_Recognised{i,8} = pest_penalty;
+            VP_Recognised{i,9} = data{i,3};
+%        end
+    end
+end
+
 %% Plot Fits superimposed on Data, and save.
 % % Plot
 for i = participants
