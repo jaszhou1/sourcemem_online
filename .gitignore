@@ -9,6 +9,9 @@
 # Ignore R cruft
 *.Rhistory
 
+# Ignore images
+*.png
+
 # Ignore MATLAB, Octave crashes
 octave-workspace
 
