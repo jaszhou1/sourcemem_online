@@ -120,8 +120,8 @@ pest_penalty(2,:) = max(P - Pub, 0).^2 + max(Plb - P, 0).^2;
 
 if sa < epsilon % No criterion variability
     % Memory-based process
-    %[t, gt, theta, ptheta, mt] = vdcircle300cls(P, tmax, badix);
-    [t, gt, theta, ptheta, mt] = vdcircle3cls(P, nw, h, tmax, badix);
+    [t, gt, theta, ptheta, mt] = vdcircle300cls(P, tmax, badix);
+    %[t, gt, theta, ptheta, mt] = vdcircle3cls(P, nw, h, tmax, badix);
     
 else  % Criterion variability
     % Rectangular mass for starting point variability.

@@ -1,6 +1,6 @@
 %% Open Data
-data = read_data();
-%load('REP.mat')
+%data = read_data();
+load('REP.mat')
 recognised = data(:,2);
 unrecognised = data(:,1);
 
