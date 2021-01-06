@@ -9,7 +9,7 @@ unrecognised = data(:,1);
 
 participants = 1:length(data);
 
-nruns = 20; %Number of times I want to run fits on each participant to find the best fit
+nruns = 10; %Number of times I want to run fits on each participant to find the best fit
 
 MX_Recognised = cell(length(participants),9);
 for i = participants
