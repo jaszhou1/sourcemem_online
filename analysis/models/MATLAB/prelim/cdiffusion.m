@@ -1,6 +1,6 @@
 %% Open Data
-%data = read_data();
-load('REP.mat')
+data = read_data();
+%load('REP.mat')
 recognised = data(:,2);
 unrecognised = data(:,1);
 
@@ -61,17 +61,17 @@ end
 
 %% Plot Fits superimposed on Data, and save.
 % % Plot
-for i = participants
-    filename = ['Cont',num2str(i),'_',datestr(now,'dd_mm_yy_HH_MM'),'.png'];
-    fitplot(recognised {i}, VP_Recognised{i,3});
-    saveas(gcf,filename);
-    
-    filename = ['Thresh',num2str(i),'_',datestr(now,'dd_mm_yy_HH_MM'),'.png'];
-    fitplot(recognised {i}, MX_Recognised{i,3});
-    saveas(gcf,filename);
-    
-    close all
-end
+% for i = participants
+%     filename = ['Cont',num2str(i),'_',datestr(now,'dd_mm_yy_HH_MM'),'.png'];
+%     fitplot(recognised {i}, VP_Recognised{i,3});
+%     saveas(gcf,filename);
+%     
+%     filename = ['Thresh',num2str(i),'_',datestr(now,'dd_mm_yy_HH_MM'),'.png'];
+%     fitplot(recognised {i}, MX_Recognised{i,3});
+%     saveas(gcf,filename);
+%     
+%     close all
+% end
 
 %close all
 
@@ -81,19 +81,19 @@ filename = datestr(now,'yyyy_mm_dd_HH_MM');
 save(filename)
 
 filename = [datestr(now,'yyyy-mm-dd-HH-MM'),'_Cont','.csv'];
-abs_marginal_mat_to_csv(filename, 'Cont', VP_LL_Preds_Recognised);
+abs_marginal_mat_to_csv(filename, 'Cont', VP_Recognised);
 
 filename = [datestr(now,'yyyy-mm-dd-HH-MM'),'_Thresh','.csv'];
-abs_marginal_mat_to_csv(filename, 'Thresh', MX_LL_Preds_Recognised);
+abs_marginal_mat_to_csv(filename, 'Thresh', MX_Recognised);
 
-filename = [datestr(now,'yyyy-mm-dd-HH-MM'),'_Hybrid','.csv'];
-abs_marginal_mat_to_csv(filename, 'Hybrid', HY_LL_Preds_Recognised);
-
+% filename = [datestr(now,'yyyy-mm-dd-HH-MM'),'_Hybrid','.csv'];
+% abs_marginal_mat_to_csv(filename, 'Hybrid', HY_LL_Preds_Recognised);
+% 
 filename = [datestr(now,'yyyy-mm-dd-HH-MM'),'_Cont','_Joint','.csv'];
-abs_mat_to_csv(filename, 'Cont', VP_LL_Preds_Recognised);
+abs_mat_to_csv(filename, 'Cont', VP_Recognised);
 
 filename = [datestr(now,'yyyy-mm-dd-HH-MM'),'_Thresh','_Joint','.csv'];
-abs_mat_to_csv(filename, 'Thresh', MX_LL_Preds_Recognised);
-
-filename = [datestr(now,'yyyy-mm-dd-HH-MM'),'_Hybrid','_Joint','.csv'];
-abs_mat_to_csv(filename, 'Hybrid', HY_LL_Preds_Recognised);
+abs_mat_to_csv(filename, 'Thresh', MX_Recognised);
+% 
+% filename = [datestr(now,'yyyy-mm-dd-HH-MM'),'_Hybrid','_Joint','.csv'];
+% abs_mat_to_csv(filename, 'Hybrid', HY_LL_Preds_Recognised);
