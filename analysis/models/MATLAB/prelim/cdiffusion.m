@@ -1,6 +1,7 @@
 %% Open Data
-data = read_data();
+%data = read_data();
 %load('REP.mat')
+load('Prolific.mat');
 recognised = data(:,2);
 unrecognised = data(:,1);
 
