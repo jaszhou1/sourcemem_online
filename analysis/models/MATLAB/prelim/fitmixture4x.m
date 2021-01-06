@@ -119,7 +119,7 @@ pest_penalty(1,:) = P;
 pest_penalty(2,:) = max(P - Pub, 0).^2 + max(Plb - P, 0).^2;
 
 % Parameters for memory process
-P_mem = [v1, v2, eta1, eta2, sigma, a];
+P_mem = [v1, v2, eta1, eta2, sigma, a1];
 
 if sa < epsilon % No criterion variability
     % Memory-based process
