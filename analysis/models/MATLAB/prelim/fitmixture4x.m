@@ -118,10 +118,13 @@ end
 pest_penalty(1,:) = P;
 pest_penalty(2,:) = max(P - Pub, 0).^2 + max(Plb - P, 0).^2;
 
+% Parameters for memory process
+P_mem = [v1, v2, eta1, eta2, sigma, a];
+
 if sa < epsilon % No criterion variability
     % Memory-based process
-    [t, gt, theta, ptheta, mt] = vdcircle300cls(P, tmax, badix);
-    %[t, gt, theta, ptheta, mt] = vdcircle3cls(P, nw, h, tmax, badix);
+    [t, gt, theta, ptheta, mt] = vdcircle300cls(P_mem, tmax, badix);
+%     [t, gt, theta, ptheta, mt] = vdcircle3cls(P, nw, h, tmax, badix);
     
 else  % Criterion variability
     % Rectangular mass for starting point variability.
@@ -145,8 +148,8 @@ else  % Criterion variability
 end;
 % Parameters for guessing process - zero drift, different criterion
 P_guess = [0, 0, 0, 0, sigma, a2];
-%[tc, gtc, thetac, pthetac, mtc] = vdcircle300cls(P_guess, tmax, badix);
-[tc, gtc, thetac, pthetac, mtc] = vdcircle3cls(P_guess, nw, h, tmax, badix);
+[tc, gtc, thetac, pthetac, mtc] = vdcircle300cls(P_guess, tmax, badix);
+%[tc, gtc, thetac, pthetac, mtc] = vdcircle3cls(P_guess, nw, h, tmax, badix);
 
 % Mixture of memory-based processes and guesses
 gt =  pmem * gt + (1 - pmem) * gtc;
