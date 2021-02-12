@@ -12,7 +12,7 @@
 % the same number of observations. 
 
 % See Donkin et al, 2013 at https://dx.doi.org/10.1037
-[cont,thresh] = simulate_data(1);
+[cont,thresh] = simulate_data(0);
 
 %% Cross-fit Models
 % Use the same fitting procedures as those reported in the original
@@ -125,27 +125,27 @@ for i = participants
 end
 %% Plot Fits superimposed on Data, and save.
 % % Plot
- for i = participants
-    filename = ['Cont_Cont',num2str(i),'_',datestr(now,'dd_mm_yy_HH_MM'),'.png'];
-    fitplot(cont(i,:), VP_VP{i,3});
-    saveas(gcf,filename);
+% for i = participants
+%    filename = ['Cont_Cont',num2str(i),'_',datestr(now,'dd_mm_yy_HH_MM'),'.png'];
+%    fitplot(cont(i,:), VP_VP{i,3});
+%    saveas(gcf,filename);
     
-    filename = ['Cont_Thresh',num2str(i),'_',datestr(now,'dd_mm_yy_HH_MM'),'.png'];
-    fitplot(cont(i,:), VP_MX{i,3});
-    saveas(gcf,filename);
+%    filename = ['Cont_Thresh',num2str(i),'_',datestr(now,'dd_mm_yy_HH_MM'),'.png'];
+%    fitplot(cont(i,:), VP_MX{i,3});
+%    saveas(gcf,filename);
 
-    filename = ['Thresh_Cont',num2str(i),'_',datestr(now,'dd_mm_yy_HH_MM'),'.png'];
-    fitplot(thresh(i,:), MX_VP{i,3});
-    saveas(gcf,filename);
+%    filename = ['Thresh_Cont',num2str(i),'_',datestr(now,'dd_mm_yy_HH_MM'),'.png'];
+%    fitplot(thresh(i,:), MX_VP{i,3});
+%    saveas(gcf,filename);
     
-    filename = ['Thresh_Thresh',num2str(i),'_',datestr(now,'dd_mm_yy_HH_MM'),'.png'];
-    fitplot(thresh(i,:), MX_MX{i,3});
-    saveas(gcf,filename);
-    close all     
- end
+%    filename = ['Thresh_Thresh',num2str(i),'_',datestr(now,'dd_mm_yy_HH_MM'),'.png'];
+%    fitplot(thresh(i,:), MX_MX{i,3});
+%    saveas(gcf,filename);
+%    close all     
+% end
 
 %% Save 
 
 % Save MATLAB workspace
-filename = [datestr(now,'yyyy_mm_dd_HH_MM'),'_recovery'];
+filename = [datestr(now,'yyyy_mm_dd_HH_MM'),'_recovery_sim'];
 save(filename)
