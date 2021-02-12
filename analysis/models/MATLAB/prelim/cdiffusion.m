@@ -11,30 +11,6 @@ participants = 1:length(data);
 
 nruns = 20; %Number of times I want to run fits on each participant to find the best fit
 
-MX_Recognised = cell(length(participants),9);
-for i = participants
-    ll = 1e7;
-    badix = 5;
-    % Multiple Starts
-    for j = 1:nruns
-        [llnew, bic, Pred, pest, Gstuff, penalty, pest_penalty] = Fit_Mix(recognised{i},badix);
-        disp(i);
-        
-        if (llnew < ll && llnew > 0)
-            ll = llnew;
-            MX_Recognised{i,1} = ll;
-            MX_Recognised{i,2} = bic;
-            MX_Recognised{i,3} = Pred;
-            MX_Recognised{i,4} = pest;
-            MX_Recognised{i,5} = Gstuff;
-            MX_Recognised{i,6} = recognised {i};
-            MX_Recognised{i,7} = penalty;
-            MX_Recognised{i,8} = pest_penalty;
-            MX_Recognised{i,9} = data{i,3};
-        end
-    end
-end
-
 % % %Empty array for Log Likelihoods and Predictions to live.
 VP_Recognised = cell(length(participants),9);
 for i = participants
@@ -59,6 +35,31 @@ for i = participants
         end
     end
 end
+
+MX_Recognised = cell(length(participants),9);
+for i = participants
+    ll = 1e7;
+    badix = 5;
+    % Multiple Starts
+    for j = 1:nruns
+        [llnew, bic, Pred, pest, Gstuff, penalty, pest_penalty] = Fit_Mix(recognised{i},badix);
+        disp(i);
+        
+        if (llnew < ll && llnew > 0)
+            ll = llnew;
+            MX_Recognised{i,1} = ll;
+            MX_Recognised{i,2} = bic;
+            MX_Recognised{i,3} = Pred;
+            MX_Recognised{i,4} = pest;
+            MX_Recognised{i,5} = Gstuff;
+            MX_Recognised{i,6} = recognised {i};
+            MX_Recognised{i,7} = penalty;
+            MX_Recognised{i,8} = pest_penalty;
+            MX_Recognised{i,9} = data{i,3};
+        end
+    end
+end
+
 
 %% Plot Fits superimposed on Data, and save.
 % % Plot

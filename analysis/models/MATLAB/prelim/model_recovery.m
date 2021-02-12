@@ -17,7 +17,7 @@
 %% Cross-fit Models
 % Use the same fitting procedures as those reported in the original
 % manuscript to fit each model to the simulated datasets
-participants = [1,2,3,4,5,6,7,8,9,10,11,12,13,15,16,17,18,19,20];
+participants = 1:length(cont);
 nruns = 10;
 badix = 5;
 
@@ -33,7 +33,7 @@ for i = participants
     % Multiple Starts
     for j = 1:nruns
         [llnew, bic, Pred, pest, Gstuff, penalty, pest_penalty] = ...
-            Fit_VP(cont(i,:),badix);
+            Fit_VP(cont{i,2},badix);
   
         if (llnew < ll && llnew > 0)
             ll = llnew;
@@ -58,7 +58,7 @@ for i = participants
     ll = 1e7;
     for j=1:nruns
         [llnew, bic, Pred, pest, Gstuff,penalty, pest_penalty] =...
-            Fit_Mix(cont(i,:),badix);
+            Fit_Mix(cont{i,2},badix);
         
         if (llnew < ll && llnew > 0)
             ll = llnew;
@@ -83,7 +83,7 @@ for i = participants
     % Multiple Starts
     for j = 1:nruns
         [llnew, bic, Pred, pest, Gstuff, penalty, pest_penalty] = ...
-            Fit_VP(thresh(i,:),badix);
+            Fit_VP(thresh{i,2},badix);
   
         if (llnew < ll && llnew > 0)
             ll = llnew;
@@ -108,7 +108,7 @@ for i = participants
     ll = 1e7;
     for j=1:nruns
         [llnew, bic, Pred, pest, Gstuff,penalty, pest_penalty] =...
-            Fit_Mix(thresh(i,:),badix);
+            Fit_Mix(thresh{i,2},badix);
         
         if (llnew < ll && llnew > 0)
             ll = llnew;
