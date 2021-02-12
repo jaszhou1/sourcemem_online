@@ -1,4 +1,4 @@
-function fitplot(Data, Pred)
+function fitplot(Data, Pred, cond)
 % ========================================================================
 % Plot fitted values of circular diffusion model with drift variability.
 %     fitplot(Data, Pred)
@@ -24,7 +24,7 @@ set(gca, 'Ylim', [0, 1.5])
 xlabel('Response Error')
 ylabel('Probability density')
 % label(gca, .7, .9, 'Low');
-title('Low')
+title(cond)
 hold
 plot(theta, ptheta, 'Linewidth', 2);
 
@@ -34,7 +34,7 @@ histogram(Rt, 50, 'Normalization', 'pdf', 'BinLimits', [0,3.0]);
 xlabel('Response Time (s)')
 set(gca, 'Ylim', [0, 3.5])
 % label(gca, .7, .9, 'Low');
-title('Low')
+title(cond)
 hold
 ylabel('Probability density')
 plot(t, gtm, 'Linewidth', 2);

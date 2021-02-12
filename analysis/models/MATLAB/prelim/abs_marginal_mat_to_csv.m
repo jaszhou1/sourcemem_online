@@ -18,45 +18,13 @@ for i = 1:size(input_cells,1)
         continue
     end
     %Combine Conditions
-    data_cells{i,:} = data_cells{i,1}{1,2};
+    data_cells{i,:} = data_cells{i,1};
     
 %     %Make Absolute
 %     data_cells{i,1}(:,1) = abs(data_cells{i,1}(:,1));
 end
 
-
-
 model_cells = input_cells(:, 3);
-%empty array
-res = cell(length(input_cells),2);
-
-for i = 1:size(input_cells,1)
-    if isempty(model_cells{i, :})
-        continue
-    end
-    % Combine imageability conditions
-    res{i,1} = (model_cells{i,1}{1,1} + model_cells{i,1}{1,2})/2;
-    res{i,2} = (model_cells{i,1}{1,3} + model_cells{i,1}{1,4})/2;
-    
-    %  Make Absolute 
-    %res{i,3}(1,:) = res{i,2}(1,(ceil(length(res{1,2})/2):length(res{1,2})));
-    
-    %   zero
-    %res{i,3}(2,1) = res{i,2}(2,ceil(length(res{1,2})/2));
-    
-    % All other bins (plot is symmetric so just taking half the model predictions, can
-    % finish averaging model if we observe assymetry)
-%     z = 0;
-%     for j = 1:length(res{i,3})
-%         res{i,3}(2,j) = res{i,2}(2,(ceil(length(res{1,2})/2)+z));
-%         z = z+1;
-%     end
-end
-
-%Removing negative error
-% res(:,2)=[];
-model_cells = res;
-
 
 header_line = 'model_name, participant, is_model, is_theta, value, prob';
 fprintf(fp, [header_line '\n']);
@@ -66,19 +34,17 @@ n_observers = min(size(data_cells, 1), ...
     size(model_cells, 1));
 
 for i = 1:n_observers
-    %% There appears to be a strange observer without any data in them, so
+    %  There appears to be a strange observer without any data in them, so
     %  let's skip over anyone who doesn't seem to have data.
     if isempty(data_cells{i, :})
         continue
     end
     
-    %% Pooled imageability
-    
     %Get Phase angle densities
     data = data_cells{i,1};
     [ptheta, theta] = abs_kernel_theta(data);
     data_prob = [theta;ptheta];
-    model_prob = model_cells{i,2};
+    model_prob = model_cells{i,1}{1,2};
     
     %Data, angle
     for k = 1:size(data_prob,2)
@@ -104,7 +70,7 @@ for i = 1:n_observers
     data = data_cells{i,1};
     [prt, rt] = abs_kernel_rt(data);
     data_rt_prob = [rt;prt];
-    model_rt_prob = model_cells{i,1};
+    model_rt_prob = model_cells{i,1}{1,1};
     
     for k = 1:size(data_rt_prob,2)
         this_line = {model_string, num2str(i), 'false', 'false' ...

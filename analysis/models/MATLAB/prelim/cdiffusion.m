@@ -62,17 +62,24 @@ end
 
 %% Plot Fits superimposed on Data, and save.
 % % Plot
-% for i = participants
-%     filename = ['Cont',num2str(i),'_',datestr(now,'dd_mm_yy_HH_MM'),'.png'];
-%     fitplot(recognised {i}, VP_Recognised{i,3});
-%     saveas(gcf,filename);
-%     
-%     filename = ['Thresh',num2str(i),'_',datestr(now,'dd_mm_yy_HH_MM'),'.png'];
-%     fitplot(recognised {i}, MX_Recognised{i,3});
-%     saveas(gcf,filename);
-%     
-%     close all
-% end
+for i = participants
+    
+    if VP_Recognised{i,9}
+        cond = 'Sequential';
+    else
+        cond = 'Simultaneous';
+    end
+    
+    filename = ['Cont',num2str(i),'_',datestr(now,'dd_mm_yy_HH_MM'),'.png'];
+    fitplot(recognised {i}, VP_Recognised{i,3}, cond);
+    saveas(gcf,filename);
+    
+    filename = ['Thresh',num2str(i),'_',datestr(now,'dd_mm_yy_HH_MM'),'.png'];
+    fitplot(recognised {i}, MX_Recognised{i,3}, cond);
+    saveas(gcf,filename);
+    
+    close all
+end
 
 %close all
 

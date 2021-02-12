@@ -26,8 +26,6 @@ for i = 1:size(input_cells,1)
     if isempty(data_cells{i, :})
         continue
     end
-    %Combine Conditions
-    data_cells{i,:} = vertcat(data_cells{i,1}{1,2});
     
     %Make Absolute
     data_cells{i,1}(:,1) = abs(data_cells{i,1}(:,1));
