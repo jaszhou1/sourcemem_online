@@ -12,7 +12,7 @@
 % the same number of observations. 
 
 % See Donkin et al, 2013 at https://dx.doi.org/10.1037
-[cont,thresh] = simulate_data(0);
+[cont,thresh] = simulate_data(1);
 
 %% Cross-fit Models
 % Use the same fitting procedures as those reported in the original
@@ -147,5 +147,5 @@ end
 %% Save 
 
 % Save MATLAB workspace
-filename = [datestr(now,'yyyy_mm_dd_HH_MM'),'_recovery_sim'];
+filename = [datestr(now,'yyyy_mm_dd_HH_MM'),'_recovery_seq'];
 save(filename)
