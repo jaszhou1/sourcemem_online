@@ -48,7 +48,7 @@ get_session <- function(p,s){
   this.session.data <- get.session.data.by.user.id(SERVER.BASE.URL, p, s,
                                                    SERVER.PORT, SERVER.MASTER.API.KEY)
   ## Extract the required information for each stimuli across the trial types.
-  data <- data.frame(matrix(ncol=10,nrow=length(this.session.data$present_trials), dimnames=list(NULL, c("word", "is_sequential",
+  data <- data.frame(matrix(ncol=11,nrow=length(this.session.data$present_trials), dimnames=list(NULL, c("word", "is_sequential", "present_trial",
                                                                                                          "recog_rating","recog_RT","target_angle",
                                                                                                          "response_angle","response_error","source_RT", "valid_RT",
                                                                                                          "block"))))
@@ -58,6 +58,7 @@ get_session <- function(p,s){
   for(i in 1:length(this.session.data$present_trials)){
     data$word[i] <- this.session.data$present_trials[[i]]$target_word
     data$is_sequential[i] <- this.session.data$present_trials[[i]]$presentation_sequential
+    data$present_trial[i] <- this.session.data$present_trials[[i]]$trial
   }
   
   ## Function to sort through the scrambled blocks and find the index needed for extraction
@@ -273,7 +274,7 @@ save.all.data <- function(){
   all.data[all.data$recog_rating == 0,]$recog_rating <- 6
   
   # Save data as .csv file
-  write.csv(all.data,"~/GitHub/sourcemem_online/analysis/sourcemem_data_all_intrusions.csv", row.names = FALSE)
+  write.csv(all.data,"~/GitHub/sourcemem_online/analysis/sourcemem_data_all_intrusions_ptrials.csv", row.names = FALSE)
   
   ## Save all users data
   for(i in 1:length(completed.users)){
@@ -282,6 +283,7 @@ save.all.data <- function(){
     filename = sprintf('Subject%s.RData', i)
     save(this.user.data, file = filename)
   }
+  return(all.data)
 }
 
 
