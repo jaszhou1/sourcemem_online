@@ -14,7 +14,7 @@ SERVER.PORT <- NULL
 SERVER.MASTER.API.KEY <- "zjFdXfQ64sgAVwQMx84IhzqzUPygpSguUkeLKLqQBIyxo8kP3yphBqF9ysd4IQsA" # <-- This needs to be in agreement with
 # whatever is on the server.
 #####
-setwd("~/GitHub/sourcemem_online/analysis")
+setwd("~/git/sourcemem_online/analysis")
 library(ggplot2)
 source("access-data.R")
 sessions <- c(1,2,3)
@@ -285,7 +285,7 @@ plot_participant <- function(p){
 # all.data[all.data$recog_rating == 0,]$recog_rating <- 6
 # 
 # # Save data as .csv file
-# write.csv(all.data,"~/GitHub/sourcemem_online/analysis/rep_data.csv", row.names = FALSE)
+# write.csv(all.data,"~/git/sourcemem_online/analysis/rep_data.csv", row.names = FALSE)
 
 ## Save all users data
 # for(i in 1:length(completed.users)){

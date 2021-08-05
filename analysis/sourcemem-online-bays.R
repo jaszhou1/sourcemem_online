@@ -16,7 +16,7 @@ SERVER.PORT <- NULL
 SERVER.MASTER.API.KEY <- "zjFdXfQ64sgAVwQMx84IhzqzUPygpSguUkeLKLqQBIyxo8kP3yphBqF9ysd4IQsA" # <-- This needs to be in agreement with
 # whatever is on the server.
 #####
-setwd("~/GitHub/sourcemem_online/analysis")
+setwd("~/git/sourcemem_online/analysis")
 library(ggplot2)
 source("access-data.R")
 sessions <- c(1,2,3)
@@ -48,10 +48,10 @@ get_session <- function(p,s){
   this.session.data <- get.session.data.by.user.id(SERVER.BASE.URL, p, s,
                                                    SERVER.PORT, SERVER.MASTER.API.KEY)
   ## Extract the required information for each stimuli across the trial types.
-  data <- data.frame(matrix(ncol=11,nrow=length(this.session.data$present_trials), dimnames=list(NULL, c("word", "is_sequential", "present_trial",
+  data <- data.frame(matrix(ncol=12,nrow=length(this.session.data$present_trials), dimnames=list(NULL, c("word", "is_sequential", "present_trial",
                                                                                                          "recog_rating","recog_RT","target_angle",
                                                                                                          "response_angle","response_error","source_RT", "valid_RT",
-                                                                                                         "block"))))
+                                                                                                         "block", "session"))))
   ## Add a number of empty columns for intrusions that is equivalent to the number of trials per block -1 
   
   ## Extract presentation data
@@ -93,6 +93,7 @@ get_session <- function(p,s){
   for (i in 1:length(words)){
     index <- find_source_index(words[i],this.session.data$recall_trials)
     data$block[i] <- this.session.data$recall_trials[[index]]$block
+    data$session[i] <- this.session.data$session_number
     data$target_angle[i] <- this.session.data$recall_trials[[index]]$target_angle
     data$response_angle[i] <- this.session.data$recall_trials[[index]]$hitting_angle
     data$response_error[i] <- this.session.data$recall_trials[[index]]$angular_error
@@ -109,6 +110,10 @@ get_session <- function(p,s){
                             ifelse(data$recog_rating >=8 & data$recog_rating <=9, 'Low',
                                    ifelse(data$recog_rating ==0, 'High','N/A')))
   
+  # Convert the indexing to start at 1
+  data$block <- data$block + 1
+  data$present_trial <- data$present_trial + 1
+  
   # Assemble a list of intrusions for each trial, and append this to the data structure
   num_intrusions <- 9 # This is n-1 where n is number of trials per block
   
@@ -122,8 +127,16 @@ get_session <- function(p,s){
     intrusion_offset_labels[i] <- sprintf('intrusion_offset%i',i)
   }
   
+  lag_labels <- vector()
+  for (i in 1:num_intrusions){
+    lag_labels[i] <- sprintf('intrusion_lag_%i',i)
+  }
+  
   intrusions <- data.frame(matrix(ncol=9,nrow=125))
   colnames(intrusions) <- intrusion_labels
+  
+  intrusion_lags <- data.frame(matrix(ncol=9,nrow=125))
+  colnames(intrusion_lags) <- lag_labels
   
   intrusion_offsets <- data.frame(matrix(ncol=9,nrow=125))
   colnames(intrusion_offsets) <- intrusion_offset_labels
@@ -131,16 +144,20 @@ get_session <- function(p,s){
   for (i in 1:nrow(data)){
     this_block_data <- data[data$block == data$block[i],]
     # The possible intrusions are items in the same block as this trial, but do not have the same stimulus word
-    this_block_intrusions <- this_block_data[this_block_data$word != data$word[i],]$target_angle
-    this_intrusion_offsets <- angle_diff(data$target_angle[i], this_block_intrusions)
-    if (data$block[i] == -1){
-      this_block_intrusions <- c(this_block_intrusions, NA, NA, NA, NA, NA)
+    this_block_intrusions <- this_block_data[this_block_data$word != data$word[i],]
+    this_intrusions <- this_block_intrusions$target_angle
+    this_intrusion_offsets <- angle_diff(data$target_angle[i], this_intrusions)
+    this_intrusion_lags <- this_block_intrusions$present_trial - data$present_trial[i]
+    if (data$block[i] == 0){
+      this_intrusions <- c(this_intrusions, NA, NA, NA, NA, NA)
       this_intrusion_offsets <- c(this_intrusion_offsets, NA, NA, NA, NA, NA) # Filling up with NAs for practice block
+      this_intrusion_lags <- c(this_intrusion_lags, NA, NA, NA, NA, NA)
     }
-    intrusions[i,] <- this_block_intrusions
+    intrusions[i,] <- this_intrusions
     intrusion_offsets[i,] <- this_intrusion_offsets
+    intrusion_lags[i,] <- this_intrusion_lags
   }
-  data <- cbind(data,intrusions, intrusion_offsets)
+  data <- cbind(data,intrusions, intrusion_offsets, intrusion_lags)
   return(data)
 }
 
@@ -274,7 +291,7 @@ save.all.data <- function(){
   all.data[all.data$recog_rating == 0,]$recog_rating <- 6
   
   # Save data as .csv file
-  write.csv(all.data,"~/GitHub/sourcemem_online/analysis/sourcemem_data_all_intrusions_ptrials.csv", row.names = FALSE)
+  write.csv(all.data,"~/git/sourcemem_online/analysis/sourcemem_data.csv", row.names = FALSE)
   
   ## Save all users data
   for(i in 1:length(completed.users)){

@@ -16,7 +16,7 @@ SERVER.PORT <- NULL
 SERVER.MASTER.API.KEY <- "zjFdXfQ64sgAVwQMx84IhzqzUPygpSguUkeLKLqQBIyxo8kP3yphBqF9ysd4IQsA" # <-- This needs to be in agreement with
 # whatever is on the server.
 #####
-setwd("~/GitHub/sourcemem_online/analysis")
+setwd("~/git/sourcemem_online/analysis")
 library(ggplot2)
 source("access-data.R")
 sessions <- c(1,2,3)
@@ -117,18 +117,21 @@ get_session <- function(p,s){
   
   intrusion_labels <- vector()
   for (i in 1:num_intrusions){
-    intrusion_labels[i] <- sprintf('intrusion_%i',i)
+    intrusion_labels[i] <- sprintf('angle_%i',i)
   }
   
   intrusion_offset_labels <- vector()
   for (i in 1:num_intrusions){
-    intrusion_offset_labels[i] <- sprintf('intrusion_offset%i',i)
+    intrusion_offset_labels[i] <- sprintf('offset%i',i)
   }
   
   intrusions <- data.frame(matrix(ncol=10,nrow=125))
   colnames(intrusions) <- intrusion_labels
   
   intrusion_offsets <- data.frame(matrix(ncol=10,nrow=125))
+  colnames(intrusion_offsets) <- intrusion_offset_labels
+  
+  intrusion_lags <- data.frame(matrix(ncol=10,nrow=125))
   colnames(intrusion_offsets) <- intrusion_offset_labels
   
   for (i in 1:nrow(data)){
@@ -174,7 +177,7 @@ save.all.data <- function(){
   all.data[all.data$recog_rating == 0,]$recog_rating <- 6
   
   # Save data as .csv file
-  write.csv(all.data,"~/GitHub/sourcemem_online/analysis/sourcemem_data_sessions.csv", row.names = FALSE)
+  write.csv(all.data,"~/git/sourcemem_online/analysis/sourcemem_data_no_offset.csv", row.names = FALSE)
   
   
   return(all.data)
