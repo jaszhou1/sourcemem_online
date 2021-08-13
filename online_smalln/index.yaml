@@ -1,0 +1,36 @@
+indexes:
+- kind: ClientSession
+  properties:
+  - name: session_id
+  - name: created
+    direction: desc
+- kind: ClientSession
+  properties:
+  - name: session_id
+  - name: sim_present
+  - name: created
+    direction: desc
+- kind: ClientSession
+  properties:
+  - name: completed
+  - name: sim_present
+- kind: ClientSession
+  properties:
+  - name: started
+  - name: sim_present
+- kind: ExperimentalData
+  properties:
+  - name: user
+  - name: created
+    direction: desc
+- kind: ExperimentalData
+  properties:
+  - name: user
+  - name: session_number
+  - name: created
+    direction: desc
+- kind: ClientSession
+  properties:
+  - name: external_id
+  - name: created
+    direction: desc

@@ -1,0 +1,23 @@
+{% extends "main.html" %}
+{% block title %}Experiment Entry ({{ exp_name }}) - Vision and Attention Lab{% endblock %}
+{% block heading %}
+{{ exp_name }}
+{% endblock %}
+{% block content %}
+<p>
+  <b>This experiment is designed for Mozilla Firefox or Google
+    Chrome. Please use these browsers if available to complete this
+    experiment.</b>
+</p>
+<p>
+  By entering your participant ID below, you accept that a cookie will be stored
+  on your computer. University of Melbourne Students should use their student
+  number as their participant ID.
+</p>
+<div style="color: red; font-weight: bold">{{ msg }}</div>
+<form id="experiment-entry-point" method="POST" action="/entry-rep">
+  <label for="extid">Student number:</label>
+  <input type="text" id="extid" name="extid"><br><br>
+  <input type="submit" value="Submit">
+</form>
+{% endblock %}

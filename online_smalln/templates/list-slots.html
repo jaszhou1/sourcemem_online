@@ -1,0 +1,31 @@
+{% extends "main.html" %}
+{% block heading %}Experimental slot status{% endblock %}
+{% block content %}
+<table>
+  <thead>
+    <td>Slot status</td>
+    <td>#</td>
+  </thead>
+  {% for key, value in slot_status.items() %}
+  <tr class="{{ loop.cycle('odd', 'even') }}">
+    <td>{{ key }}</td>
+    <td>{{ value }}</td>
+  </tr>
+  {% endfor %}
+</table>
+
+<table>
+  <thead>
+    <td>ID</td>
+    <td>Created</td>
+    <td>Allocated</td>
+  </thead>
+  {% for slot in slots %}
+  <tr class="{{ loop.cycle('odd', 'even') }}">
+    <td>{{ slot.id_str }}</td>
+    <td>{{ slot.created }}</td>
+    <td>{{ slot.allocated }}</td>
+  </tr>
+  {% endfor %}
+</table>
+{% endblock %}
