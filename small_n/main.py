@@ -460,18 +460,7 @@ def experiment():
     has_completed_first_session = "1" in completed_sessions.keys()
     has_completed_second_session = "2" in completed_sessions.keys()
     has_completed_third_session = "3" in completed_sessions.keys()
-    has_completed_fourth_session = "4" in completed_sessions.keys()
-    has_completed_fifth_session = "5" in completed_sessions.keys()
-    has_completed_sixth_session = "6" in completed_sessions.keys()
-    has_completed_seventh_session = "7" in completed_sessions.keys()
-    has_completed_eigth_session = "8" in completed_sessions.keys()
-    has_completed_ninth_session = "9" in completed_sessions.keys()
-    has_completed_tenth_session = "10" in completed_sessions.keys()
-    if has_completed_first_session and has_completed_second_session and has_completed_third_session
-        and has_completed_fourth_session and has_completed_fifth_session and has_completed_sixth_session
-        and has_completed_seventh_session and has_completed_eigth_session and has_completed_ninth_session
-        and has_completed_tenth_session:
-        logging.warning("User completed all sessions in experiment handler")
+    if has_completed_first_session and has_completed_second_session and has_completed_third_session:
         logging.warning("User completed all sessions in experiment handler")
     return render_template("experiment-sim.html")
 
