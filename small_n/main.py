@@ -447,7 +447,7 @@ def experiment():
             time_text = ""
             if time_rested > ALMOST_READY:
                 time_text += "You are almost ready to begin the next" + \
-                    "session. Please wait at least one more hour."
+                    " session. Please wait at least one more hour."
             elif time_rested < datetime.timedelta(hours=WAIT_UNTIL_TOMORROW_HRS):
                 time_text += "You will need to wait until tomorrow before the next session."
             else:
@@ -499,11 +499,11 @@ def session_complete():
         has_completed_second_session = "2" in completed_sessions.keys()
         has_completed_third_session = "3" in completed_sessions.keys()
         if has_completed_first_session and has_completed_second_session and has_completed_third_session:
-            return redirect("https://app.prolific.co/submissions/complete?cc=492748A9")
+            return redirect("https://en.wikipedia.org/wiki/3")
         elif has_completed_first_session and has_completed_second_session:
-            return redirect("https://app.prolific.co/submissions/complete?cc=EA13C396")
+            return redirect("https://en.wikipedia.org/wiki/2")
         elif has_completed_first_session:
-            return redirect("https://app.prolific.co/submissions/complete?cc=20C47418")
+            return redirect("https://en.wikipedia.org/wiki/1")
         else:
             return redirect(url_for(".dispatch")) # Catch-all?
 
