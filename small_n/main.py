@@ -469,7 +469,25 @@ def experiment():
     has_completed_tenth_session = "10" in completed_sessions.keys()
     if has_completed_first_session and has_completed_second_session and has_completed_third_session and has_completed_fourth_session and has_completed_fifth_session and has_completed_sixth_session and has_completed_seventh_session and has_completed_eigth_session and has_completed_ninth_session and has_completed_tenth_session:
         logging.warning("User completed all sessions in experiment handler")
-    return render_template("experiment-sim.html")
+    if not has_completed_first_session:
+        return render_template("experiment-s1.html")
+    if not has_completed_second_session:
+        return render_template("experiment-s2.html")
+    if not has_completed_third_session:
+        return render_template("experiment-s3.html")
+    if not has_completed_fourth_session:
+        return render_template("experiment-s4.html")
+    if not has_completed_fifth_session:
+        return render_template("experiment-s5.html")
+    if not has_completed_sixth_session:
+        return render_template("experiment-s6.html")
+    if not has_completed_seventh_session:
+        return render_template("experiment-s7.html")
+    if not has_completed_eigth_session:
+        return render_template("experiment-s8.html")
+    if not has_completed_ninth_session:
+        return render_template("experiment-s9.html")
+    return render_template("experiment-s10.html")
 
 @app.route("/complete", methods=["GET"])
 def complete():
@@ -541,7 +559,7 @@ data, if valid, to the database."""
     if next_step_from_request(request).lower() != "experiment":
         return "Experimental data received from invalid user", 403
     sid = get_cookie(request)
-    if sessionid not in [1, 2, 3]:
+    if sessionid not in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]:
         return "Invalid session ID", 403
     is_valid, data_dict, data_str = \
         datahandling.convert_experimental_data(sid, request.json)
