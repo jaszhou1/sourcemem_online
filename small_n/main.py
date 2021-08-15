@@ -510,6 +510,7 @@ def session_complete():
     the entire experiment.
 
     """
+
     user_is_rep = get_user_entry_point(request) # 1 = REP, 0 = Public
     next_step = next_step_from_request(request)
     sid = get_cookie(request)
@@ -519,6 +520,7 @@ def session_complete():
         return render_template("session-complete.html")
     else:
         # Redirect participant to Prolific Completion URL (assigned by Prolific.co)
+        completed_sessions = datahandling.get_completed_experimental_sessions(DATASTORE_CLIENT, sid)
         has_completed_first_session = "1" in completed_sessions.keys()
         has_completed_second_session = "2" in completed_sessions.keys()
         has_completed_third_session = "3" in completed_sessions.keys()
