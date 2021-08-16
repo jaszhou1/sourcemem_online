@@ -532,25 +532,25 @@ def session_complete():
         has_completed_ninth_session = "9" in completed_sessions.keys()
         has_completed_tenth_session = "10" in completed_sessions.keys()
         if has_completed_first_session and has_completed_second_session and has_completed_third_session and has_completed_fourth_session and has_completed_fifth_session and has_completed_sixth_session and has_completed_seventh_session and has_completed_eigth_session and has_completed_ninth_session and has_completed_tenth_session:
-            return redirect("https://en.wikipedia.org/wiki/10")
+            return redirect("https://app.prolific.co/submissions/complete?cc=1F3FD55D")
         elif has_completed_first_session and has_completed_second_session and has_completed_third_session and has_completed_fourth_session and has_completed_fifth_session and has_completed_sixth_session and has_completed_seventh_session and has_completed_eigth_session and has_completed_ninth_session:
-            return redirect("https://en.wikipedia.org/wiki/9")
+            return redirect("https://app.prolific.co/submissions/complete?cc=5C13E144")
         elif has_completed_first_session and has_completed_second_session and has_completed_third_session and has_completed_fourth_session and has_completed_fifth_session and has_completed_sixth_session and has_completed_seventh_session and has_completed_eigth_session:
-            return redirect("https://en.wikipedia.org/wiki/8")
+            return redirect("https://app.prolific.co/submissions/complete?cc=75C12AC2")
         elif has_completed_first_session and has_completed_second_session and has_completed_third_session and has_completed_fourth_session and has_completed_fifth_session and has_completed_sixth_session and has_completed_seventh_session:
-            return redirect("https://en.wikipedia.org/wiki/7")
+            return redirect("https://app.prolific.co/submissions/complete?cc=7D122125")
         elif has_completed_first_session and has_completed_second_session and has_completed_third_session and has_completed_fourth_session and has_completed_fifth_session and has_completed_sixth_session:
-            return redirect("https://en.wikipedia.org/wiki/6")
+            return redirect("https://app.prolific.co/submissions/complete?cc=2FB75361")
         elif has_completed_first_session and has_completed_second_session and has_completed_third_session and has_completed_fourth_session and has_completed_fifth_session:
-            return redirect("https://en.wikipedia.org/wiki/5")
+            return redirect("https://app.prolific.co/submissions/complete?cc=39530C08")
         elif has_completed_first_session and has_completed_second_session and has_completed_third_session and has_completed_fourth_session:
-            return redirect("https://en.wikipedia.org/wiki/4")
+            return redirect("https://app.prolific.co/submissions/complete?cc=EDAA64B1")
         elif has_completed_first_session and has_completed_second_session and has_completed_third_session:
-            return redirect("https://en.wikipedia.org/wiki/3")
+            return redirect("https://app.prolific.co/submissions/complete?cc=60DD1460")
         elif has_completed_first_session and has_completed_second_session:
-            return redirect("https://en.wikipedia.org/wiki/2")
+            return redirect("https://app.prolific.co/submissions/complete?cc=24183B65")
         elif has_completed_first_session:
-            return redirect("https://en.wikipedia.org/wiki/1")
+            return redirect("https://app.prolific.co/submissions/complete?cc=235C5D3D")
         else:
             return redirect(url_for(".dispatch")) # Catch-all?
 
