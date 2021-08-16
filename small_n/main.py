@@ -34,8 +34,8 @@ import datahandling
 EXPERIMENT_NAME = "Source Memory Experiment"
 
 ## Minimum rest period between sessions (in hours)
-MINIMUM_SESSION_REST_HRS = 0 #20
-WAIT_UNTIL_TOMORROW_HRS = 0 #10
+MINIMUM_SESSION_REST_HRS = 20 #20
+WAIT_UNTIL_TOMORROW_HRS = 10 #10
 
 ## Google Cloud Storage parameters.
 STORAGE_BUCKET_NAME = "jzhou-sourcemem-online"
