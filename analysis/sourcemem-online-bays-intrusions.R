@@ -152,7 +152,7 @@ get_session <- function(p,s){
 
 ## Save all the data as one csv
 
-save.all.data <- function(){
+save.all.data <- function(filename){
   all.data = data.frame()
   # Participant Loop
   for(h in 1:length(completed.users)){
@@ -177,7 +177,7 @@ save.all.data <- function(){
   all.data[all.data$recog_rating == 0,]$recog_rating <- 6
   
   # Save data as .csv file
-  write.csv(all.data,"~/git/sourcemem_online/analysis/sourcemem_data_no_offset.csv", row.names = FALSE)
+  write.csv(all.data, filename, row.names = FALSE)
   
   
   return(all.data)
