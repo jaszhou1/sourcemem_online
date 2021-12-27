@@ -28,6 +28,7 @@ spatiotemporal_model <- function(params, data){
   zeta <- params[8]
   rho <- params[9]
   
+  tau <- 1-rho
   # Function to compute angular difference
   
   angle_diff <- function(a,b){
@@ -67,7 +68,7 @@ spatiotemporal_model <- function(params, data){
   }
   
   # Multiply the temporal similarities with corresponding spatial similarity to get a spatiotemporal gradient on each trial
-  intrusion_weights <- ((1-rho) * temporal_similarity) + (rho*spatial_similarity)
+  intrusion_weights <- (temporal_similarity^tau) * (spatial_similarity^rho)
   
   # Multiply all intrusion weights with overall intrusion scaling parameter
   intrusion_weights <- gamma*intrusion_weights
@@ -159,6 +160,8 @@ simulate_spatiotemporal_model <- function(participant, data, pest){
   zeta <- pest[[8]]
   rho <- pest[[9]]
   
+  tau <- 1-rho
+  
   shepard_similarity <- function(x, k){
     x <- exp(-k * x)
     return(x)
@@ -184,7 +187,7 @@ simulate_spatiotemporal_model <- function(participant, data, pest){
   }
   
   # Multiply the temporal similarities with corresponding spatial similarity to get a spatiotemporal gradient on each trial
-  intrusion_weights <- ((1-rho) * temporal_similarity) + (rho*spatial_similarity)
+  intrusion_weights <- (temporal_similarity^tau) * (spatial_similarity^rho)
   
   # Multiply all intrusion weights with overall intrusion scaling parameter
   intrusion_weights <- gamma*intrusion_weights

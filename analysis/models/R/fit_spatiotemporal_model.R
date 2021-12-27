@@ -49,17 +49,22 @@ get_aic <- function(L, n_params){
   return(aic)
 }
 
+# Append spatial distances to the dataset
+source('spatial_distance.R')
+data <- append_distances(data)
+
 #################################################################
 # Fitting Functions
 #################################################################
-run_fit <- function(participant){
+fit_spatiotemporal_model <- function(participant){
   
   # Assemble data that goes into the matrix
   this_data <- data[(data$participant == participant),]
   
   # Parameter Boundaries
-  lower <- c(0.1, 0.1, 0, 0, 0, 0, 0, 0)
-  upper <- c(50, 50, 2, 1, 5, 5, 1, 1)
+  # Parameter Boundaries
+  lower <- c(0.1, 0.1, 0, 0, 0, 0, 0, 0, 0)
+  upper <- c(50, 50, 2, 1, 5, 5, 1, 1, 1)
   
   # Set some starting parameters
   
@@ -75,60 +80,22 @@ run_fit <- function(participant){
   return(fit)
 }
 
-fit_all <- function(is_parallel){
-  if(missing(is_parallel)){
-    is_parallel <- TRUE
-  }
+fit_all <- function(){
   participants <- unique(data$participant)
-  
-  if(is_parallel == FALSE){
-    # Empty dataframe to store fitted parameters
-    res <- data.frame(
-      participant = integer(),
-      nLL = numeric(),
-      aic = numeric(),
-      prec1 = numeric(),
-      prec2 = numeric(),
-      gamma = numeric(),
-      kappa = numeric(),
-      lambda_b = numeric(),
-      lambda_f = numeric(),
-      beta = numeric(),
-      zeta = numeric(),
-      stringsAsFactors = FALSE
-    )
-    
-    for (i in 1:length(participants)){
-      optim <- run_fit(participants[i])
-      pest <- optim$bestmem
-      this_fit <- c(participants[i], optim$bestval, optim$aic, pest[1], pest[2], pest[3], pest[4], pest[5], pest[6], pest[7], pest[8])
-      res[nrow(res)+1, ] <- this_fit
-    }
-    
-    res$prec1 <- as.numeric(res$prec1)
-    res$prec2 <- as.numeric(res$prec2)
-    res$gamma <- as.numeric(res$gamma)
-    res$kappa <- as.numeric(res$kappa)
-    res$lambda_b <- as.numeric(res$lambda_b)
-    res$lambda_f <- as.numeric(res$lambda_f)
-    res$beta <- as.numeric(res$beta)
-    res$zeta <- as.numeric(res$zeta)
-  } else {
-    cl <- makeForkCluster((detectCores() - 1))
-    registerDoParallel(cl)
-    res = foreach (i = 1:length(participants),
-                   .combine = rbind) %dopar% {
-                     optim <- run_fit(participants[i])
-                     pest <- optim$bestmem
-                     this_fit <- c(participants[i], optim$bestval, optim$aic, pest[1:8])
-                     return(this_fit)
-                   }
-    colnames(res) <- c('participant','nLL','aic','prec1','prec2','gamma', 'kappa', 'lambda_b', "lambda_f", "beta", "zeta")
-    res <- as.data.frame(res)
-  }
-  write.csv(res, paste(toString(Sys.Date()), '_spatiotemporal_power_pest.csv', sep =""))
+  cl <- makeForkCluster((detectCores() - 1))
+  registerDoParallel(cl)
+  res = foreach (i = 1:length(participants),
+                 .combine = rbind) %dopar% {
+                   optim <- fit_spatiotemporal_model(participants[i])
+                   pest <- optim$bestmem
+                   this_fit <- c(participants[i], optim$bestval, optim$aic, pest[1:9])
+                   return(this_fit)
+                 }
+  colnames(res) <- c('participant','nLL','aic','prec1','prec2','gamma', 'kappa', 'lambda_b', "lambda_f", "beta", "zeta", "rho")
+  res <- as.data.frame(res)
+  write.csv(res, paste(toString(Sys.Date()), '_spatiotemporal_pest.csv', sep =""))
   sim_data <- simulate_dataset(data, res)
-  save(res, sim_data, file = paste(toString(Sys.Date()), '_spatiotemporal_power_pest.RData', sep =""))
+  save(res, sim_data, file = paste(toString(Sys.Date()), '_spatiotemporal.RData', sep =""))
   return(res)
 }
 
@@ -140,7 +107,7 @@ simulate_dataset <- function(data, res){
   participants <- unique(data$participant)
   for (i in participants){
     this_data <- data[data$participant == i,]
-    this_pest <- res[(res$participant == i),4:11]
+    this_pest <- res[(res$participant == i),4:12]
     this_simulated_data <- simulate_spatiotemporal_model(i, this_data, this_pest)
     simulated_data <- rbind(simulated_data, this_simulated_data)
   }
