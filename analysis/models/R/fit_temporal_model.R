@@ -68,7 +68,7 @@ fit_temporal <- function(participant){
   this_fit <- DEoptim(temporal_model, lower, upper, control = DEoptim.control(itermax = 200), this_data)
   
   # Calculate aic
-  aic <- get_aic(this_fit$optim$bestval, nrow(this_data), length(upper))
+  aic <- get_aic(this_fit$optim$bestval, length(upper))
   this_fit$optim$aic<-aic
   fit <- this_fit$optim
   # Pass out best fitting parameters
