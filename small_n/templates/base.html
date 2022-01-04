@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />    
+    <meta charset="utf-8" />
+    {% block head_css %}
+      <link href="/static/css/base.css" rel="stylesheet" type="text/css" />
+    {% endblock %}
+    {% block head_js %}
+    {% endblock %}
+    <title>{% block title %}Vision and Attention Lab{% endblock %}</title>
+  </head>
+  <body>
+    {% block main %}
+    {% endblock %}
+    {% block postbody_js %}
+    {% endblock %}
+  </body>
+</html>

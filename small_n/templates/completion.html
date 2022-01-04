@@ -1,0 +1,39 @@
+{% extends "main.html" %}
+{% block title %}Completion Code - Vision and Attention Lab{% endblock %}
+{% block heading %}{% if completion_code %}Thank you{% else %}Missing completion code{% endif %}{% endblock %}
+{% block content %}
+{% if completion_code %}
+<div>Thank you for completing the experiment. Please submit the
+  following completion code to receive REP credit:
+</div>
+<div style="border: 1px dashed #ccc; padding: 0.5em; margin: 0.5em; font-size: 2em; font-family: monospace; text-align: center;">
+  {{ completion_code }}
+</div>
+<p>
+  Thank you for participating in a project on decision-making in source memory.
+  This research aimed to investigate the nature of how people
+  remember the context in which items are encountered. In particular, we are
+  interested in whether memory for context is "all or nothing", or if memory
+  precision varies continuously.
+</p>
+<p>
+  You were asked to study a list of words and memorise the words and the
+  location of those words around a circle. Each word represented an item,
+  and each location represented the contextual information for that item.
+</p>
+<p>
+  Although the experiment can be quite difficult and repetitive at times, we hope
+  that in undertaking the experiment, you were able to reflect on how these different
+  parts of memory might interact when we retrieve information from memory.
+</p>
+<p>
+  This research has been cleared by the Human Research Ethics Committee (HREC 1749270.3).
+  If you have any concerns about this project please contact the Executive Officer,
+  Human Research Ethics, The University of Melbourne (Tel: 8344 2073; Fax: 9347 6739).
+</p>
+{% else %}
+Unfortunately no completion code was found for your user profile. If you have
+finished the experiment and believe this is in error, please contact
+<a href="mailto:lilburns@unimelb.edu.au">lilburns@unimelb.edu.au</a>.
+{% endif %}
+{% endblock %}

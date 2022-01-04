@@ -1,0 +1,21 @@
+{% extends "main.html" %}
+{% block title %}Entrypoint Director ({{ exp_name }}) - Vision and Attention Lab{% endblock %}
+{% block heading %}
+{{ exp_name }}
+{% endblock %}
+{% block content %}
+<div>
+  <p>Please indicate which participant recruitment system you were directed to this page from</p>
+</div>
+<div>
+  <form id="ethics-form" method="POST" action="/ethics">
+    <input type="radio" id="rep" name="entrypoint" value="rep">
+    <label for="rep">The University of Melbourne Research Experience Program (REP)</label><br>
+    <input type="radio" id="prolific" name="entrypoint" value="prolific">
+    <label for="prolific">Prolific</label><br>
+    <input type="radio" id="mturk" name="entrypoint" value="mturk">
+    <label for="prolific">Amazon Mechanical Turk (MTurk)</label><br>
+    <input type="submit" value="Submit">
+  </form>
+</div>
+{% endblock %}

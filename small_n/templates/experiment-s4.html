@@ -1,0 +1,509 @@
+{% extends "base.html" %}
+{% block title %}{{ exp_name }} - Vision and Attention Lab{% endblock %}
+{% block head_css %}
+<link href="static/css/jspsych.css" rel="stylesheet" type="text/css" />
+<link href="static/css/custom.css" rel="stylesheet" type="text/css" />
+{% endblock %}
+{% block head_js %}
+<script src="static/js/jspsych.js" type="text/javascript"></script>
+<script src="static/js/jspsych-contmemory-present.js" type="text/javascript"></script>
+<script src="static/js/jspsych-math-distractor.js" type="text/javascript"></script>
+<script src="static/js/jspsych-call-function.js" type="text/javascript"></script>
+<script src="static/js/jspsych-contmemory-recall.js" type="text/javascript"></script>
+<script src="static/js/jspsych-html-keyboard-response.js" type="text/javascript"></script>
+<script src="static/stimuli/wordpool.js" type="text/javascript"></script>
+{% endblock %}
+{% block main %}
+{% endblock %}
+{% block postbody_js %}
+<script type="text/javascript">
+
+// SOURCE MEMORY EXPERIMENT
+// Online (jspsych) version of Jason Zhou's second PhD experiment
+
+// Simon Lilburn <lilburns AT unimelb DOT edu DOT au>
+// Jason Zhou <jasonz1 AT student DOT unimelb DOT edu DOT au>
+
+  /* - - - - PARAMETERS - - - - */
+  var num_blocks = 12;// Subject to pilot testing for session timing
+  var num_trials = 10; // Subject to pilot testing for session timing
+  var num_stim = num_blocks * num_trials; // Total number of words needed for the session
+  var num_foil = num_stim; // Number of foil words for the recognition task
+  var num_prac = Math.round(num_trials/2); // Number of practice trials
+
+  // Timing
+  var isi = 250; // Inter-stimulus interval
+  var post_trial = 750;
+  var maths_time = 30000;
+
+
+  /* - - - - INSTRUCTIONS - - - - */
+
+  // Welcome message
+  var welcome = {
+    type: "html-keyboard-response",
+    stimulus: '<p style = "colour:white">Welcome to the experiment. Press any key to begin.</p>'
+  };
+
+  var instructions = {
+    type: "html-keyboard-response",
+    stimulus: '<p style = "colour:white"> This experiment is made up of 14 blocks. In each block you will be asked to complete four steps:<br><br> (1) STUDY: Study a series of words and locations<br>(2) MATH: Complete a series of math problems<br>(3) RECOGNITION: Rate your confidence that words were presented in the STUDY step <br> (4) SOURCE: Reproduce the locations of words that were studied in (1) <br><br> Press any key to contiue.</p>'
+  };
+
+  var instructions_practice_start = {
+    type: "html-keyboard-response",
+    stimulus: '<p style = "colour:white"> You will now have the chance to familiarize yourself with the task by completing a practice block. <br><br> Before each step in the practice block, you will be shown detailed instructions for that step. <br><br> Press any key to begin the practice block.</p>'
+  };
+
+  var instructions_study = {
+    type: "html-keyboard-response",
+    stimulus: '<p style = "colour:white"> STEP 1: STUDY <br><br> You will first be shown a series of words located along a circle. After each word, you will be asked to confirm you saw its location by moving your cursor from the center of the circle to the location. <br><br> While you are being shown the word, there will be a small dot in the middle of the screen. Please keep your cursor within this dot until your response. The dot will turn into a small cross when you are to make your response.<br><br> Press any key to contiue. </p>'
+  };
+
+  var instructions_math = {
+    type: "html-keyboard-response",
+    stimulus: '<p style = "colour:white"> STEP 2: MATH <br><br> You will now be shown a series of math problems of the form A + B + C = D, where A, B, C, and D are numbers. You will be asked whether D is the true sum of these numbers, pressing "1" for TRUE and "0" for FALSE. Try to perform these math problems as quickly and accurately as possible. <br><br> Press any key to continue.</p>'
+  };
+
+  var instructions_recog = {
+    type: "html-keyboard-response",
+    stimulus: '<p style = "colour:white"> STEP 3: RECOGNITION <br><br> You will now be asked to use number keys on your keyboard to rate a list on words on how confident you are that they were in the study list. <br><br> The numbers 1, 2, and 3 mean that the item was NOT on the list (a NEW word), with 1 meaning you are certain it is a new word. <br><br>The numbers 8, 9, and 0 mean you are sure it was on the list (an OLD word), with 0 meaning you are certain it is an old word. <br><br> Press any key to continue. </p>'
+  };
+
+  var instructions_source = {
+    type: "html-keyboard-response",
+    stimulus: '<p style = "colour:white"> STEP 4: SOURCE <br><br> You will now be shown the words that were studied. Please use your cursor to reproduce the locations that each of the words were presented in during the study phase. <br><br> Please wait until the dot in the middle of the screen turns into a cross before you make your response. <br><br> Press any key to continue.</p>'
+  };
+
+  var instructions_practice_end = {
+    type: "html-keyboard-response",
+    stimulus: '<p style = "colour:white"> You have now completed the practice block. <br><br> The experimental blocks to follow will be longer than the practice block. <br><br> Press any key to begin the experiment.</p>'
+  };
+
+  // End message
+  var ending_1 = {
+      type: "html-keyboard-response",
+      stimulus: '<p id="inst">You have now completed the study. Please press any key.</p>'
+  };
+
+  var ending_2 = {
+      type: "html-keyboard-response",
+      stimulus: '<p>You will now be redirected to Prolific/mTurk to recieve compensation for your participation. <br><br> If you are a University of Melbourne student, you will receive a completion code that you can return to the experimenter to receive compensation. <br><br> Press any key to continue.</p>'
+  };
+
+  /* - - - - STIMULI - - - - */
+
+  // Shuffle wordpool
+  wordlist = jsPsych.randomization.shuffle(wordpool);
+  stim_words = wordlist.slice(0,num_stim) // Assign words as stimuli
+  foil_words = wordlist.slice(num_stim, num_stim + num_foil) // Assign words unused as stimuli as foils
+
+  // Practice words
+  prac_stim_words = wordlist.slice(num_stim + num_foil, num_stim + num_foil + num_prac);
+  prac_foil_words = wordlist.slice(num_stim + num_foil + num_prac, num_stim + num_foil + 2*num_prac);
+
+  // Function to generate a random angle between 0 and 2*pi
+  var stim_angles = [];
+  var prac_stim_angles = [];
+  function getRandomAng(max) {
+    return Math.random() * max;
+  }
+
+  // Populate an array of same length as word stimuli with random angles
+  for (i = 0; i < stim_words.length; i++){
+    stim_angles[i] = getRandomAng(2*Math.PI)
+  }
+
+  for (i = 0; i < prac_stim_words.length; i++){
+    prac_stim_angles[i] = getRandomAng(2*Math.PI)
+  }
+
+
+  /* - - - - GENERATE DESIGN - - - - */
+
+  //Function to shuffle stimuli (Fisher-Yates)
+  function shuffle(originalArray){
+    // Added this line, otherwise it shuffles the encode list, rather than just returning a new array
+    var array = [].concat(originalArray);
+    var currentIndex = array.length, temporaryValue, randomIndex;
+
+    // While there remain elements to shuffle...
+    while (0 !== currentIndex) {
+
+      // Pick a remaining element...
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex -= 1;
+
+      // And swap it with the current element.
+      temporaryValue = array[currentIndex];
+      array[currentIndex] = array[randomIndex];
+      array[randomIndex] = temporaryValue;
+    }
+    return array;
+  }
+
+  // Generate a practice block
+  // Encode
+   var prac_encode_list = [];
+   for (j = 0; j <num_prac; j++) {
+     prac_encode_list[j] = {word: prac_stim_words[j],
+                       angle: prac_stim_angles[j]};
+   }
+   // Recognition
+   var prac_recog_list = [];
+   for (j = 0; j <num_prac; j++) {
+     prac_recog_list[j] = {word: prac_foil_words[j],
+                       angle: "N/A"};
+   }
+   prac_recog_list = prac_recog_list.concat(prac_encode_list);
+   prac_recog_list = shuffle(prac_recog_list);
+
+   // Source
+   var prac_source_list = [];
+   prac_source_list = shuffle(prac_encode_list);
+
+
+  // Generate experiment
+  //Generate encode list
+  var encode_list = []; // Empty array for all stimuli to go into
+  for (i = 0; i < num_blocks; i++) {
+    word_offset = i * num_trials
+
+    this_block_words = stim_words.slice(word_offset, word_offset + num_trials)
+    this_block_angles = stim_angles.slice(word_offset, word_offset + num_trials)
+    var this_block = [] ;
+    for (j = 0; j <num_trials; j++) {
+      this_block[j] = {word: this_block_words[j],
+                        angle: this_block_angles[j]};
+    }
+    encode_list[i] = this_block;
+  }
+
+
+  //Append foils to encode list..
+  var recog_list = [];
+
+  for (i = 0; i < num_blocks; i++) {
+    word_offset = i * num_trials
+
+    this_block_foil_words = foil_words.slice(word_offset, word_offset + num_trials)
+    var this_block_foil = [] ;
+    for (j = 0; j <num_trials; j++) {
+      this_block_foil[j] = {word: this_block_foil_words[j], // Not strictly necessary, but treating foils the same as stimuli for consistent indexing
+                        angle: "N/A"};
+    }
+    recog_list[i] = this_block_foil.concat(encode_list[i]);
+  }
+
+  // ...and shuffle to create recognition list
+  for (i = 0; i < num_blocks; i++) {
+  recog_list[i] = shuffle(recog_list[i])
+  }
+
+  //Shuffle encode blocks to create test blocks
+  var source_list = [];
+  for (i = 0; i < num_blocks; i++) {
+  source_list[i] = shuffle(encode_list[i])
+}
+
+  /* - - - - DATA SAVING AND SUBMISSION - - - - */
+  var DATA_SUBMITTED = false;
+  var NUM_RETRIES = 0;
+
+  function sendResolutionData(data) {
+      data.pixel_depth = window.screen.pixelDepth;
+      data.colour_depth = window.screen.colorDepth;
+      data.screen_height = window.screen.height;
+      data.screen_width = window.screen.width;
+      data.pixel_ratio = window.devicePixelRatio;
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', '/report-display-characteristics');
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.onload = function() {
+          console.log('Display characteristics reported');
+      }
+      xhr.send(JSON.stringify(data));
+  }
+
+  function saveData() {
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', '/submit-data/4');
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.onload = function() {
+          DATA_SUBMITTED = true;
+          if(xhr.status == 200){
+              var response = JSON.parse(xhr.responseText);
+              console.log(response.success);
+          }
+      };
+      xhr.send(jsPsych.data.get().json());
+  }
+
+  function moveOnward() {
+      if(DATA_SUBMITTED) {
+          console.log('Data submitted. Moving forward to completion...');
+          window.location.replace('/session-complete');
+      } else {
+          if(NUM_RETRIES < 5) {
+              console.log('Data not yet submitted. Trying again...');
+              saveData();
+              setTimeout(function() {
+                  console.log('Data not yet submitted. Trying again...');
+                  moveOnward();
+              }, 5000);
+              NUM_RETRIES = NUM_RETRIES + 1;
+          } else {
+              window.location.replace('/session-complete');
+          }
+      }
+  }
+
+
+  /* - - - - TIMELINE - - - - */
+  var TIMELINE = [welcome, instructions, instructions_practice_start]
+
+// Practice block
+// STUDY
+  // Instructions
+  TIMELINE.push(instructions_study);
+  TIMELINE.push({
+      type: 'html-keyboard-response',
+      stimulus: '<p style="color:white">STUDY</p>',
+      choices: jsPsych.NO_KEYS,
+      trial_duration: 2000,
+      on_finish: sendResolutionData
+  });
+
+    // Trial
+  for(j = 0; j < num_prac; j++){
+    TIMELINE.push({
+        type: 'contmemory-present',
+        stimulus: prac_encode_list[j].word,
+        angle: prac_encode_list[j].angle,
+        data: {
+          phase: 'study',
+          block: -1,
+          trial: j
+        }
+    });
+  }
+
+  // MATHS
+  // Instructions
+  TIMELINE.push(instructions_math);
+  TIMELINE.push({
+      type: 'html-keyboard-response',
+      stimulus: '<p style="color:white">MATH</p>',
+      choices: jsPsych.NO_KEYS,
+      trial_duration: 2000,
+  });
+
+  // Trial
+  TIMELINE.push({
+    type: 'math-distractor',
+    duration: maths_time,
+    data: {
+      phase: 'delay',
+      block: -1,
+      trial: j
+    }
+  });
+
+
+  // RECOGNITION
+  // Instructions
+  TIMELINE.push(instructions_recog);
+  TIMELINE.push({
+      type: 'html-keyboard-response',
+      stimulus: '<p style="color:white">RECOGNITION</p>',
+      choices: jsPsych.NO_KEYS,
+      trial_duration: 2000,
+  });
+
+    // Trial
+    for(j = 0; j < prac_recog_list.length; j++){
+      TIMELINE.push({
+          type: 'html-keyboard-response',
+          stimulus: prac_recog_list[j].word,
+          choices: ['1','2','3','8','9','0'],
+          prompt: '<p style="colour:white">Please enter a number. <br><br> (SURE NEW) 1 2 3 8 9 0 (SURE OLD)</p>',
+          post_trial_gap: isi,
+          data: {
+            phase: 'recognition',
+            block: -1,
+            trial: j
+          },
+          on_finish: function(data){
+            data.response = jsPsych.pluginAPI.convertKeyCodeToKeyCharacter(data.key_press)
+          }
+      });
+    }
+
+  // SOURCE
+  // Instructions
+  TIMELINE.push(instructions_source);
+  TIMELINE.push({
+      type: 'html-keyboard-response',
+      stimulus: '<p style="color:white">SOURCE</p>',
+      choices: jsPsych.NO_KEYS,
+      trial_duration: 2000,
+  });
+
+  //  var correct_trials = [];
+    // Trial
+    for(j = 0; j < num_prac; j++){
+      TIMELINE.push({
+          type: 'contmemory-recall',
+          stimulus: prac_source_list[j].word,
+          angle: prac_source_list[j].angle,
+          data: {
+            phase: 'recall',
+            block: -1,
+            trial: j
+          },
+          on_finish: function(data){
+            data.correct = Math.abs(data.angular_error) <= Math.PI/8
+          }
+      });
+    }
+
+  TIMELINE.push(instructions_practice_end);
+
+  // Main experiment loop here
+  // For each block
+  for (i = 0; i < num_blocks; i++) {
+
+    // ENCODE
+      // Instructions
+      TIMELINE.push({
+          type: 'html-keyboard-response',
+          stimulus: '<p style="color:white">STUDY</p>',
+          choices: jsPsych.NO_KEYS,
+          trial_duration: 2000,
+      });
+
+      // Trial
+    for(j = 0; j < num_trials; j++){
+      TIMELINE.push({
+          type: 'contmemory-present',
+          stimulus: encode_list[i][j].word,
+          angle: encode_list[i][j].angle,
+          data: {
+            phase: 'study',
+            block: i,
+            trial: j
+          }
+      });
+    }
+
+    // MATHS
+    // Instructions
+    TIMELINE.push({
+        type: 'html-keyboard-response',
+        stimulus: '<p style="color:white">MATH</p>',
+        choices: jsPsych.NO_KEYS,
+        trial_duration: 2000,
+    });
+
+    // TODO: this plug-in was originally written for an older version of jspsych, ISI is defined within the function. Neater to treat as a parameter.
+    TIMELINE.push({
+      type: 'math-distractor',
+      duration: maths_time,
+      data: {
+        phase: 'delay',
+        block: i,
+        trial: j
+      }
+    });
+
+
+    // RECOGNITION
+    // Instructions
+    TIMELINE.push({
+        type: 'html-keyboard-response',
+        stimulus: '<p style="color:white">RECOGNITION</p>',
+        choices: jsPsych.NO_KEYS,
+        trial_duration: 2000,
+    });
+
+      // Trial
+      for(j = 0; j < num_trials*2; j++){
+        TIMELINE.push({
+            type: 'html-keyboard-response',
+            stimulus: recog_list[i][j].word,
+            choices: ['1','2','3','8','9','0'],
+            prompt: '<p style="colour:white">Please enter a number. <br><br> (SURE NEW) 1 2 3 8 9 0 (SURE OLD)</p>',
+            post_trial_gap: isi,
+            data: {
+              phase: 'recognition',
+              block: i,
+              trial: j
+            },
+            on_finish: function(data){
+              data.response = jsPsych.pluginAPI.convertKeyCodeToKeyCharacter(data.key_press)
+            }
+        });
+      }
+
+    // SOURCE
+    // Instructions
+    TIMELINE.push({
+        type: 'html-keyboard-response',
+        stimulus: '<p style="color:white">SOURCE</p>',
+        choices: jsPsych.NO_KEYS,
+        trial_duration: 2000,
+    });
+
+    //  var correct_trials = [];
+      // Trial
+      for(j = 0; j < num_trials; j++){
+        TIMELINE.push({
+            type: 'contmemory-recall',
+            stimulus: source_list[i][j].word,
+            angle: source_list[i][j].angle,
+            data: {
+              phase: 'recall',
+              block: i,
+              trial: j
+            },
+            on_finish: function(data){
+              data.correct = Math.abs(data.angular_error) <= Math.PI/8
+            }
+        });
+      }
+
+    // BLOCK FEEDBACK
+    // Calculate feedback percentage and assemble string to be displayed
+    // Function to construct string for html keyboard response stimulus
+
+    TIMELINE.push({
+      type: "html-keyboard-response",
+      stimulus: function() {
+        var this_block_correct = jsPsych.data.get().last(num_trials).filter({trial_type: 'contmemory-recall',correct: true}).count()
+        var accuracy = Math.round(this_block_correct/num_trials * 100); // change to actual output from cont-recall
+        return "<p>End of Block</p>" +
+                "<p>You responded correctly on "+accuracy+"% of the trials in this block.</p>"+
+                "<p>Press any key to begin the next block.</p>";
+      }
+    });
+
+  }
+
+  var send_data_trial = {
+      type: 'call-function',
+      func: saveData
+  };
+
+  TIMELINE[TIMELINE.length-1] = ending_1; // Replace continue instructions from final list with the first ending screen
+  TIMELINE.push(send_data_trial);
+  TIMELINE.push(ending_2);
+
+
+  /* create timeline */
+    jsPsych.init({
+        timeline: TIMELINE,
+        on_finish: moveOnward
+    });
+
+</script>
+{% endblock %}

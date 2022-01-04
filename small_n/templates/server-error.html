@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Internal server error{% endblock %}
+{% block main %}
+<h1>500. Internal server error.</h1>
+<div>
+  Unfortunately there was an internal server error.
+</div>
+{% if message %}
+<div>
+  {{ message }}
+</div>
+{% endif %}
+<div>
+  Apologies for the inconvenience.
+</div>
+{% endblock %}
