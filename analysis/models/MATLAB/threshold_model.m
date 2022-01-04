@@ -90,7 +90,7 @@ pest_penalty(2,:) = max(P - Pub, 0).^2 + max(Plb - P, 0).^2;
 
 
 P_targ = [v1, v2, eta1, eta2, sigma, a1];
-[t ,Gt_target, theta, ~, ~] = vdcircle3x(P_targ, nw, h, tmax, ter, st, badix);
+[t ,Gt_target, theta, ~, ~] = vdcircle3(P_targ, nw, h, tmax, ter, st, badix);
 
 P_intrusion = P_targ;
 %Gt_targ is the exponential term for the (unshifted) target. This will
@@ -100,7 +100,7 @@ P_intrusion = P_targ;
 % Because the guessing process has a different criterion (a2) to the other
 % processes, we need to calculate Gt0 separately.
 P_guess = [0, 0, 0, 0, sigma, a2];
-[~,Gt_guess, ~, ~, ~] = vdcircle3x(P_guess, nw, h, tmax, ter, st, badix);
+[~,Gt_guess, ~, ~, ~] = vdcircle3(P_guess, nw, h, tmax, ter, st, badix);
 
 
 % Create mesh for interpolation
