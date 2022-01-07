@@ -29,7 +29,7 @@ all_data(:,8) = all_data(:,8)/1000;
 % [response error, response time, response angle, target angle,intrusion angle 1 ... intrusion angle 9]
 for i = 1:length(participants)
     this_participant_data = all_data(all_data(:,39) == i,:);
-    this_participant_cell = zeros(length(this_participant_data), 48);
+    this_participant_cell = zeros(length(this_participant_data), 32);
     this_participant_cell(:,1) = this_participant_data(:,7); % Response Error
     this_participant_cell(:,2) = this_participant_data(:,8); % response time
     this_participant_cell(:,3) = this_participant_data(:,6); % response angle
@@ -37,6 +37,7 @@ for i = 1:length(participants)
     this_participant_cell(:,5:13) = this_participant_data(:,21:29); % intrusion offsets
     this_participant_cell(:,14:22) = this_participant_data(:,30:38); % intrusion lags
     this_participant_cell(:,23:31) = this_participant_data(:,40:48); % intrusion spatial distances
+    this_participant_cell(:,32) = this_participant_data(:,2); % trial number (in block)
     data{i,1} = this_participant_cell;
 end
 end

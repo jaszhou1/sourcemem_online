@@ -178,7 +178,7 @@ P_intrusion = [v1_int, v2_int, eta1_int, eta2_int, sigma, a_int];
 like = zeros(length(Data),1);
 for i = 1:length(Data)
     % Find the intrusions for this trial
-    this_trial_intrusions = Data(i, 5:end);
+    this_trial_intrusions = Data(i, 5:13);
     % Get the intrusion weights, based on temporal similarities, for this
     % trial. Scale these by (1-beta)
     this_intrusion_weights = temporal_similarities(i, :) * (1 - beta);

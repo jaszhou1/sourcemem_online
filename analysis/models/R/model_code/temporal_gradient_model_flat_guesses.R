@@ -33,6 +33,7 @@ temporal_model <- function(params, data){
     return(nLL)
   }
   
+  
   # Function to compute angular difference
   
   angle_diff <- function(a,b){

@@ -201,7 +201,7 @@ P_intrusion = [v1_int, v2_int, eta1_int, eta2_int, sigma, a_int];
 like = zeros(length(Data),1);
 for i = 1:length(Data)
     % Get the serial position of this trial
-    this_trial_pos = Data(i, 50);
+    this_trial_pos = Data(i, 32);
     
     % Determine which beta value should be used based on the serial
     % position of the trial
