@@ -42,6 +42,8 @@ for i = 1:n_participants
     simulated_threshold = vertcat(simulated_threshold, this_simulated_data);
 end
 
+filename = [datestr(now,'yyyy_mm_dd_HH'),'_Experiment1_diffusion_temp'];
+save(filename)
 %% Pure Intrusion Model
 
 pure_intrusion = cell(n_participants,4);
@@ -76,6 +78,7 @@ for i = 1:n_participants
     simulated_pure_intrusion = vertcat(simulated_pure_intrusion, this_simulated_data);
 end
 
+save(filename)
 %% Three-Component Model
 % i.e. Memory + Guess + Flat Intrusions
 
@@ -110,7 +113,7 @@ for i = 1:n_participants
     this_simulated_data(:,3) = i; 
     simulated_flat_intrusion = vertcat(simulated_flat_intrusion, this_simulated_data);
 end
-
+save(filename)
 %% Same, but with eta
 flat_intrusion_eta = cell(n_participants,4);
 
@@ -143,7 +146,7 @@ for i = 1:n_participants
     this_simulated_data(:,3) = i; 
     simulated_flat_intrusion_eta = vertcat(simulated_flat_intrusion_eta, this_simulated_data);
 end
-
+save(filename)
 %% Temporal Gradient Model
 temporal = cell(n_participants,4);
 
@@ -176,7 +179,7 @@ for i = 1:n_participants
     this_simulated_data(:,3) = i; 
     simulated_temporal_flat_guess = vertcat(simulated_temporal_flat_guess, this_simulated_data);
 end
-
+save(filename)
 %% Spatiotemporal Model
 spatiotemporal = cell(n_participants,4);
 
