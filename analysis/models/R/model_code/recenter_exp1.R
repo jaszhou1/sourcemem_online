@@ -7,6 +7,11 @@ load("~/git/sourcemem_online/analysis/models/R/model_code/2022-01-10.RData")
 # Filter is the number of positions away from the target we are allowing intrusions to come from
 n_intrusions <- 9
 
+angle_diff <- function(a,b){
+  diff <- atan2(sin(a-b), cos(a-b))
+  return(diff)
+}
+
 # Recenter Empirical Data
 recenter_data <- function(filter, data){
   recentered_errors <- data.frame()
@@ -46,18 +51,18 @@ recenter_model <- function(filter, this_data, model){
   idx <- 1
   for (i in 1:nrow(this_data)){
     this_trial <- as.numeric(this_data[i,]$target_position)
-    this_response_angle <- this_data[i,]$simulated_response
+    this_response_angle <- as.numeric(this_data[i,]$simulated_response)
     this_intrusions <- this_data[i, 6:15]
     for (j in 1:filter){
       if (this_trial + filter <= n_intrusions){
-        this_intrusion <- this_intrusions[[this_trial+j]]
+        this_intrusion <- as.numeric(this_intrusions[[this_trial+j]])
         this_offset <- angle_diff(this_response_angle, this_intrusion)
         sim_errors[idx,1] <- this_offset
         sim_errors[idx,2] <- 'forwards'
         idx <- idx + 1
       }
       if (this_trial - filter > 0){
-        this_intrusion <- this_intrusions[[this_trial-j]]
+        this_intrusion <- as.numeric(this_intrusions[[this_trial-j]])
         this_offset <- angle_diff(this_response_angle, this_intrusion)
         sim_errors[idx,1] <- this_offset
         sim_errors[idx,2] <- 'backwards'
@@ -87,7 +92,6 @@ generate_recentered_model <- function(data, model_string){
     this_recenter_data <- recenter_model(i, data, model_string)
     recentered_dataset <- rbind(recentered_dataset, this_recenter_data)  
   }
-  return(recentered_dataset)
 }
 
 recenter_all <- function(){
