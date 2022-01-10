@@ -61,28 +61,45 @@ sim_intrusion <- function(participant, this_prec, this_gamma, this_beta, this_da
   sim_data <- data.frame(
     target_word = character(),
     target_angle = numeric(),
-    is_intrusion = integer(),
-    simulated_angle = numeric(),
+    target_position = integer(),
+    simulated_response = numeric(),
     simulated_error = numeric(),
+    angle_1 = numeric(),
+    angle_2 = numeric(),
+    angle_3 = numeric(),
+    angle_4 = numeric(),
+    angle_5 = numeric(),
+    angle_6 = numeric(),
+    angle_7 = numeric(),
+    angle_8 = numeric(),
+    angle_9 = numeric(),
+    angle_10 = numeric(),
+    participant = integer(),
+    model = character(),
     stringsAsFactors = FALSE
   )
   
   nSims = 5
   
   intrusions <- this_data[,14:22] # rvm wants values between 0 and 2pi, intrusions are expressed as an offset 
+  # Get the angles for each trial
+  block_angles <- cbind(this_data[,6], this_data[,14:22])
   
   # Simultate each trial one by one
   for (i in 1:nrow(this_data)){
     
     # Stimulus identity (I'm using the stimulus word itself to match each observations with its intrusions)
     word <- as.character(this_data$word[i])
-    target_angle <- this_data$target_angle[i] 
-    
+    target_angle <- this_data$target_angle[i]
+    target_position <- this_data$present_trial[i]
+    this_block_angles <- block_angles[i,]
     # Find the possible intrusions for this trial
     this_intrusions <- intrusions[i,]
     
     # Simulate each trial *nSims
     for (j in 1:nSims){
+      no_offset_angles <- insert(as.vector(t(this_block_angles[2:10])), ats = target_position, values = target_angle)
+      
       # Center on target
       sim_target <- rvm(1, target_angle, this_prec)
       
@@ -101,17 +118,20 @@ sim_intrusion <- function(participant, this_prec, this_gamma, this_beta, this_da
       weight <- rmnom(1, 1, c((1-(this_gamma + this_beta)), this_gamma, this_beta))
       
       if (weight[,1] == TRUE){
-        sim_error <- angle_diff(target_angle, sim_target)
-        sim_data[nrow(sim_data)+1,] <- c(word, target_angle, FALSE, sim_target, sim_error)
+        sim_response <- sim_target
+        sim_error <- angle_diff(target_angle, sim_response)
+        sim_data[nrow(sim_data)+1,] <- c(word, target_angle, target_position, sim_response, sim_error, no_offset_angles, participant, 'flat')
       } else if (weight[,2] == TRUE){
         # Intrusion, with equal probability of each possible intrusion
         intrusion_idx <- sample(1:n_intrusions, 1)
         # This is the simulated intrusion
-        sim_error <- angle_diff(target_angle, sim_intrusion[intrusion_idx])
-        sim_data[nrow(sim_data)+1,] <- c(word, target_angle, TRUE, sim_target, sim_error)
+        sim_response <- sim_intrusion[intrusion_idx]
+        sim_error <- angle_diff(target_angle, sim_response)
+        sim_data[nrow(sim_data)+1,] <- c(word, target_angle, target_position, sim_response, sim_error, no_offset_angles, participant, 'flat')
       } else if (weight[,3] == TRUE){
-        sim_error <- runif(1, -pi, pi)
-        sim_data[nrow(sim_data)+1,] <- c(word, target_angle, FALSE, sim_target, sim_error)
+        sim_response <- sim_guess
+        sim_error <- angle_diff(target_angle, sim_response)
+        sim_data[nrow(sim_data)+1,] <- c(word, target_angle, target_position, sim_response, sim_error, no_offset_angles, participant, 'flat')
       }
       sim_data$simulated_error <- as.numeric(sim_data$simulated_error)
     }

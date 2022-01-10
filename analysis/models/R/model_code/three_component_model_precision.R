@@ -121,18 +121,18 @@ sim_intrusion_precision <- function(participant, this_prec1, this_prec2,
       if (weight[,1] == TRUE){
         sim_response <- sim_target
         sim_error <- angle_diff(target_angle, sim_response)
-        sim_data[nrow(sim_data)+1,] <- c(word, target_angle, target_position, sim_response, sim_error, no_offset_angles, participant, 'flat')
+        sim_data[nrow(sim_data)+1,] <- c(word, target_angle, target_position, sim_response, sim_error, no_offset_angles, participant, 'flat_prec')
       } else if (weight[,2] == TRUE){
         # Intrusion, with equal probability of each possible intrusion
         intrusion_idx <- sample(1:n_intrusions, 1)
         # This is the simulated intrusion
         sim_response <- sim_intrusion[intrusion_idx]
         sim_error <- angle_diff(target_angle, sim_response)
-        sim_data[nrow(sim_data)+1,] <- c(word, target_angle, target_position, sim_response, sim_error, no_offset_angles, participant, 'flat')
+        sim_data[nrow(sim_data)+1,] <- c(word, target_angle, target_position, sim_response, sim_error, no_offset_angles, participant, 'flat_prec')
       } else if (weight[,3] == TRUE){
         sim_response <- sim_guess
         sim_error <- angle_diff(target_angle, sim_response)
-        sim_data[nrow(sim_data)+1,] <- c(word, target_angle, target_position, sim_response, sim_error, no_offset_angles, participant, 'flat')
+        sim_data[nrow(sim_data)+1,] <- c(word, target_angle, target_position, sim_response, sim_error, no_offset_angles, participant, 'flat_prec')
       }
     }
   }
