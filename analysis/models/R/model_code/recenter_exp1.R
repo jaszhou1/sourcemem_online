@@ -92,6 +92,7 @@ generate_recentered_model <- function(data, model_string){
     this_recenter_data <- recenter_model(i, data, model_string)
     recentered_dataset <- rbind(recentered_dataset, this_recenter_data)  
   }
+  return(recentered_dataset)
 }
 
 recenter_all <- function(){
