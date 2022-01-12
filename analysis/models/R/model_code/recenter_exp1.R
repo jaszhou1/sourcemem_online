@@ -104,5 +104,6 @@ recenter_all <- function(){
   recentered_spatiotemporal <- generate_recentered_model(sim_spatiotemporal, 'Spatiotemporal Gradient')
   recentered_all <- rbind(recentered_data, recentered_threshold, recentered_pure_intrusion,
                           recentered_intrusion, recentered_temporal, recentered_spatiotemporal)
+  save(recentered_all, file = paste(toString(Sys.Date()), '_recentered_exp1.RData', sep =""))
   return(recentered_all)
 }
