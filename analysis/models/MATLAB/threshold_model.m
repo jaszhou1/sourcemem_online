@@ -69,12 +69,12 @@ eta2 = eta;
 %% Parameter bounds
 penalty = 0; % Set the penalty to an initial value of zero
 % ---------------------------------------------------------------------------
-%   [v1, v2,          eta    a,  beta, Ter, st]
-% ---------------------------------------------------- ----------------------
-Ub= [ 8.0*ones(1,2),  2.0,  5.0, 5.0, 1.0, 0.7, 3.0];
-Lb= [0*ones(1,2),  0.0,  0.5, 0.5, 0, 0,  0];
-Pub=[ 2.5*ones(1,2),  2.5,  4.5, 4.5,  0.9, 0.65, 2.8];
-Plb=[0*ones(1,2),  0.0,  0.7, 0.7, 0, 0.01, 0];
+%   [v1, v2,            eta   a1, a2,      beta,   Ter,     st]
+% --------------------------------------------------------------------------
+Ub= [ 8.0*ones(1,2),    2.0,  5.0, 5.0,     1.0,    0.7,    3.0];
+Lb= [0*ones(1,2),       0.0,  0.5, 0.5,     0,      0,      0];
+Pub=[ 2.5*ones(1,2),    2.5,  4.5, 4.5,     0.9,    0.65,   2.8];
+Plb=[0*ones(1,2),       0.0,  0.7, 0.7,     0,      0.01,   0];
 
 if any(P - Ub > 0) || any(Lb - P > 0)
     ll = 1e7 + ...
@@ -90,9 +90,8 @@ pest_penalty(2,:) = max(P - Pub, 0).^2 + max(Plb - P, 0).^2;
 
 
 P_targ = [v1, v2, eta1, eta2, sigma, a1];
-[t ,Gt_target, theta, ~, ~] = vdcircle3(P_targ, nw, h, tmax, ter, st, badix);
+[t, Gt_target, theta] = vdcircle3x(P_targ, nw, h, tmax, badix);
 
-P_intrusion = P_targ;
 %Gt_targ is the exponential term for the (unshifted) target. This will
 %always be the same for each trial in this iteration because it is relative
 %to the target location
@@ -100,7 +99,7 @@ P_intrusion = P_targ;
 % Because the guessing process has a different criterion (a2) to the other
 % processes, we need to calculate Gt0 separately.
 P_guess = [0, 0, 0, 0, sigma, a2];
-[~,Gt_guess, ~, ~, ~] = vdcircle3(P_guess, nw, h, tmax, ter, st, badix);
+[~,Gt_guess, ~] = vdcircle3x(P_guess, nw, h, tmax, badix);
 
 
 % Create mesh for interpolation

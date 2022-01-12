@@ -9,41 +9,41 @@ n_participants = length(data);
 n_runs = 3;
 num_workers = maxNumCompThreads/2 - 1; % Maximum number of workers
 
-% %% Threshold Model
-% 
-% threshold = cell(n_participants,4);
-% 
-% parfor (i = 1:n_participants, num_workers)
-%     % Initial log likelihood value
-%     ll = 1e7;
-%     % Run each participant nrun times
-%     this_fit = cell(1,4);
-%     for j = 1:n_runs
-%         this_participant_data = data{i};
-%         [ll_new, aic, pest, pest_penalty] = fit_threshold_model(this_participant_data);
-%         % If this ll is better than the last one, replace it in the saved
-%         % structure
-%         if (ll_new < ll)
-%             this_fit{1} = ll_new;
-%             this_fit{2} = aic;
-%             this_fit{3} = pest;
-%             this_fit{4} = pest_penalty;
-%             threshold(i,:) = this_fit;
-%         end
-%     end
-% end
-% 
-% % Simulate data, concatenate participants, and save simulated dataset
-% simulated_threshold = [];
-% for i = 1:n_participants
-%     this_simulated_data = simulate_threshold(data{i}, threshold{i,3});
-%     % Label this dataset with participant number
-%     this_simulated_data(:,3) = i; 
-%     simulated_threshold = vertcat(simulated_threshold, this_simulated_data);
-% end
-% 
-% filename = [datestr(now,'yyyy_mm_dd_HH'),'_Experiment1_diffusion_temp'];
-% save(filename)
+%% Threshold Model
+
+threshold = cell(n_participants,4);
+
+parfor (i = 1:n_participants, num_workers)
+    % Initial log likelihood value
+    ll = 1e7;
+    % Run each participant nrun times
+    this_fit = cell(1,4);
+    for j = 1:n_runs
+        this_participant_data = data{i};
+        [ll_new, aic, pest, pest_penalty] = fit_threshold_model(this_participant_data);
+        % If this ll is better than the last one, replace it in the saved
+        % structure
+        if (ll_new < ll)
+            this_fit{1} = ll_new;
+            this_fit{2} = aic;
+            this_fit{3} = pest;
+            this_fit{4} = pest_penalty;
+            threshold(i,:) = this_fit;
+        end
+    end
+end
+
+% Simulate data, concatenate participants, and save simulated dataset
+simulated_threshold = [];
+for i = 1:n_participants
+    this_simulated_data = simulate_threshold(data{i}, threshold{i,3});
+    % Label this dataset with participant number
+    this_simulated_data(:,3) = i; 
+    simulated_threshold = vertcat(simulated_threshold, this_simulated_data);
+end
+
+filename = [datestr(now,'yyyy_mm_dd_HH'),'_Experiment1_diffusion_temp'];
+save(filename)
 % %% Pure Intrusion Model
 % 
 % pure_intrusion = cell(n_participants,4);
