@@ -54,7 +54,7 @@ simulate_mixture <- function(participant, this_prec, this_beta, this_data){
     stringsAsFactors = FALSE
   )
   
-  nSims = 10
+  nSims = 5
   
   # Get the angles for each trial
   block_angles <- cbind(this_data[,6], this_data[,14:22])
