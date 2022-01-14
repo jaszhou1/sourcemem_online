@@ -73,6 +73,7 @@ recenter_model <- function(filter, this_data, model){
   colnames(sim_errors) <- c('error', 'direction')
   sim_errors$model <- model
   sim_errors$filter <- filter
+  return(sim_errors)
 }
 
 generate_recentered_dataset <- function(data){
