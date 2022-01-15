@@ -228,7 +228,7 @@ simulate_spatiotemporal_model <- function(participant, data, pest){
   nSims = 5
   this_data <- data
   # Get the angles for each trial
-  block_angles <- cbind(this_data[,6], this_data[,14:22])
+  block_angles <- cbind(this_data[,7], this_data[,14:22])
   
   # Simulate each trial one by one
   for (i in 1:nrow(this_data)){
