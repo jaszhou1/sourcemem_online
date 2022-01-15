@@ -2,7 +2,7 @@
 # histograms
 
 # Load in Experiment 1 Fits
-load("~/git/sourcemem_online/analysis/models/R/model_code/2022-01-10.RData")
+load("~/git/sourcemem_online/analysis/models/R/model_code/2022-01-14.RData")
 
 # Filter is the number of positions away from the target we are allowing intrusions to come from
 n_intrusions <- 9
@@ -29,6 +29,7 @@ recenter_data <- function(filter, data){
         this_offset <- angle_diff(this_response_angle, this_intrusion)
         recentered_errors[idx,1] <- this_offset
         recentered_errors[idx,2] <- 'forwards'
+        recentered_errors[idx,3] <- data[i,]$participant
         idx <- idx + 1
       }
       if (this_trial - filter > 0){
@@ -36,6 +37,7 @@ recenter_data <- function(filter, data){
         this_offset <- angle_diff(this_response_angle, this_intrusion)
         recentered_errors[idx,1] <- this_offset
         recentered_errors[idx,2] <- 'backwards'
+        recentered_errors[idx,3] <- data[i,]$participant
         idx <- idx + 1
       }
     }
@@ -59,6 +61,7 @@ recenter_model <- function(filter, this_data, model){
         this_offset <- angle_diff(this_response_angle, this_intrusion)
         sim_errors[idx,1] <- this_offset
         sim_errors[idx,2] <- 'forwards'
+        sim_errors[idx,3] <- this_data[i,]$participant
         idx <- idx + 1
       }
       if (this_trial - filter > 0){
@@ -66,6 +69,7 @@ recenter_model <- function(filter, this_data, model){
         this_offset <- angle_diff(this_response_angle, this_intrusion)
         sim_errors[idx,1] <- this_offset
         sim_errors[idx,2] <- 'backwards'
+        sim_errors[idx,3] <- this_data[i,]$participant
         idx <- idx + 1
       }
     }
@@ -100,7 +104,7 @@ recenter_all <- function(){
   recentered_data <- generate_recentered_dataset(data)
   recentered_threshold <- generate_recentered_model(sim_mix, 'Pure Guess')
   recentered_pure_intrusion <- generate_recentered_model(sim_pure_intrusion, 'Pure Intrusion')
-  recentered_intrusion <- generate_recentered_model(sim_pure_intrusion, 'Intrusion + Guess')
+  recentered_intrusion <- generate_recentered_model(sim_intrusion, 'Intrusion + Guess')
   recentered_temporal <- generate_recentered_model(sim_temporal, 'Temporal Gradient')
   recentered_spatiotemporal <- generate_recentered_model(sim_spatiotemporal, 'Spatiotemporal Gradient')
   recentered_all <- rbind(recentered_data, recentered_threshold, recentered_pure_intrusion,
