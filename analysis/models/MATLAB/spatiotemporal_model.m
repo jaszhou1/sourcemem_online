@@ -175,7 +175,7 @@ guess_weights = 1- sum(weights,2);
 all_weights = horzcat(weights, guess_weights);
 
 % Check no weights are negative
-if any(all_weights < 0)
+if any(all_weights(:) < 0)
     ll = 1e7;
     aic = 0;
     penalty = 1e7;
