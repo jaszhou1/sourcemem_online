@@ -86,7 +86,7 @@ temporal_similarities = reshape(temporal_similarities, size(lags));
 spatial_distances = data(:,23:31);
 spatial_similarities = shepard(spatial_distances, zeta);
 
-spatiotemporal_similarities = (temporal_similarities.^(1-rho)) * (spatial_similarities.^rho);
+spatiotemporal_similarities = (temporal_similarities.^(1-rho)) .* (spatial_similarities.^rho);
 
 % Scale spatiotemporal similarity values by gamma, the overall intrusion
 % scaling parameter
