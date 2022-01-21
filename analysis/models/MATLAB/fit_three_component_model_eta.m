@@ -1,4 +1,4 @@
-function [ll, aic, P, penalty] = fit_three_component_model(data, badix)
+function [ll, aic, P, penalty] = fit_three_component_model_eta(data, badix)
 %    [ll,aic,Pred] = fitmixture3(Pvar, Pfix, Sel, Data)
 %    P = [v1, v2, eta, a1, a2, pi, Ter, st, sa]
 %          1    2    3  4   5   6   7   8   9 
