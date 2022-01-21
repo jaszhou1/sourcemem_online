@@ -1,6 +1,6 @@
 library(ggplot2)
 
-load("~/git/sourcemem_online/analysis/models/R/model_code/2022-01-13_recentered_exp1.RData")
+load("~/git/sourcemem_online/analysis/models/R/model_code/2022-01-17_recentered_exp1.RData")
 
 # Get a number of equally spaced colours
 gg_color_hue <- function(n) {
@@ -79,7 +79,8 @@ compare_model <- function(data, models, title, colors){
 
 compare_model_asymm <- function(data, models, title, colors){
   plot <- ggplot(data, aes(x=error, y = ..density..)) + geom_histogram(bins = 30,  alpha = 0.9) +
-    geom_density(data = models, aes(color = model), size = 1.2, adjust = 2) +
+    #geom_density(data = models, aes(color = model), size = 1.2, adjust = 2) +
+    geom_histogram(data = models, aes(color = model), size = 1.2, adjust = 2) +
     scale_x_continuous(breaks  = c(-pi, 0, pi), 
                        labels = c("-\u03c0", "0", "\u03c0")) +
     scale_color_manual(values= colors) +
@@ -122,4 +123,13 @@ compare_model_asymm(data,plot_3_models, 'Recentered Asymmetry', c(color_wheel[3]
 
 
 
-
+individual_recenter <- function(){
+  participants <- unique(data$participant)
+  model <- recentered_all[recentered_all$model != 'data',]
+  for (i in 1:length(participants)){
+    this_model <- model[model$participant == participants[i],]
+    this_data <- data[data$participant == participants[i],]
+    this_plot <- compare_model_asymm(this_data,this_model, 'Recentered Asymmetry', color_wheel)
+    ggsave(sprintf('asymm_p%s.png',i), plot = this_plot)
+  }
+}
