@@ -22,8 +22,8 @@ pure_intrusion$model <- 'Pure Intrusion'
 intrusion <- read.csv('sim_intrusion.csv', header = FALSE)
 intrusion$model <- 'Intrusion + Guess'
 
-intrusion_eta <- read.csv('sim_intrusion_eta.csv', header = FALSE)
-intrusion_eta$model <- 'Intrusion + Guess (Different Eta)'
+# intrusion_eta <- read.csv('sim_intrusion_eta.csv', header = FALSE)
+# intrusion_eta$model <- 'Intrusion + Guess (Different Eta)'
 
 temporal <- read.csv('sim_temporal.csv', header = FALSE)
 temporal$model <- 'Temporal Gradient'
@@ -31,7 +31,7 @@ temporal$model <- 'Temporal Gradient'
 spatiotemporal <- read.csv('sim_spatiotemporal.csv', header = FALSE)
 spatiotemporal$model <- 'Spatiotemporal Gradient'
 
-model_predictions <- rbind(pure_guess, pure_intrusion, intrusion, intrusion_eta, temporal, spatiotemporal)
+model_predictions <- rbind(pure_guess, pure_intrusion, intrusion, temporal, spatiotemporal)
 colnames(model_predictions) <- c('error', 'time', 'participant', 'model')
 
 models <- unique(model_predictions$model)
@@ -69,13 +69,11 @@ colnames(response_error_predictions) <- c("value", "prob", "model")
 # Response Error charting parameters.
 
 # Define some colours
-# Get a number of equally spaced colours
-gg_color_hue <- function(n) {
-  hues = seq(15, 375, length = n + 1)
-  hcl(h = hues, l = 65, c = 100)[1:n]
-}
-
-color_wheel <- gg_color_hue(5)
+color_wheel <- c('#00468BFF',
+                 '#ED0000FF',
+                 '#42B540FF',
+                 '#0099B4FF',
+                 '#925E9FFF')
 
 # Assign models to colours
 MODEL.TYPES <- unique(as.character(response_error_predictions$model))
@@ -90,13 +88,13 @@ MODEL.COL <- list(
 
 ## Compute variables required for chart layout.
 
-AXIS.CEX <- 1
-AXIS.LABEL.CEX <- 1.2
+AXIS.CEX <- 1.2
+AXIS.LABEL.CEX <- 1.5
 NUM.BINS <- 50
 X.RESP.LOW <- -pi - 0.01
 X.RESP.HI <- pi + 0.01
 Y.RESP.LOW <- 0.0
-Y.RESP.HI <- 1
+Y.RESP.HI <- 0.8
 
 
 # Plot Response Error 
@@ -126,17 +124,17 @@ plot_response_error <- function(model_list, filename){
   
   for(model.type in MODEL.TYPES[model_list]) {
     model.data <- response_error_predictions[response_error_predictions$model == model.type, ]
-    points(model.data$value, model.data$prob, type="l", lty=2, lwd = 2, col=MODEL.COL[[model.type]])
+    points(model.data$value, model.data$prob, type="l", lty=2, lwd = 3, col=MODEL.COL[[model.type]])
   }
   
   axis(side=1, at=c(-pi, 0, pi), labels=c(expression(-pi), "0", expression(pi)), cex.axis= AXIS.CEX)
-  mtext(paste("Response error (rads)"), side=1, cex= AXIS.CEX, cex.lab = AXIS.LABEL.CEX, line=2.5)
+  mtext(paste("Response Error (rads)"), side=1, cex= AXIS.CEX, cex.lab = AXIS.LABEL.CEX, line=2.5)
   axis(side=2, at=c(0, 0.2, 0.4, 0.6, 0.8), cex.axis= AXIS.CEX)
   mtext(paste("Density"), side=2, cex=AXIS.CEX, cex.lab = AXIS.LABEL.CEX, line=2.5)
   
   ## Add in legend
-  legend("topright", legend= MODEL.TYPES[model_list],
-         col=color_wheel[model_list], lty=2, lwd = 2, bty = "n",cex=AXIS.CEX, title="Models")
+  # legend("topright", legend= MODEL.TYPES[model_list],
+  #        col=color_wheel[model_list], lty=2, lwd = 2, bty = "n",cex=AXIS.CEX, title="Models")
   
   # Close the plotting device
   dev.off()
@@ -189,10 +187,10 @@ plot_response_time <- function(model_list, filename){
   
   for(model.type in MODEL.TYPES[model_list]) {
     model.data <- response_time_predictions[response_time_predictions$model == model.type, ]
-    points(model.data$value, model.data$prob, type="l", lty = 2, lwd = 2, col=MODEL.COL[[model.type]])
+    points(model.data$value, model.data$prob, type="l", lty = 2, lwd = 3, col=MODEL.COL[[model.type]])
   }
   
-  axis(side=1, at=c(0, 2, 4, 6), labels= c("0", "2", "4", "6"), cex.axis=AXIS.CEX)
+  axis(side=1, at=c(0, 2, 4, 6, 7), labels= c("0", "2", "4", "6", "7"), cex.axis=AXIS.CEX)
   mtext(paste("Response Time (s)"), side=1, cex=AXIS.CEX, cex.lab = AXIS.LABEL.CEX, line=2.5)
   axis(side=2, at=c(0.0, 0.5, 1.0, 1.5), cex.axis=AXIS.CEX)
   mtext(paste("Density"), side=2, cex=AXIS.CEX, cex.lab = AXIS.LABEL.CEX, line=2.5)
@@ -204,3 +202,5 @@ plot_response_time <- function(model_list, filename){
   # Close the plotting device
   dev.off()
 }
+
+# Joint Q-Q Plot

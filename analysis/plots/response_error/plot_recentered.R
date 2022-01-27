@@ -1,12 +1,17 @@
 load("~/git/sourcemem_online/analysis/models/R/model_code/2022-01-17_recentered_exp1.RData")
 
 # Get a number of equally spaced colours
-gg_color_hue <- function(n) {
-  hues = seq(15, 375, length = n + 1)
-  hcl(h = hues, l = 65, c = 100)[1:n]
-}
-
-color_wheel <- gg_color_hue(5)
+# gg_color_hue <- function(n) {
+#   hues = seq(15, 375, length = n + 1)
+#   hcl(h = hues, l = 65, c = 100)[1:n]
+# }
+# 
+# color_wheel <- gg_color_hue(5)
+color_wheel <- c('#00468BFF',
+                 '#ED0000FF',
+                 '#42B540FF',
+                 '#0099B4FF',
+                 '#925E9FFF')
 
 data <- recentered_all[recentered_all$model == 'data',]
 model_predictions <- recentered_all[recentered_all$model != 'data',]
@@ -20,8 +25,8 @@ MODEL.COL <- list(
   "Temporal Gradient" = color_wheel[4],
   "Spatiotemporal Gradient" = color_wheel[5]
 )
-AXIS.CEX <- 1
-AXIS.LABEL.CEX <- 1.2
+AXIS.CEX <- 1.2
+AXIS.LABEL.CEX <- 1.5
 NUM.BINS <- 50
 X.RESP.LOW <- -pi - 0.01
 X.RESP.HI <- pi + 0.01
@@ -81,7 +86,7 @@ plot_recentered <- function(model_list, this_recentered_predictions, filename){
   }
   
   axis(side=1, at=c(-pi, 0, pi), labels=c(expression(-pi), "0", expression(pi)), cex.axis= AXIS.CEX)
-  mtext(paste("Response error (rads)"), side=1, cex= AXIS.CEX, cex.lab = AXIS.LABEL.CEX, line=2.5)
+  mtext(paste("Response Offset (rads)"), side=1, cex= AXIS.CEX, cex.lab = AXIS.LABEL.CEX, line=2.5)
   axis(side=2, at=c(0, 0.1, 0.2, 0.3), cex.axis= AXIS.CEX)
   mtext(paste("Density"), side=2, cex=AXIS.CEX, cex.lab = AXIS.LABEL.CEX, line=2.5)
   
@@ -114,7 +119,7 @@ for(i in 1:length(models)){
 }
 colnames(asymm_predictions) <- c("value", "prob", "model", "direction", "lag")
 
-plot_asymm_recenter <- function(model_list, this_recentered_predictions, filename){
+plot_asymm_recenter <- function(model_list, this_asymm_predictions, filename){
   ## Opens a drawing device (either X11 for testing or a
   ## PDF for saving).
   if(filename == "") {
@@ -125,7 +130,7 @@ plot_asymm_recenter <- function(model_list, this_recentered_predictions, filenam
   
   # Set up panels
   par(mfrow=c(2,3))
-  par(mar=c(0.1, 1.5, 0.1, 0.1),
+  par(mar=c(0.1, 1.5, 0.5, 0.1),
       oma=c(4, 4, 3, 4),
       xaxs="i")
   
@@ -153,7 +158,7 @@ plot_asymm_recenter <- function(model_list, this_recentered_predictions, filenam
       
       for(model.type in MODEL.TYPES[model_list]) {
         model.data <- this_panel_model[this_panel_model$model == model.type, ]
-        points(model.data$value, model.data$prob, type="l", lty=2, lwd = 2, col=MODEL.COL[[model.type]])
+        points(model.data$value, model.data$prob, type="l", lty=2, lwd = 2.5, col=MODEL.COL[[model.type]])
       }
       ## Plot the participant number and data type
       mtext(paste0("Lag", panel_labs[panel_idx]), side=3, cex=0.85, line=-2, adj=0.1)
@@ -175,5 +180,12 @@ plot_asymm_recenter <- function(model_list, this_recentered_predictions, filenam
       panel_idx <- panel_idx + 1
     }
   }
+  ## Add in legend
+  par(fig = c(0, 1, 0, 1), oma = c(0, 0, 0, 0), mar = c(0, 0, 0, 0), new = TRUE)
+  plot(0, 0, type = 'l', bty = 'n', xaxt = 'n', yaxt = 'n')
+  legend('topright',legend= MODEL.TYPES[model_list],
+         col=color_wheel[model_list], lty=2, lwd = 2, xpd = TRUE, horiz = TRUE, cex = AXIS.CEX, seg.len=1, bty = 'n')
+  # xpd = TRUE makes the legend plot to the figure
+  dev.off()
 }
 
