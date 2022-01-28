@@ -86,7 +86,7 @@ plot_recentered <- function(model_list, this_recentered_predictions, filename){
   }
   
   axis(side=1, at=c(-pi, 0, pi), labels=c(expression(-pi), "0", expression(pi)), cex.axis= AXIS.CEX)
-  mtext(paste("Response Offset (rads)"), side=1, cex= AXIS.CEX, cex.lab = AXIS.LABEL.CEX, line=2.5)
+  mtext(paste("Response Offset (rad)"), side=1, cex= AXIS.CEX, cex.lab = AXIS.LABEL.CEX, line=2.5)
   axis(side=2, at=c(0, 0.1, 0.2, 0.3), cex.axis= AXIS.CEX)
   mtext(paste("Density"), side=2, cex=AXIS.CEX, cex.lab = AXIS.LABEL.CEX, line=2.5)
   
@@ -167,7 +167,7 @@ plot_asymm_recenter <- function(model_list, this_asymm_predictions, filename){
       if(panel_idx %in% c(4, 5, 6)) {
         axis(side=1, at=c(-pi, 0, pi), labels=c(expression(-pi), "0", expression(pi)), 
              cex.axis=AXIS.CEX)
-        mtext(paste("Response Offset (rads)"), side=1, cex=0.75, line=2.5)
+        mtext(paste("Response Offset (rad)"), side=1, cex=0.75, line=2.5)
       } else {
         axis(side=1, at=c(-pi, pi), lwd.ticks=0, labels=FALSE, cex.axis=0.75)
       }

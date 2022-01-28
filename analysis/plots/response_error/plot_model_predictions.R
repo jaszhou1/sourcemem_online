@@ -100,7 +100,7 @@ plot_response_error <- function(model_list, data, filename){
   }
   
   axis(side=1, at=c(-pi, 0, pi), labels=c(expression(-pi), "0", expression(pi)), cex.axis= AXIS.CEX)
-  mtext(paste("Response Error (rads)"), side=1, cex= AXIS.CEX, cex.lab = AXIS.LABEL.CEX, line=2.5)
+  mtext(paste("Response Error (rad)"), side=1, cex= AXIS.CEX, cex.lab = AXIS.LABEL.CEX, line=2.5)
   axis(side=2, at=c(0, 0.2, 0.4, 0.6, 0.8), cex.axis= AXIS.CEX)
   mtext(paste("Density"), side=2, cex=AXIS.CEX, cex.lab = AXIS.LABEL.CEX, line=2.5)
   
@@ -160,8 +160,13 @@ errors_across_serial_position <- function(data){
   }
   models <- concatenate_model_average_error()
   plot <- ggplot(data=serial_position_data, aes(x=position, y = error)) +
-    geom_point(size = 2) +
-    geom_smooth(data = models, method = 'loess', se = FALSE, aes(x = position, color = model)) +
+    geom_point(size = 3) +
+    geom_smooth(data = models, method = 'loess', se = FALSE, aes(x = position, color = model), span = 1.5) +
+    scale_color_manual(values=c('#42B540FF',
+                                '#ED0000FF',
+                                '#00468BFF',
+                                '#925E9FFF',
+                                '#0099B4FF')) +
     scale_x_continuous(name = 'Study List Position', breaks = 1:10) +
     scale_y_continuous(name = 'Average Absolute Error (rad)', breaks = c(1, 1.05), limits = c(0.95, 1.1)) +
     theme(

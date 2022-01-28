@@ -88,8 +88,8 @@ MODEL.COL <- list(
 
 ## Compute variables required for chart layout.
 
-AXIS.CEX <- 1.2
-AXIS.LABEL.CEX <- 1.5
+AXIS.CEX <- 2
+AXIS.LABEL.CEX <- 2.5
 NUM.BINS <- 50
 X.RESP.LOW <- -pi - 0.01
 X.RESP.HI <- pi + 0.01
@@ -128,7 +128,7 @@ plot_response_error <- function(model_list, filename){
   }
   
   axis(side=1, at=c(-pi, 0, pi), labels=c(expression(-pi), "0", expression(pi)), cex.axis= AXIS.CEX)
-  mtext(paste("Response Error (rads)"), side=1, cex= AXIS.CEX, cex.lab = AXIS.LABEL.CEX, line=2.5)
+  mtext(paste("Response Error (rad)"), side=1, cex= AXIS.CEX, cex.lab = AXIS.LABEL.CEX, line=2.5)
   axis(side=2, at=c(0, 0.2, 0.4, 0.6, 0.8), cex.axis= AXIS.CEX)
   mtext(paste("Density"), side=2, cex=AXIS.CEX, cex.lab = AXIS.LABEL.CEX, line=2.5)
   
@@ -193,7 +193,7 @@ plot_response_time <- function(model_list, filename){
   axis(side=1, at=c(0, 2, 4, 6, 7), labels= c("0", "2", "4", "6", "7"), cex.axis=AXIS.CEX)
   mtext(paste("Response Time (s)"), side=1, cex=AXIS.CEX, cex.lab = AXIS.LABEL.CEX, line=2.5)
   axis(side=2, at=c(0.0, 0.5, 1.0, 1.5), cex.axis=AXIS.CEX)
-  mtext(paste("Density"), side=2, cex=AXIS.CEX, cex.lab = AXIS.LABEL.CEX, line=2.5)
+  #mtext(paste("Density"), side=2, cex=AXIS.CEX, cex.lab = AXIS.LABEL.CEX, line=2.5)
   
   ## Add in legend
   legend("topright", legend= MODEL.TYPES[model_list],
@@ -202,5 +202,6 @@ plot_response_time <- function(model_list, filename){
   # Close the plotting device
   dev.off()
 }
+
 
 # Joint Q-Q Plot
