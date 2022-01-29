@@ -86,10 +86,14 @@ cross_fit <- function(gen_model, fit_model){
 model_recovery <- function(){
   res <- data.frame()
   for(i in models){
-    for (j in models){
+    cl <- makeForkCluster(5)
+    registerDoParallel(cl)
+    this_model = foreach (j = models,
+                     .combine = rbind) %dopar% {
       this_fit <- cross_fit(i, j)
-      res <- rbind(res, this_fit)
-    }
+      return(this_fit)
+      }
+    res <- rbind(res, this_model)
   }
   return(res)
 }
