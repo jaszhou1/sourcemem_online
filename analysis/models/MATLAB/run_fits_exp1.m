@@ -219,3 +219,25 @@ end
 % Save workspace
 filename = [datestr(now,'yyyy_mm_dd_HH'),'_Experiment1_diffusion'];
 save(filename)
+
+% Output fit statistics and parameter estimates to .csv
+filename = [datestr(now,'yyyy_mm_dd_HH'),'_pest_pure_guess.csv'];
+header_line = 'participant, model_name, AIC, v1_targ, v2_targ, v1_int, v2_int, eta_targ, eta_int,  a_targ, a_guess, gamma, beta, Ter, st';
+param_to_csv(filename, 1:n_participants, threshold, 'Pure Guess', header_line);
+
+filename = [datestr(now,'yyyy_mm_dd_HH'),'_pest_pure_intrusion.csv'];
+header_line = 'participant, model_name, AIC, v1_targ, v2_targ, v1_int, v2_int, eta_targ, eta_int,  a_targ, gamma,  Ter, st';
+param_to_csv(filename, 1:n_participants, pure_intrusion, 'Pure Intrusion', header_line)
+
+filename = [datestr(now,'yyyy_mm_dd_HH'),'_pest_flat_intrusion.csv'];
+header_line = 'participant, model_name, AIC, v1_targ, v2_targ, v1_int, v2_int, eta_targ, eta_int,  a_targ, a_guess, gamma, beta, Ter, st';
+param_to_csv(filename, 1:n_participants, flat_intrusion_eta, 'Intrusion + Guess', header_line)
+
+filename = [datestr(now,'yyyy_mm_dd_HH'),'_pest_temporal.csv'];
+header_line = 'participant, model_name, AIC, v1_targ, v2_targ, v1_int, v2_int, eta_targ, eta_int,  a_targ, a_guess, gamma, beta, kappa, lambda_b, lambda_f, Ter, st';
+param_to_csv(filename, 1:n_participants, temporal, 'Temporal Gradient', header_line)
+
+filename = [datestr(now,'yyyy_mm_dd_HH'),'_pest_spatiotemporal.csv'];
+header_line = 'participant, model_name, AIC, v1_targ, v2_targ, v1_int, v2_int, eta_targ, eta_int,  a_targ, a_guess, gamma, beta, kappa, lambda_b, lambda_f, zeta, rho, Ter, st';
+param_to_csv(filename, 1:n_participants, spatiotemporal, 'Spatiotemporal Gradient', header_line)
+
