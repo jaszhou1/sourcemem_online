@@ -89,7 +89,7 @@ MODEL.COL <- list(
 ## Compute variables required for chart layout.
 
 AXIS.CEX <- 2
-AXIS.LABEL.CEX <- 2.5
+AXIS.LABEL.CEX <- 2
 NUM.BINS <- 50
 X.RESP.LOW <- -pi - 0.01
 X.RESP.HI <- pi + 0.01
@@ -203,5 +203,87 @@ plot_response_time <- function(model_list, filename){
   dev.off()
 }
 
-
+rt_quantiles <- c(0.1, 0.5, 0.9)
+error_quantiles <- c(0.1, 0.3, 0.5, 0.9)
+Q_SYMBOLS <- c(25, 23, 24)
 # Joint Q-Q Plot
+source('~/git/sourcemem_online/analysis/plots/diffusion/qxq.R')
+plot_qq <- function(data, model, filename){
+  data_qq <- all_qq_points(rt_quantiles, error_quantiles, data, 'data')
+  model_qq <- data.frame()
+  # Covert from ms to s
+  data_qq$rt <- data_qq$rt/1000
+  # For the model predictions, need to rename columns of simulated data to keep everything consistent
+  colnames(model) <- c('response_error', 'source_RT', 'participant', 'model')
+  for(i in MODEL.TYPES){
+    this_model <- model[model$model == i,]
+    this_qq <- all_qq_points(rt_quantiles, error_quantiles, this_model, i)
+    model_qq <- rbind(model_qq, this_qq)
+  }
+  
+  # Plot (ggplot)
+  plot <- ggplot() +
+    geom_point(data=data_qq, aes(x= theta, y = rt, size = 2, shape = factor(rt_q))) +
+    geom_line(data = model_qq, linetype="dashed", size = 1.2, aes(x = theta, y = rt,
+                                   color = model, group = interaction(model, rt_q))) +
+    scale_color_manual(values=c('#42B540FF',
+                                '#00468BFF',
+                                '#ED0000FF',
+                                '#925E9FFF',
+                                '#0099B4FF')) +
+    scale_x_continuous(name = 'Absolute Error (rad)', breaks = c(0, pi), limits = c(0, pi),
+                       labels = c(0, expression(pi))) +
+    scale_y_continuous(name = 'Response Time (s)', breaks = c(0.5, 1.0, 1.5, 2.0)) +
+    guides(size = "none",
+           color= guide_legend(title="Model"),
+           shape= guide_legend(title="Response Time Quantile")) +
+    theme(
+      axis.text.x = element_text(color="black", size = 12),
+      axis.text.y = element_text(color="black", size = 12),
+      plot.title = element_blank(),
+      axis.title.x = element_text(color="black", size=14),
+      axis.title.y = element_text(color="black", size=14),
+      plot.background = element_rect(fill = "white"),
+      panel.grid.major = element_blank(), 
+      panel.grid.minor = element_blank(),
+      panel.background = element_blank(),
+      legend.key = element_rect(colour = "transparent", fill = "white"),
+      legend.text=element_text(size= 12),
+      axis.line = element_line(colour = "black")
+    )
+  return(plot)
+}
+
+# Base R
+# if(filename == "") {
+#   X11() # Write to the screen
+# } else {
+#   png(file=filename, width=10.7, height=8.3, units = "in", pointsize = 12, res = 300)
+#   #pdf(file=filename, width=8.3, height=10.7)
+# }
+# par(mar = c(5, 5, 4, 6))
+# plot.new()
+# plot.window(xlim=c(0, pi),
+#             ylim=c(0, 2.2))
+# # Plot each RT quantile with a different character
+# for(i in 1:length(rt_quantiles)){
+#   this_data_rt_qq <- data_qq[data_qq$rt_q == rt_quantiles[i],]
+#   points(x = this_data_rt_qq$theta, y = this_data_rt_qq$rt, type="p", pch = Q_SYMBOLS[i], bg = 'black', cex=2)
+# }
+# 
+# for(model.type in MODEL.TYPES){
+#   this_model_qq <- model_qq[model_qq$model == model.type,]
+#   for(j in 1:length(rt_quantiles)){
+#     this_model_rt_qq <- this_model_qq[this_model_qq$rt_q == rt_quantiles[j],]
+#     points(x = this_model_rt_qq$theta, y = this_model_rt_qq$rt, type="l", lty = 2, lwd = 2, col = MODEL.COL[[model.type]])
+#   }
+# }
+# axis(side=1, at=c(0, pi), labels= c(0, expression(-pi)), cex.axis=AXIS.CEX)
+# mtext(paste("Absolute Response Error (rad)"), side=1, cex=AXIS.CEX, cex.lab = AXIS.LABEL.CEX, line=2.5)
+# axis(side=2, at=c(0, 1, 2), cex.axis=AXIS.CEX)
+# mtext(paste("Response Time (s)"), side=2, cex=AXIS.CEX, cex.lab = AXIS.LABEL.CEX, line=2.5)
+# ## Add in legend
+# legend("topleft", legend= MODEL.TYPES, inset = c(0, 0),
+#        col=color_wheel, lty=2, lwd = 2, bty = "n",cex=0.5, title="Models", title.adj= 0.5, xpd = TRUE, horiz = TRUE)
+# dev.off()
+
