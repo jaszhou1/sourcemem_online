@@ -27,8 +27,8 @@ v1_targ = normrnd(4, 2);
 v2_targ = 0;
 v1_int = normrnd(2, 0.5);
 v2_int = 0;
-eta_targ = 0;
-eta_int = 0;
+eta_targ = normrnd(0.3, 0.1);
+eta_int = normrnd(0.3, 0.1);
 a_targ = normrnd(1.5, 0.4);
 % a_int = normrnd(1.5, 0.4);
 a_guess = normrnd(1, 0.4);
@@ -42,7 +42,7 @@ st = 0;
 
 
 P = [v1_targ, v2_targ, v1_int, v2_int, eta_targ, eta_int,  a_targ, a_guess, gamma, beta, kappa, lambda_b, lambda_f, Ter, st];
-Sel = [1,        0,     1,       0,       0,        0        1,       1,      1,    1,     1,      1,        1,      1,   0];  
+Sel = [1,        0,     1,       0,       1,        1,        1,       1,      1,    1,     1,      1,        1,      1,   0];  
 
 pest = fminsearch(@temporal_gradient_flat_guess, P(Sel==1), options, P(Sel==0), Sel, data, badix);
 P(Sel==1) = pest;
