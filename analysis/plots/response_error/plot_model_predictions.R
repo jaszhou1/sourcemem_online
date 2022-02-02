@@ -161,14 +161,15 @@ errors_across_serial_position <- function(data){
   models <- concatenate_model_average_error()
   plot <- ggplot(data=serial_position_data, aes(x=position, y = error)) +
     geom_point(size = 3) +
-    geom_smooth(data = models, method = 'loess', se = FALSE, aes(x = position, color = model), span = 1.5) +
+    geom_smooth(data = models, method = 'loess', se = FALSE, linetype="dashed", aes(x = position, color = model), span = 1.5) +
     scale_color_manual(values=c('#42B540FF',
-                                '#ED0000FF',
                                 '#00468BFF',
+                                '#ED0000FF',
                                 '#925E9FFF',
                                 '#0099B4FF')) +
     scale_x_continuous(name = 'Study List Position', breaks = 1:10) +
     scale_y_continuous(name = 'Average Absolute Error (rad)', breaks = c(1, 1.05), limits = c(0.95, 1.1)) +
+    guides(color= guide_legend(title="Model")) +
     theme(
       axis.text.x = element_text(color="black", size = 12),
       axis.text.y = element_text(color="black", size = 12),
@@ -179,6 +180,8 @@ errors_across_serial_position <- function(data){
       panel.grid.major = element_blank(), 
       panel.grid.minor = element_blank(),
       panel.background = element_blank(),
+      legend.key = element_rect(colour = "transparent", fill = "white"),
+      legend.text=element_text(size= 12),
       axis.line = element_line(colour = "black")
     )
   return(plot)
