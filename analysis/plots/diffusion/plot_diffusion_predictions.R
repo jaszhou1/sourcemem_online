@@ -251,9 +251,16 @@ plot_qq <- function(data, model, filename){
       legend.text=element_text(size= 12),
       axis.line = element_line(colour = "black")
     )
+  ggsave(filename, width = 40, height = 20, units = "cm")
   return(plot)
 }
 
+indivdual_qq <- function(){
+  for (i in unique(data$participant)){
+    filename = sprintf('p_%i_qxq.png', i)
+    plot_qq(data[data$participant == i,], model_predictions[model_predictions$participant == i,], filename)
+  }
+}
 # Base R
 # if(filename == "") {
 #   X11() # Write to the screen
