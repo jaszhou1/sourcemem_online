@@ -6,7 +6,8 @@
 #3. 'Intrusion + Guess'
 #4. 'Temporal'
 #5.'Spatiotemporal'
-source('~/git/sourcemem_online/analysis/plots/response_error/plot_model_predictions.R')
+setwd("~/git/sourcemem_online/analysis/plots/response_error")
+source('~/git/sourcemem_online/analysis/plots/response_error/plot_experiment_1.R')
 setwd("~/git/sourcemem_online/analysis/plots/output")
 # Response error distributions of models with and without intrusions
 plot_response_error(c(1,2,3), data, 'fig6.png')
