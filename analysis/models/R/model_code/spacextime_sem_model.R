@@ -13,9 +13,9 @@
 # lambda_f: Decay rate of forwards temporal gradient
 # beta: proportion of guesses
 # zeta: precision for Shepard similarity function (perceived spatial distance)
-# chi: precision for Shepard similarity from orthographic levenshtein distance
-# psi : weighting for semantic similarity
-all_x_model <- function(params, data){
+# rho: weight of spatial vs temporal similarity
+# chi: weight of semantic vs spatiotemporal similarity
+semantic_model <- function(params, data){
   
   n_trials <- 10
   n_intrusions <- 9
@@ -31,13 +31,6 @@ all_x_model <- function(params, data){
   #tau <- params[8]
   rho <- params[9]
   chi <- params[10]
-  psi <- params[11]
-  
-  if(rho+chi+psi >= 1){
-    print("Invalid intrusion component weight")
-    nLL <- 1e7
-    return(nLL)
-  }
   
   # Function to compute angular difference
   
@@ -55,11 +48,7 @@ all_x_model <- function(params, data){
     similarity <- (length - x)/length
     return(similarity)
   }
-  
-  # Turn levenshtein distance into shepard similarity
-  orthographic_similarity <- data.frame(matrix(nrow = nrow(data), ncol = n_intrusions))
-  orthographic_similarity[,1:9] <- lapply(data[,51:59], convert_orthographic_similarity, length = 4)
-  
+
   # Scale semantic cosine similarity
   semantic_similarity <- data.frame(matrix(nrow = nrow(data), ncol = n_intrusions))
   semantic_similarity[,1:9] <- data[,60:68] 
@@ -84,7 +73,7 @@ all_x_model <- function(params, data){
   }
   
   # Multiply the temporal similarities with corresponding spatial similarity to get a spatiotemporal gradient on each trial
-  intrusion_weights <- ((temporal_similarity^(1-rho)) * (spatial_similarity^rho))^(1-chi) * ((orthographic_similarity^(1-psi)) * (semantic_similarity^psi))^chi
+  intrusion_weights <-((temporal_similarity^(1-rho)) * (spatial_similarity^rho))^(1-chi) * (spatial_similarity ^ chi) 
   
   # Multiply all intrusion weights with overall intrusion scaling parameter
   intrusion_weights <- gamma*intrusion_weights
@@ -156,7 +145,7 @@ all_x_model <- function(params, data){
 # pest = temp[participant,5:9]
 
 # Simulate data from fitted parameters of the temporal gradient model
-simulate_all_x_model <- function(participant, data, pest){
+simulate_semantic_model <- function(participant, data, pest){
   
   # Check that trial numbers are 1-indexed
   if(min(data$present_trial) == 0){
@@ -177,19 +166,12 @@ simulate_all_x_model <- function(participant, data, pest){
   #tau <- pest[[8]]
   rho <- pest[[9]]
   chi <- pest[[10]]
-  psi <- pest[[11]]
-  
-  tau <- 1-(rho+chi+psi)
   
   shepard_similarity <- function(x, k){
     x <- exp(-k * x)
     return(x)
   }
-  
-  # Turn levenshtein distance into shepard similarity
-  orthographic_similarity <- data.frame(matrix(nrow = nrow(data), ncol = n_intrusions))
-  orthographic_similarity[,1:9] <- lapply(data[,51:59], convert_orthographic_similarity, length = 4)
-  
+
   # Scale semantic cosine similarity
   semantic_similarity <- data.frame(matrix(nrow = nrow(data), ncol = n_intrusions))
   semantic_similarity[,1:9] <- data[,60:68] 
@@ -214,7 +196,8 @@ simulate_all_x_model <- function(participant, data, pest){
   }
   
   # Multiply the temporal similarities with corresponding spatial similarity to get a spatiotemporal gradient on each trial
-  intrusion_weights <- ((temporal_similarity^(1-rho)) * (spatial_similarity^rho))^(1-chi) * ((orthographic_similarity^(1-psi)) * (semantic_similarity^psi))^chi
+  intrusion_weights <-   intrusion_weights <-((temporal_similarity^(1-rho)) * (spatial_similarity^rho))^(1-chi) * (spatial_similarity ^ chi) 
+  
   
   # Multiply all intrusion weights with overall intrusion scaling parameter
   intrusion_weights <- gamma*intrusion_weights

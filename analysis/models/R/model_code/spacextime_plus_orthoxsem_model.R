@@ -85,7 +85,7 @@ spacextime_plus_orthoxsem_model <- function(params, data){
   }
   
   # Multiply the temporal similarities with corresponding spatial similarity to get a spatiotemporal gradient on each trial
-  intrusion_weights <- ((temporal_similarity^tau) * (spatial_similarity^rho)) + ((orthographic_similarity^chi) * (semantic_similarity^psi))
+  intrusion_weights <- (1-chi)*((temporal_similarity^(1-rho)) * (spatial_similarity^rho)) + chi*((orthographic_similarity^(1-psi)) * (semantic_similarity^psi))
   
   # Multiply all intrusion weights with overall intrusion scaling parameter
   intrusion_weights <- gamma*intrusion_weights
@@ -215,7 +215,7 @@ simulate_spacextime_plus_orthoxsem_model <- function(participant, data, pest){
   }
   
   # Multiply the temporal similarities with corresponding spatial similarity to get a spatiotemporal gradient on each trial
-  intrusion_weights <- ((temporal_similarity^tau) * (spatial_similarity^rho)) + ((orthographic_similarity^chi) * (semantic_similarity^psi))
+  intrusion_weights <- (1-chi)*((temporal_similarity^(1-rho)) * (spatial_similarity^rho)) + chi*((orthographic_similarity^(1-psi)) * (semantic_similarity^psi))
   
   
   # Multiply all intrusion weights with overall intrusion scaling parameter

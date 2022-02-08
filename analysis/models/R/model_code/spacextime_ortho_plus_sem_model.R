@@ -33,14 +33,6 @@ spacextime_ortho_plus_sem_model <- function(params, data){
   chi <- params[10]
   psi <- params[11]
   
-  if(rho+chi+psi >= 1){
-    print("Invalid intrusion component weight")
-    nLL <- 1e7
-    return(nLL)
-  }
-  
-  tau <- 1-(rho+chi+psi)
-  
   # Function to compute angular difference
   
   angle_diff <- function(a,b){
@@ -86,7 +78,7 @@ spacextime_ortho_plus_sem_model <- function(params, data){
   }
   
   # Multiply the temporal similarities with corresponding spatial similarity to get a spatiotemporal gradient on each trial
-  intrusion_weights <- ((temporal_similarity^tau) * (spatial_similarity^rho)) + (chi * orthographic_similarity) + (psi * semantic_similarity)
+  intrusion_weights <- (1-chi)*(temporal_similarity^(1-rho) * spatial_similarity^rho) + chi*((1-psi)*orthographic_similarity + psi*semantic_similarity)
   
   # Multiply all intrusion weights with overall intrusion scaling parameter
   intrusion_weights <- gamma*intrusion_weights
@@ -216,7 +208,7 @@ simulate_spacextime_ortho_plus_sem_model <- function(participant, data, pest){
   }
   
   # Multiply the temporal similarities with corresponding spatial similarity to get a spatiotemporal gradient on each trial
-  intrusion_weights <- ((temporal_similarity^tau) * (spatial_similarity^rho)) + (chi * orthographic_similarity) + (psi * semantic_similarity)
+  intrusion_weights <- (1-chi)*(temporal_similarity^(1-rho) * spatial_similarity^rho) + chi*((1-psi)*orthographic_similarity + psi*semantic_similarity)
   
   
   # Multiply all intrusion weights with overall intrusion scaling parameter
