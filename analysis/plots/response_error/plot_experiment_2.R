@@ -35,6 +35,15 @@ data <- data[data$valid_RT==TRUE,]
 
 participants <- unique(data$participant)
 
+## Overall charting parameters.
+NUM.BINS <- 50
+AXIS.CEX <- 1
+AXIS.LABEL.CEX <- 1.1
+X.RESP.LOW <- -pi - 0.01
+X.RESP.HI <- pi + 0.01
+Y.RESP.LOW <- 0.0
+Y.RESP.HI <- 2.5
+
 color_wheel <- c('#00468BFF',
                  #'#ED0000FF', no pure intrusion, maybe need to add?
                  '#42B540FF',
@@ -42,8 +51,8 @@ color_wheel <- c('#00468BFF',
                  '#925E9FFF',
                  '#FDAF91FF',
                  '#AD002AFF',
-                 '#ADB6B6FF',
-                 '#1B1919FF',
+                 '#8F7700FF',
+                 '#80796BFF',
                  '#ED0000FF') #Find new colour for the recognition model maybe
 
 get_response_error_density <- function(model){
@@ -94,26 +103,13 @@ individual_response_error_plot <- function(model_list, data, filename){
     pdf(file=filename, width=7, height=10)
   }
   
-  ## Overall charting parameters.
-  NUM.BINS <- 50
-  
-  ## Get the summary variables from the data.
+  ## Compute variables required for chart layout.
   PARTICIPANTS <- unique(data$participant)
   NUM.PARTICIPANTS <- length(PARTICIPANTS)
   PARTICIPANTS.PER.ROW <- 2
-  
-  ## Compute variables required for chart layout.
-  AXIS.CEX <- 1
-  AXIS.LABEL.CEX <- 1.1
-  
   NUM.ROWS <- ceiling(NUM.PARTICIPANTS / PARTICIPANTS.PER.ROW)
   NUM.COLS <- PARTICIPANTS.PER.ROW 
-  
-  X.RESP.LOW <- -pi - 0.01
-  X.RESP.HI <- pi + 0.01
-  Y.RESP.LOW <- 0.0
-  Y.RESP.HI <- 2.5
-  
+
   ## Set up the global presentation parameters for the plot.
   par(mfrow=c(NUM.ROWS, NUM.COLS))
   par(mar=c(0.5, 0.5, 0, 0.5),
@@ -174,86 +170,111 @@ individual_response_error_plot <- function(model_list, data, filename){
   }
 }
 
-individual_recentered_error_plot <- function(model_list, data, filename){
+# Load in recentered data
+load("~/git/sourcemem_online/analysis/models/R/experiment_2/output/2022-02-08_recentered_exp2.RData")
+
+plot_asymm_recenter <- function(model_list, this_data, this_recentered_predictions, filename){
   ## Opens a drawing device (either X11 for testing or a
   ## PDF for saving).
   if(filename == "") {
     X11() # Write to the screen
   } else {
-    pdf(file=filename, width=7, height=10)
+    png(file=filename, width=10.7, height=8.3, units = "in", pointsize = 12, res = 300)
   }
   
-  ## Overall charting parameters.
-  NUM.BINS <- 50
+  # Set up panels
+  par(mfrow=c(2,3))
+  par(mar=c(0.1, 1.5, 0.5, 0.1),
+      oma=c(4, 4, 3, 4),
+      xaxs="i")
   
-  ## Get the summary variables from the data.
-  PARTICIPANTS <- unique(data$participant)
-  NUM.PARTICIPANTS <- length(PARTICIPANTS)
-  PARTICIPANTS.PER.ROW <- 2
+  panel_idx <- 1
+  panel_labs <- c('+1', '+2', '+3', '-1', '-2', '-3')
   
-  ## Compute variables required for chart layout.
-  AXIS.CEX <- 1
-  AXIS.LABEL.CEX <- 1.1
-  
-  NUM.ROWS <- ceiling(NUM.PARTICIPANTS / PARTICIPANTS.PER.ROW)
-  NUM.COLS <- PARTICIPANTS.PER.ROW 
-  
-  X.RESP.LOW <- -pi - 0.01
-  X.RESP.HI <- pi + 0.01
-  Y.RESP.LOW <- 0.0
-  Y.RESP.HI <- 1
-  
-  ## Set up the global presentation parameters for the plot.
-  par(mfrow=c(NUM.ROWS, NUM.COLS))
-  par(mar=c(0.5, 0.5, 0, 0.5),
-      oma=c(4, 3.5, 0, 3.5))
-  
-  ## Iterate through each participant...
-  for(p.idx in 1:NUM.PARTICIPANTS) {
-    p <- PARTICIPANTS[p.idx]
-    
-    # insert actual recentered plot here
-    
-    ## Plot the participant number and data type
-    mtext(paste0("P", p), side=3, cex=AXIS.LABEL.CEX, line=-2, adj=0.2)
-    
-    ## Plot the x axes (for the last two participants only)
-    if(p %in% tail(PARTICIPANTS, n=PARTICIPANTS.PER.ROW)) {
-      axis(side=1, at=c(-pi, 0, pi), labels=c(expression(-pi), "0", expression(pi)), cex.axis=AXIS.CEX)
-      mtext(paste("Response error (rads)"), side=1, cex=AXIS.LABEL.CEX, line=2.5)
-    } else {
-      axis(side=1, at=c(-pi, pi), lwd.ticks=0, labels=FALSE, cex.axis=AXIS.CEX)
-    }
-    
-    ## Plot the y axes (for the participants in the first col)
-    if((p.idx %% PARTICIPANTS.PER.ROW) == 1) {
-      axis(side=2, at=c(0, 1, 2), cex.axis=AXIS.CEX)
-    }
-    
-    ## Put the outer margin axis labels.
-    mtext("Error density", side=2, line=2, outer=TRUE, cex = AXIS.LABEL.CEX)
-    
-    ## If we're writing to a file (i.e. a PDF), close the device.
-    if(filename != "") {
-      dev.off()
+  directions <- unique(this_recentered_predictions$direction)
+  lags <- unique(this_recentered_predictions$lag)
+  for(i in directions){
+    for(j in lags){
+      this_panel_data <- this_data[(this_data$direction == i) & (this_data$filter == j),]
+      this_panel_model <- this_recentered_predictions[(this_recentered_predictions$direction == i) & 
+                                              (this_recentered_predictions$lag == j),]
+      plot.new()
+      plot.window(xlim=c(X.RESP.LOW, X.RESP.HI),
+                  ylim=c(Y.RESP.LOW, 0.25))
+      
+      ## Compute and plot the empirical histograms for response error.
+      resp.hist <- hist(this_panel_data$error,
+                        breaks=30, freq=FALSE,
+                        plot=FALSE)
+      for(b in 2:length(resp.hist$breaks)) {
+        lo.break <- resp.hist$breaks[b-1]
+        hi.break <- resp.hist$breaks[b]
+        bar.height <- resp.hist$density[b-1]
+        rect(lo.break, 0.0, hi.break, bar.height, border=NA, col="grey70")
+      }
+      
+      for(model.type in MODEL.TYPES[model_list]) {
+        model.data <- this_panel_model[this_panel_model$model == model.type, ]
+        points(model.data$value, model.data$prob, type="l", lty=2, lwd = 2.5, col=MODEL.COL[[model.type]])
+      }
+      ## Plot the participant number and data type
+      mtext(paste0("Lag", panel_labs[panel_idx]), side=3, cex=0.85, line=-2, adj=0.1)
+      
+      ## Plot the x axes (for the bottom row only)
+      if(panel_idx %in% c(4, 5, 6)) {
+        axis(side=1, at=c(-pi, 0, pi), labels=c(expression(-pi), "0", expression(pi)), 
+             cex.axis=AXIS.CEX)
+        mtext(paste("Response Offset (rad)"), side=1, cex=0.75, line=2.5)
+      } else {
+        axis(side=1, at=c(-pi, pi), lwd.ticks=0, labels=FALSE, cex.axis=0.75)
+      }
+      
+      ## Plot the y axes (for the participants in the first col)
+      if(panel_idx %in% c(1,4)) {
+        axis(side=2, at=c(0, 0.25), cex.axis= AXIS.CEX)
+        mtext(paste("Density"), side=2, cex=AXIS.CEX, cex.lab = AXIS.LABEL.CEX, line=2.5)
+      }
+      panel_idx <- panel_idx + 1
     }
   }
+  ## Add in legend
+  par(fig = c(0, 1, 0, 1), oma = c(0, 0, 0, 0), mar = c(0, 0, 0, 0), new = TRUE)
+  plot(0, 0, type = 'l', bty = 'n', xaxt = 'n', yaxt = 'n')
+  legend('topright',legend= MODEL.TYPES[model_list],
+         col=color_wheel[model_list], lty=2, lwd = 2, xpd = TRUE, horiz = TRUE, cex = AXIS.CEX, seg.len=1, bty = 'n')
+  # xpd = TRUE makes the legend plot to the figure
+  dev.off()
 }
 
 ## Recentered plot
-get_asymmetric_recenter <- function(){
-  directions <- unique(recentered_all$direction)
-  lags <- unique(recentered_all$filter)
+# Get densities from recentered points
+get_recenter_density <- function(model){
+  preds <- density(as.numeric(model$error), from = -pi, to = pi, cut = FALSE, kernel = "gaussian")
+  # To counteract the smoothing to zero beyond the domain -pi, pi, replace the last 50 y co-ords 
+  # with the mean of the preceeding 50
+  preds$y[1:50] <- mean(preds$y[51:100])
+  preds$y[(length(preds$y)-50):length(preds$y)] <- mean(preds$y[(length(preds$y)-100):(length(preds$y)-50)])
+  this_predictions <- data.frame(matrix(ncol = 3, nrow = 512))
+  this_predictions[1] <- preds$x
+  this_predictions[2] <- preds$y
+  this_predictions[3] <- model$model[1]
+  this_predictions[4] <- model$participant[1]
+  return(this_predictions)
+}
+
+get_asymmetric_recenter <- function(recenter_model){
+  directions <- unique(recenter_model$direction)
+  lags <- unique(recenter_model$filter)
   asymm_predictions <- data.frame(matrix(ncol = 6, nrow = 0))
   for(h in PARTICIPANTS){
     for(i in 1:length(models)){
       for(j in directions){
         for(k in lags){
-          this_model <- model_predictions[(model_predictions$participant == h)&
-                                            (model_predictions$model == models[i])&
-                                            (model_predictions$direction == j)&
-                                            (model_predictions$filter == k),]
-          this_predictions <- get_response_error_density(this_model)
+          this_model <- recenter_model[(recenter_model$participant == h)&
+                                            (recenter_model$model == models[i])&
+                                            (recenter_model$direction == j)&
+                                            (recenter_model$filter == k),]
+          this_predictions <- get_recenter_density(this_model)
           this_predictions[,4] <- j
           this_predictions[,5] <- k
           this_predictions[,6] <- h
@@ -264,11 +285,20 @@ get_asymmetric_recenter <- function(){
       }
     }
   }
-  colnames(asymm_predictions) <- c("value", "prob", "model", "direction", "lag")
+  colnames(asymm_predictions) <- c("value", "prob", "model", "direction", "lag", "participant")
   return(asymm_predictions)
 }
 
 recenter_data <- recentered_all[recentered_all$model == 'data',]
 recenter_model <- recentered_all[recentered_all$model != 'data',]
+recenter_densities <- get_asymmetric_recenter(recenter_model)
 
-recentered_model_densities <- get_asymmetric_recenter(recenter_model)
+recenter_plot <- function(){
+  for(i in participants){
+    this_recenter_data <- recenter_data[recenter_data$participant == i,]
+    this_model_densities <- recenter_densities[recenter_densities$participant == i,]
+    this_filename <- sprintf('p%i_recenter.png',i)
+    plot_asymm_recenter(c(3:8), this_recenter_data, this_model_densities, this_filename)
+  }
+}
+

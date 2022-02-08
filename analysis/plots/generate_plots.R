@@ -29,5 +29,8 @@ setwd("~/git/sourcemem_online/analysis/plots/output")
 plot_response_error(c(1,2,3,4,5), 'fig10a.png')
 plot_response_time(c(1,2,3,4,5), 'fig10b.png')
 
+# Experiment 2
 setwd("~/git/sourcemem_online/analysis/models/R/experiment_2/output")
-
+source('~/git/sourcemem_online/analysis/plots/response_error/plot_experiment_2.R')
+individual_response_error_plot(c(1:8), data, "fig11.png")
+recenter_plot() #add some input arguments for this like filename
