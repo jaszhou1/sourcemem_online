@@ -1,11 +1,11 @@
 ## spatiotemporal_semantic_orthographic_model.R
 
-# This code is based on the spatiotemporal gradient model with different betas for primacy and recency items.
+# This code is based on the spatiotemporal gradient model.
 
-# This version adds parameters for orthographic and semantic similarity to weight the intrusion probabilities
+# In this variant, space and time are multiplicative components, while semantic and orthographic are additive.
 
-# params = [prec1, prec2, gamma, kappa, lambda_b, lambda_f, beta, zeta,  rho, chi, psi]
-#             1    2       3      4         5    , 6    ,     7,    8    9    10,   11
+# params = [prec1, prec2, gamma, kappa, lambda_b, lambda_f, beta, zeta,  tau, rho, chi, psi]
+#             1    2       3      4         5    , 6    ,     7,    8    9    10    11, 12
 # prec1, prec2: Precision of von Mises components (mem, intrusion)
 # gamma: Overall scaling of intrusions
 # kappa: Scaling parameter for forwards vs backwards intrusion decay slope
@@ -15,7 +15,7 @@
 # zeta: precision for Shepard similarity function (perceived spatial distance)
 # chi: precision for Shepard similarity from orthographic levenshtein distance
 # psi : weighting for semantic similarity
-semantic_orthographic_model <- function(params, data){
+spacextime_ortho_plus_sem_model <- function(params, data){
   
   n_trials <- 10
   n_intrusions <- 9
@@ -28,9 +28,18 @@ semantic_orthographic_model <- function(params, data){
   lambda_f <- params[6]
   beta <- params[7]
   zeta <- params[8]
+  #tau <- params[8]
   rho <- params[9]
   chi <- params[10]
   psi <- params[11]
+  
+  if(rho+chi+psi >= 1){
+    print("Invalid intrusion component weight")
+    nLL <- 1e7
+    return(nLL)
+  }
+  
+  tau <- 1-(rho+chi+psi)
   
   # Function to compute angular difference
   
@@ -47,13 +56,6 @@ semantic_orthographic_model <- function(params, data){
   convert_orthographic_similarity <- function(x, length){
     similarity <- (length - x)/length
     return(similarity)
-  }
-  
-  # Check intrusion component weights do not exceed 1.
-  if(rho+chi+psi >= 1){
-    print("Invalid intrusion component weight")
-    nLL <- 1e7
-    return(nLL)
   }
   
   # Turn levenshtein distance into shepard similarity
@@ -84,7 +86,7 @@ semantic_orthographic_model <- function(params, data){
   }
   
   # Multiply the temporal similarities with corresponding spatial similarity to get a spatiotemporal gradient on each trial
-  intrusion_weights <- ((1-rho-chi-psi) * temporal_similarity) + (rho * spatial_similarity) + (chi * orthographic_similarity) + (psi * semantic_similarity)
+  intrusion_weights <- ((temporal_similarity^tau) * (spatial_similarity^rho)) + (chi * orthographic_similarity) + (psi * semantic_similarity)
   
   # Multiply all intrusion weights with overall intrusion scaling parameter
   intrusion_weights <- gamma*intrusion_weights
@@ -99,7 +101,7 @@ semantic_orthographic_model <- function(params, data){
   
   trial_weights <- trial_weights * (1-beta)
   trial_weights[, length(trial_weights)+1] <- beta
-
+  
   
   # Make sure all weights are positive numbers
   if(any(trial_weights < 0)){
@@ -107,7 +109,7 @@ semantic_orthographic_model <- function(params, data){
     nLL <- 1e7
     return(nLL)
   }
-
+  
   cbind(data, intrusion_weights)
   # Get likelihoods of the response angle coming from a von Mises distribution centered on each of the angles in its block
   likelihoods <- data.frame(matrix(ncol=12,nrow=nrow(data), dimnames=list(NULL, c('position','target', 'intrusion_1','intrusion_2',
@@ -156,7 +158,7 @@ semantic_orthographic_model <- function(params, data){
 # pest = temp[participant,5:9]
 
 # Simulate data from fitted parameters of the temporal gradient model
-simulate_semantic_orthographic_model <- function(participant, data, pest){
+simulate_spacextime_ortho_plus_sem_model <- function(participant, data, pest){
   
   # Check that trial numbers are 1-indexed
   if(min(data$present_trial) == 0){
@@ -174,9 +176,12 @@ simulate_semantic_orthographic_model <- function(participant, data, pest){
   lambda_f <- pest[[6]]
   beta <- pest[[7]]
   zeta <- pest[[8]]
+  #tau <- pest[[8]]
   rho <- pest[[9]]
   chi <- pest[[10]]
   psi <- pest[[11]]
+  
+  tau <- 1-(rho+chi+psi)
   
   shepard_similarity <- function(x, k){
     x <- exp(-k * x)
@@ -211,7 +216,7 @@ simulate_semantic_orthographic_model <- function(participant, data, pest){
   }
   
   # Multiply the temporal similarities with corresponding spatial similarity to get a spatiotemporal gradient on each trial
-  intrusion_weights <- ((1-rho-chi-psi) * temporal_similarity) + (rho * spatial_similarity) + (chi * orthographic_similarity) + (psi * semantic_similarity)
+  intrusion_weights <- ((temporal_similarity^tau) * (spatial_similarity^rho)) + (chi * orthographic_similarity) + (psi * semantic_similarity)
   
   
   # Multiply all intrusion weights with overall intrusion scaling parameter
@@ -253,7 +258,7 @@ simulate_semantic_orthographic_model <- function(participant, data, pest){
     stringsAsFactors = FALSE
   )
   
-  nSims = 2
+  nSims = 5
   this_data <- data
   # Get the angles for each trial
   block_angles <- cbind(this_data[,6], this_data[,14:22])

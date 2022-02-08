@@ -1,24 +1,23 @@
-## spatiotemporal_recency_beta_model.R
+## spacextime_plus_orthoxsem_recog_model.R
 
-# This code implements the temporal gradient model with a third uniform guessing component.
+# This code is based on the spatiotemporal gradient model.
 
-# This version has beta (the proportion of guesses) constant regardless of the position of the target
-# So variation in the proportion of intrusions due to temporal gradient effect is all in memory/intrusions
+# In this variant, space and time are multiplicative components, while semantic and orthographic are additive.
 
-# The temporal gradient in this version is defined by a power law rather than an exponential function
+# Also adds a binary recognition factor so unrecognised items do not intrude, regardless of other factors
 
-# params = [prec1, prec2, gamma, kappa, lambda_b, lambda_f, beta, beta_primacy, beta_recency zeta]
-#             1    2       3      4         5    , 6    ,     7,          8      9            10
+# params = [prec1, prec2, gamma, kappa, lambda_b, lambda_f, beta, zeta,  tau, rho, chi, psi]
+#             1    2       3      4         5    , 6    ,     7,    8    9    10    11, 12
 # prec1, prec2: Precision of von Mises components (mem, intrusion)
 # gamma: Overall scaling of intrusions
 # kappa: Scaling parameter for forwards vs backwards intrusion decay slope
 # lambda_b: Decay rate of backwards temporal gradient
 # lambda_f: Decay rate of forwards temporal gradient
 # beta: proportion of guesses
-# beta_primacy: proportion of guesses for the first item
-# beta_recency: proportion of guesses for last item
 # zeta: precision for Shepard similarity function (perceived spatial distance)
-spatiotemporal_beta_model <- function(params, data){
+# chi: precision for Shepard similarity from orthographic levenshtein distance
+# psi : weighting for semantic similarity
+spacextime_plus_orthoxsem_recog_model <- function(params, data){
   
   n_trials <- 10
   n_intrusions <- 9
@@ -30,11 +29,19 @@ spatiotemporal_beta_model <- function(params, data){
   lambda_b <- params[5]
   lambda_f <- params[6]
   beta <- params[7]
-  beta_primacy <- params[8]
-  beta_recency <- params[9]
-  zeta <- params[10]
-  rho <- params[11]
+  zeta <- params[8]
+  #tau <- params[8]
+  rho <- params[9]
+  chi <- params[10]
+  psi <- params[11]
   
+  if(rho+chi+psi >= 1){
+    print("Invalid intrusion component weight")
+    nLL <- 1e7
+    return(nLL)
+  }
+  
+  tau <- 1-(rho+chi+psi)
   # Function to compute angular difference
   
   angle_diff <- function(a,b){
@@ -46,6 +53,19 @@ spatiotemporal_beta_model <- function(params, data){
     x <- exp(-k * x)
     return(x)
   }
+  
+  convert_orthographic_similarity <- function(x, length){
+    similarity <- (length - x)/length
+    return(similarity)
+  }
+  
+  # Turn levenshtein distance into shepard similarity
+  orthographic_similarity <- data.frame(matrix(nrow = nrow(data), ncol = n_intrusions))
+  orthographic_similarity[,1:9] <- lapply(data[,51:59], convert_orthographic_similarity, length = 4)
+  
+  # Scale semantic cosine similarity
+  semantic_similarity <- data.frame(matrix(nrow = nrow(data), ncol = n_intrusions))
+  semantic_similarity[,1:9] <- data[,60:68] 
   
   # Turn cosine distances between target and intrusions into Shepard similarity
   spatial_similarity <- data.frame(matrix(nrow = nrow(data), ncol = n_intrusions))
@@ -66,8 +86,10 @@ spatiotemporal_beta_model <- function(params, data){
     temporal_similarity[temporal_similarity == i] <- temporal_gradient[[as.character(i)]]
   }
   
+  intrusion_recognition <- data[,70:78]
+  
   # Multiply the temporal similarities with corresponding spatial similarity to get a spatiotemporal gradient on each trial
-  intrusion_weights <- ((1-rho)*temporal_similarity) + (rho*spatial_similarity)
+  intrusion_weights <- (((temporal_similarity^tau) * (spatial_similarity^rho)) + ((orthographic_similarity^chi) * (semantic_similarity^psi))) * intrusion_recognition
   
   # Multiply all intrusion weights with overall intrusion scaling parameter
   intrusion_weights <- gamma*intrusion_weights
@@ -80,25 +102,13 @@ spatiotemporal_beta_model <- function(params, data){
   # Multiply all weights by 1-beta, the non-guessed responses, based on the serial position of the target
   # Different betas for primacy and recency items
   
-  trial_weights[data$present_trial %in% c(1,2),] <- trial_weights[data$present_trial %in% c(1,2),] * (1-beta_primacy)
-  trial_weights[data$present_trial %in% c(1,2), length(trial_weights)+1] <- beta_primacy
+  trial_weights <- trial_weights * (1-beta)
+  trial_weights[, length(trial_weights)+1] <- beta
   
-  trial_weights[data$present_trial %in% c(10),] <- trial_weights[data$present_trial %in% c(10),] * (1-beta_recency)
-  trial_weights[data$present_trial %in% c(10), length(trial_weights)] <- beta_recency
-  
-  trial_weights[!(data$present_trial %in% c(1,2,10)),] <- trial_weights[!(data$present_trial %in% c(1,2,10)),] * (1-beta)
-  trial_weights[!(data$present_trial %in% c(1,2,10)), length(trial_weights)] <- beta
   
   # Make sure all weights are positive numbers
   if(any(trial_weights < 0)){
     print("Invalid: Negative weight")
-    nLL <- 1e7
-    return(nLL)
-  }
-  
-  # Force beta to be higher than beta_primacy, as it doesn't make sense for there to be more guessing on first item
-  if(beta < beta_primacy){
-    print("Invalid: Beta < Beta_Primacy")
     nLL <- 1e7
     return(nLL)
   }
@@ -151,7 +161,7 @@ spatiotemporal_beta_model <- function(params, data){
 # pest = temp[participant,5:9]
 
 # Simulate data from fitted parameters of the temporal gradient model
-simulate_spatiotemporal_beta_model <- function(participant, data, pest){
+simulate_spacextime_plus_orthoxsem_recog_model <- function(participant, data, pest){
   
   # Check that trial numbers are 1-indexed
   if(min(data$present_trial) == 0){
@@ -168,15 +178,26 @@ simulate_spatiotemporal_beta_model <- function(participant, data, pest){
   lambda_b <- pest[[5]]
   lambda_f <- pest[[6]]
   beta <- pest[[7]]
-  beta_primacy <- pest[[8]]
-  beta_recency <- pest[[9]]
-  zeta <- pest[[10]]
-  rho <- pest[[11]]
+  zeta <- pest[[8]]
+  #tau <- pest[[8]]
+  rho <- pest[[9]]
+  chi <- pest[[10]]
+  psi <- pest[[11]]
+  
+  tau <- 1-(rho+chi+psi)
   
   shepard_similarity <- function(x, k){
     x <- exp(-k * x)
     return(x)
   }
+  
+  # Turn levenshtein distance into shepard similarity
+  orthographic_similarity <- data.frame(matrix(nrow = nrow(data), ncol = n_intrusions))
+  orthographic_similarity[,1:9] <- lapply(data[,51:59], convert_orthographic_similarity, length = 4)
+  
+  # Scale semantic cosine similarity
+  semantic_similarity <- data.frame(matrix(nrow = nrow(data), ncol = n_intrusions))
+  semantic_similarity[,1:9] <- data[,60:68] 
   
   # Turn cosine distances between target and intrusions into Shepard similarity
   spatial_similarity <- data.frame(matrix(nrow = nrow(data), ncol = n_intrusions))
@@ -197,8 +218,11 @@ simulate_spatiotemporal_beta_model <- function(participant, data, pest){
     temporal_similarity[temporal_similarity == i] <- temporal_gradient[[as.character(i)]]
   }
   
+  intrusion_recognition <- data[,70:78]
+  
   # Multiply the temporal similarities with corresponding spatial similarity to get a spatiotemporal gradient on each trial
-  intrusion_weights <- ((1-rho)*temporal_similarity) + (rho*spatial_similarity)
+  intrusion_weights <- (((temporal_similarity^tau) * (spatial_similarity^rho)) + ((orthographic_similarity^chi) * (semantic_similarity^psi))) * intrusion_recognition
+  
   
   # Multiply all intrusion weights with overall intrusion scaling parameter
   intrusion_weights <- gamma*intrusion_weights
@@ -208,17 +232,15 @@ simulate_spatiotemporal_beta_model <- function(participant, data, pest){
   target_weight <- 1 - rowSums(intrusion_weights)
   trial_weights <- cbind(target_weight, intrusion_weights)
   
+  if(any(trial_weights < 0)){
+    print("Invalid: Negative weight")
+  }
+  
   # Multiply all weights by 1-beta, the non-guessed responses, based on the serial position of the target
   # Different betas for primacy and recency items
   
-  trial_weights[data$present_trial %in% c(1,2),] <- trial_weights[data$present_trial %in% c(1,2),] * (1-beta_primacy)
-  trial_weights[data$present_trial %in% c(1,2), length(trial_weights)+1] <- beta_primacy
-  
-  trial_weights[data$present_trial %in% c(10),] <- trial_weights[data$present_trial %in% c(10),] * (1-beta_recency)
-  trial_weights[data$present_trial %in% c(10), length(trial_weights)] <- beta_recency
-  
-  trial_weights[!(data$present_trial %in% c(1,2,10)),] <- trial_weights[!(data$present_trial %in% c(1,2,10)),] * (1-beta)
-  trial_weights[!(data$present_trial %in% c(1,2,10)), length(trial_weights)] <- beta
+  trial_weights <- trial_weights * (1-beta)
+  trial_weights[, length(trial_weights)+1] <- beta
   
   # Empty dataframe to store simulated data
   sim_data <- data.frame(
@@ -238,7 +260,6 @@ simulate_spatiotemporal_beta_model <- function(participant, data, pest){
     angle_9 = numeric(),
     angle_10 = numeric(),
     participant = integer(),
-    model = character(),
     stringsAsFactors = FALSE
   )
   
@@ -270,18 +291,18 @@ simulate_spatiotemporal_beta_model <- function(participant, data, pest){
         sim_angle <- NA
         sim_response <- runif(1, -pi, pi)
         sim_error <- angle_diff(target_angle, sim_response)
-        sim_data[nrow(sim_data)+1,] <- c(word, target_angle, target_position, sim_response, sim_error, no_offset_angles, participant, 'spatiotemporal_beta')
+        sim_data[nrow(sim_data)+1,] <- c(word, target_angle, target_position, sim_response, sim_error, no_offset_angles, participant)
       } else if (sim_intrusion_position[1]){
         # Decide which stimulus angle is the center of this retrieval
         sim_angle <- this_block_angles[sim_intrusion_position == 1]
         sim_response <- rvm(1, sim_angle, prec1)
         sim_error <- angle_diff(target_angle, sim_response)
-        sim_data[nrow(sim_data)+1,] <- c(word, target_angle, target_position, sim_response, sim_error, no_offset_angles, participant, 'spatiotemporal_beta')
+        sim_data[nrow(sim_data)+1,] <- c(word, target_angle, target_position, sim_response, sim_error, no_offset_angles, participant)
       } else {
         sim_angle <- this_block_angles[sim_intrusion_position == 1]
         sim_response <- rvm(1, sim_angle, prec2)
         sim_error <- angle_diff(target_angle, sim_response)
-        sim_data[nrow(sim_data)+1,] <- c(word, target_angle, target_position, sim_response, sim_error, no_offset_angles, participant, 'spatiotemporal_beta')
+        sim_data[nrow(sim_data)+1,] <- c(word, target_angle, target_position, sim_response, sim_error, no_offset_angles, participant)
       }
     }
   }
