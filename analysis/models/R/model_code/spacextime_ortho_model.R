@@ -43,14 +43,9 @@ ortho_model <- function(params, data){
     return(x)
   }
   
-  convert_orthographic_similarity <- function(x, length){
-    similarity <- (length - x)/length
-    return(similarity)
-  }
-  
-  # Get levenshtein distance 
+  # Turn levenshtein distance into similarity
   orthographic_similarity <- data.frame(matrix(nrow = nrow(data), ncol = n_intrusions))
-  orthographic_similarity[,1:9] <- lapply(data[,51:59], convert_orthographic_similarity, length = 4)
+  orthographic_similarity[,1:9] <- 1- data[,51:59]
   
   # Turn cosine distances between target and intrusions into Shepard similarity
   spatial_similarity <- data.frame(matrix(nrow = nrow(data), ncol = n_intrusions))
@@ -170,9 +165,9 @@ simulate_ortho_model <- function(participant, data, pest){
     return(x)
   }
   
-  # Turn levenshtein distance into shepard similarity
+  # Turn levenshtein distance into similarity
   orthographic_similarity <- data.frame(matrix(nrow = nrow(data), ncol = n_intrusions))
-  orthographic_similarity[,1:9] <- lapply(data[,51:59], convert_orthographic_similarity, length = 4)
+  orthographic_similarity[,1:9] <- 1- data[,51:59]
   
   # Turn cosine distances between target and intrusions into Shepard similarity
   spatial_similarity <- data.frame(matrix(nrow = nrow(data), ncol = n_intrusions))

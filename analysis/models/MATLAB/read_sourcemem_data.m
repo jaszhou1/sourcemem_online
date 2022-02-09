@@ -10,7 +10,7 @@ function [data] = read_sourcemem_data()
 % % J1 is all the numbers, J2 is all the strings, and J3 is the full array
 % % MATLAB doesnt like having strings and numbers together
 
-[J1, J2, J3] = xlsread("sourcemem_data_2021_distances.csv");
+[J1, J2, J3] = xlsread("experiment_1.csv");
 
 % First, exclude the practice blocks
 all_data = J1(J1(:,10) ~= 0,:);
@@ -38,6 +38,7 @@ for i = 1:length(participants)
     this_participant_cell(:,14:22) = this_participant_data(:,30:38); % intrusion lags
     this_participant_cell(:,23:31) = this_participant_data(:,40:48); % intrusion spatial distances
     this_participant_cell(:,32) = this_participant_data(:,2); % trial number (in block)
+    this_participant_cell(:,33:41) = this_participant_data(:,50:58);
     data{i,1} = this_participant_cell;
 end
 end

@@ -11,7 +11,7 @@ data <- data[data$block!= 0,]
 # Exclude invalid RTs
 data <- data[data$valid_RT==TRUE,]
 
-setwd("~/git/sourcemem_online/analysis/models/MATLAB")
+setwd("~/git/sourcemem_online/analysis/models/MATLAB/experiment_1")
 
 pure_guess <- read.csv('sim_pure_guess.csv', header = FALSE)
 pure_guess$model <- 'Pure Guess'
@@ -19,7 +19,7 @@ pure_guess$model <- 'Pure Guess'
 pure_intrusion <- read.csv('sim_pure_intrusion.csv', header = FALSE)
 pure_intrusion$model <- 'Pure Intrusion'
 
-intrusion <- read.csv('sim_intrusion.csv', header = FALSE)
+intrusion <- read.csv('sim_intrusion_eta.csv', header = FALSE)
 intrusion$model <- 'Intrusion + Guess'
 
 # intrusion_eta <- read.csv('sim_intrusion_eta.csv', header = FALSE)
@@ -223,8 +223,9 @@ plot_qq <- function(data, model, filename){
   
   # Plot (ggplot)
   plot <- ggplot() +
-    geom_point(data=data_qq, aes(x= theta, y = rt, size = 2, shape = factor(rt_q))) +
-    geom_line(data = model_qq, linetype="dashed", size = 1.2, aes(x = theta, y = rt,
+    geom_point(data=data_qq, size = 3, aes(x= theta, y = rt, shape = factor(rt_q))) +
+    geom_point(data=model_qq, size = 3, alpha = 0.5, aes(x= theta, y = rt, shape = factor(rt_q), color = model)) +
+    geom_line(data = model_qq, linetype="dashed", alpha = 0.5, size = 1, aes(x = theta, y = rt,
                                    color = model, group = interaction(model, rt_q))) +
     scale_color_manual(values=c('#42B540FF',
                                 '#00468BFF',
@@ -238,24 +239,24 @@ plot_qq <- function(data, model, filename){
            color= guide_legend(title="Model"),
            shape= guide_legend(title="Response Time Quantile")) +
     theme(
-      axis.text.x = element_text(color="black", size = 12),
-      axis.text.y = element_text(color="black", size = 12),
+      axis.text.x = element_text(color="black", size = 14),
+      axis.text.y = element_text(color="black", size = 14),
       plot.title = element_blank(),
-      axis.title.x = element_text(color="black", size=14),
-      axis.title.y = element_text(color="black", size=14),
+      axis.title.x = element_text(color="black", size=16),
+      axis.title.y = element_text(color="black", size=16),
       plot.background = element_rect(fill = "white"),
       panel.grid.major = element_blank(), 
       panel.grid.minor = element_blank(),
       panel.background = element_blank(),
       legend.key = element_rect(colour = "transparent", fill = "white"),
-      legend.text=element_text(size= 12),
+      legend.text=element_text(size= 14),
       axis.line = element_line(colour = "black")
     )
-  ggsave(filename, width = 40, height = 20, units = "cm")
+  ggsave(filename, width=10.7, height=4, units = "in")
   return(plot)
 }
-
-indivdual_qq <- function(){
+setwd("~/git/sourcemem_online/analysis/plots/diffusion")
+individual_qq <- function(){
   for (i in unique(data$participant)){
     filename = sprintf('p_%i_qxq.png', i)
     plot_qq(data[data$participant == i,], model_predictions[model_predictions$participant == i,], filename)
