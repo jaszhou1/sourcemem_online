@@ -1,4 +1,4 @@
-function [ll, bic, P, penalty] = pure_guess_model(Pvar, Pfix, Sel, Data)
+function [ll, aic, P, penalty] = pure_guess_model(Pvar, Pfix, Sel, Data)
 % This is a mixture model (Zhang and Luck style) with uniform guessing from a
 % zero-drift diffusion process and positive drift
 
@@ -56,7 +56,7 @@ st = P(8);
 % Check to see if component weights sum to 1.
 if beta > 1
     ll = 1e7;
-    bic = 0;
+    aic = 0;
     penalty = 1e7;
     [name, errmg3], return;
 end
@@ -79,7 +79,7 @@ Plb=[0*ones(1,2),  0.0,  0.7, 0.7, 0, 0.01, 0];
 if any(P - Ub > 0) || any(Lb - P > 0)
     ll = 1e7 + ...
         1e3 * (sum(max(P - Ub, 0).^2) + sum(max(Lb - P, 0).^2));
-    bic = 0;
+    aic = 0;
     return
 else
     penalty =  1e3 * (sum(max(P - Pub, 0).^2) + sum(max(Plb - P, 0).^2));
@@ -129,5 +129,5 @@ log_like = log(like);
 ll = sum(-log_like) + penalty;
 
 % Calculate the BIC
-bic = 2 * ll + sum(Sel) * log(length(Data));
+aic = 2 * ll + 2 * sum(Sel);
 end
