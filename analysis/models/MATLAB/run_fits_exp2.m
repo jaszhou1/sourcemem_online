@@ -406,3 +406,13 @@ param_to_csv(filename, 1:n_participants, add, 'Additive', header_line)
 filename = [datestr(now,'yyyy_mm_dd_HH'),'_pest_multiplicative.csv'];
 header_line = 'participant, model_name, AIC, v1_targ, v2_targ, v1_int, v2_int, eta_targ, eta_int,  a_targ, a_guess, gamma, beta, kappa, lambda_b, lambda_f, zeta, rho, chi, psi, Ter, st';
 param_to_csv(filename, 1:n_participants, multi, 'Multiplicative', header_line)
+
+csvwrite('sim_add.csv', simulated_add)
+csvwrite('sim_flat.csv', simulated_flat_intrusion_eta)
+csvwrite('sim_multi.csv', simulated_multi)
+csvwrite('sim_ortho.csv', simulated_ortho)
+csvwrite('sim_pure_guess.csv', simulated_pure_guess)
+csvwrite('sim_pure_intrusion.csv', simulated_pure_intrusion)
+csvwrite('sim_semantic.csv', simulated_semantic)
+csvwrite('sim_spatiotemporal.csv', simulated_spatiotemporal)
+csvwrite('sim_temporal.csv', simulated_temporal_flat_guess)
