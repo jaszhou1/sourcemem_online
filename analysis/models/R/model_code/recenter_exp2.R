@@ -4,7 +4,7 @@ library(R.utils)
 setwd("~/git/sourcemem_online/analysis/models/R/experiment_2/output")
 
 # Load in Experiment 2 Fits
-load("~/git/sourcemem_online/analysis/models/R/experiment_2/output/exp_2_simulated_data.RData")
+load("~/git/sourcemem_online/analysis/models/R/experiment_2/output/exp_2_sim_data_updated.RData")
 
 # Filter is the number of positions away from the target we are allowing intrusions to come from
 n_intrusions <- 9
@@ -104,21 +104,21 @@ generate_recentered_model <- function(data, model_string){
 
 recenter_all <- function(){
   recentered_data <- generate_recentered_dataset(data)
-  recentered_threshold <- generate_recentered_model(sim_no_intrusion, 'Pure Guess')
+  #recentered_threshold <- generate_recentered_model(sim_no_intrusion, 'Pure Guess')
   #recentered_pure_intrusion <- generate_recentered_model(sim_pure_intrusion, 'Pure Intrusion')
   recentered_intrusion <- generate_recentered_model(sim_flat_intrusion, 'Intrusion + Guess')
   recentered_temporal <- generate_recentered_model(sim_temporal, 'Temporal')
   recentered_spatiotemporal <- generate_recentered_model(sim_SxT, 'Spatiotemporal')
-  recentered_orthographic <- generate_recentered_model(sim_orthographic, 'Orthographic')
+  recentered_orthographic <- generate_recentered_model(sim_ortho, 'Orthographic')
   recentered_semantic <- generate_recentered_model(sim_semantic, 'Semantic')
   recentered_additive <- generate_recentered_model(sim_SxTpOxSe, 'Four Factor (Additive)')
   recentered_multiplicative <- generate_recentered_model(sim_all_x, 'Four Factor (Multiplicative)')
   recentered_recognition <- generate_recentered_model(sim_SxT_recog, 'Unrecognised = Guesses')
-  recentered_all <- rbind(recentered_data, recentered_threshold, recentered_intrusion, 
+  recentered_all <- rbind(recentered_data, recentered_intrusion, 
                           recentered_temporal, recentered_spatiotemporal,
                           recentered_orthographic, recentered_semantic,
                           recentered_additive, recentered_multiplicative,
                           recentered_recognition)
-  save(recentered_all, file = paste(toString(Sys.Date()), '_recentered_exp2.RData', sep =""))
+  save(recentered_all, file = paste(toString(Sys.Date()), '_recentered_exp2_updated.RData', sep =""))
   return(recentered_all)
 }

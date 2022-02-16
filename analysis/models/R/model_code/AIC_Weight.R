@@ -11,11 +11,11 @@ AIC_weight <- function(AIC){
   
   AIC_weight <- relative_AIC[,1:ncol]/relative_AIC[,ncol+1]
   
-  write.csv(AIC_weight, file = 'AIC_Weight.csv')
+  write.csv(AIC_weight, file = 'AIC_Weight_exp2.csv')
 }
 
 setwd("~/git/sourcemem_online/analysis/models/R/experiment_1/output")
 exp1 <- read.csv('Exp1_AIC.csv')
 
 setwd("~/git/sourcemem_online/analysis/models/R/experiment_2/output")
-exp2 <- read.csv('Exp2_AIC.csv')
+exp2 <- read.csv('Exp2_AIC_trimmed.csv')

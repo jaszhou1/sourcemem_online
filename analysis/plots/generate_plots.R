@@ -31,6 +31,10 @@ plot_response_time(c(1,2,3,4,5), 'fig10b.png')
 
 # Experiment 2
 setwd("~/git/sourcemem_online/analysis/models/R/experiment_2/output")
+# Non- ortho/sem models
 source('~/git/sourcemem_online/analysis/plots/response_error/plot_experiment_2.R')
-individual_response_error_plot(c(1:8), data, "fig11.png")
-recenter_plot() #add some input arguments for this like filename
+setwd("~/git/sourcemem_online/analysis/plots/output")
+individual_combined_plot(c(1,2,3), data, response_error_predictions, recenter_data, 
+                         individual_recentered, group_response_error_predictions, group_recentered, "fig11.png")
+
+plot_asymm_recenter(c(1,2,3), recenter_data, asymm_group_densities, "fig12.png")

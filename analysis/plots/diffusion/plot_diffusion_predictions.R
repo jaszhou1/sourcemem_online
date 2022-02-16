@@ -3,8 +3,8 @@
 ## Read in, and transform data as required. ##
 
 # Plot marginal response error and time model predictions against data
-setwd("~/git/sourcemem_online/analysis/models/MATLAB/data")
-data <- read.csv('sourcemem_data_2021_distances.csv')
+setwd("~/git/sourcemem_online/analysis/models/MATLAB/")
+data <- read.csv('experiment_1.csv')
 # Exclude practice block
 data <- data[data$block!= 0,]
 

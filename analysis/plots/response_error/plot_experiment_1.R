@@ -1,6 +1,6 @@
 # Load in best fits of the models
 setwd("~/git/sourcemem_online/analysis/models/R/experiment_1/output")
-load("~/git/sourcemem_online/analysis/models/R/model_code/2022-01-14.RData")
+load("2022-01-14.RData")
 
 # Get a number of equally spaced colours
 # gg_color_hue <- function(n) {
@@ -161,7 +161,8 @@ errors_across_serial_position <- function(data){
   models <- concatenate_model_average_error()
   plot <- ggplot(data=serial_position_data, aes(x=position, y = error)) +
     geom_point(size = 3) +
-    geom_smooth(data = models, method = 'loess', se = FALSE, linetype="dashed", aes(x = position, color = model), span = 1.5) +
+    geom_point(data = models, aes(x = position, color = model)) +
+    geom_smooth(data = models, method = 'loess', se = FALSE, linetype="solid", aes(x = position, color = model), span = 1.5) +
     scale_color_manual(values=c('#42B540FF',
                                 '#00468BFF',
                                 '#ED0000FF',
