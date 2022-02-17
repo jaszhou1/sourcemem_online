@@ -148,8 +148,7 @@ recenter_all <- function(){
   recentered_all <- rbind(recentered_data, recentered_intrusion, 
                           recentered_temporal, recentered_spatiotemporal,
                           recentered_orthographic, recentered_semantic,
-                          recentered_additive, recentered_multiplicative,
-                          recentered_recognition)
+                          recentered_multiplicative)
   save(recentered_all, file = paste(toString(Sys.Date()), '_recentered_exp2_updated.RData', sep =""))
   return(recentered_all)
 }
