@@ -40,9 +40,28 @@ get_orthographic_index <- function(data){
   colnames(orthographic_index) <- 'ortho_bin'
   return(orthographic_index)
 }
-load("~/git/sourcemem_online/analysis/models/R/experiment_2/output/exp_2_simulated_data.RData")
-bin_by_orthography <- function(data, model){
-  idx <- get_orthographic_index(data)
-  data$ortho_bin <- idx
-  model$ortho_bin <- df[rep(seq_len(nrow(df)), each = 5), ]
-}
+
+load("~/git/sourcemem_online/analysis/models/R/experiment_2/output/exp_2_sim_data_updated.RData")
+
+# Rename models and concatenate simulated data
+#sim_no_intrusion$model <- 'Pure Guess'
+sim_flat_intrusion$model <- 'Intrusion + Guess'
+sim_temporal$model <- 'Temporal'
+sim_SxT$model <- 'Spatiotemporal'
+sim_ortho$model <- 'Orthographic'
+sim_semantic$model <- 'Semantic'
+
+model_predictions <- rbind(sim_flat_intrusion, sim_temporal,
+                           sim_SxT, sim_ortho, sim_semantic)
+idx <- get_orthographic_index(data)
+data[,ncol(data)+1] <- idx
+data$ortho_bin_f <- factor(data$ortho_bin, levels = c('Low', 'Medium', 'High'))
+
+model_predictions$ortho_bin <- rep(idx[rep(seq_len(nrow(idx)), each = 5), ],5)
+model_predictions$ortho_bin_f <- factor(model_predictions$ortho_bin, levels = c('Low', 'Medium', 'High'))
+
+
+ggplot() +
+  geom_histogram(data = data, aes(x = response_error, y=..density..)) +
+  geom_density(data = model_predictions, aes(x = simulated_error, col = model), alpha = 0.4, position = "identity") +
+  facet_wrap(participant ~ ortho_bin_f, ncol = 3)

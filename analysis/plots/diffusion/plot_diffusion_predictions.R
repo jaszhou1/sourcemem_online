@@ -44,7 +44,7 @@ models <- unique(model_predictions$model)
 # Transform data into (wrapped) density 
 
 get_response_error_density <- function(model){
-  preds <- density(as.numeric(model$error), from = -pi, to = pi, cut = FALSE, kernel = "gaussian")
+  preds <- density(as.numeric(model$error), from = -pi, to = pi, cut = FALSE, kernel = "epanechnikov")
   # To counteract the smoothing to zero beyond the domain -pi, pi, replace the last 50 y co-ords 
   # with the mean of the preceeding 50
   preds$y[1:50] <- mean(preds$y[51:100])
