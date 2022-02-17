@@ -2,7 +2,7 @@
 # histograms
 
 # Load in Experiment 1 Fits
-load("~/git/sourcemem_online/analysis/models/R/model_code/2022-01-14.RData")
+load("~/git/sourcemem_online/analysis/models/R/experiment_1/output/2022-01-14.RData")
 
 # Filter is the number of positions away from the target we are allowing intrusions to come from
 n_intrusions <- 9
