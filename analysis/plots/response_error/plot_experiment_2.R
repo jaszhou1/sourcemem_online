@@ -652,3 +652,8 @@ plot_asymm_recenter <- function(model_list, data, asymm_predictions, filename){
 #   # xpd = TRUE makes the legend plot to the figure
 #   dev.off()
 # }
+ggplot() +
+geom_histogram(data = recentered_data, aes(x = error, y=..density..)) +
+geom_histogram(data = recentered_orthographic, aes(x = error, y = ..density..), fill = 'red',
+             alpha = 0.4, position = "identity") +
+  facet_wrap(participant ~ ortho, ncol = 4)

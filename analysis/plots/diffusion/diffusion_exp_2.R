@@ -204,7 +204,7 @@ exp2_plot <- function(model_list, data, model_predictions, filename){
       axis(side=1, cex.axis=AXIS.CEX)
       mtext(paste("Response time (s)"), side=1, cex=AXIS.LABEL.CEX, line=2.5)
     } else {
-      axis(side=1, at=c(0, 7), labels= c("0", "2", "4", "6", "7"), lwd.ticks=0, labels=FALSE, cex.axis=AXIS.CEX)
+      axis(side=1, at=c(0, 7), lwd.ticks=0, labels=FALSE, cex.axis=AXIS.CEX)
     }
     
     if((p.idx %% PARTICIPANTS.PER.ROW) == 0) {
