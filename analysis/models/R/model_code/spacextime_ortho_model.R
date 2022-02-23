@@ -231,7 +231,7 @@ simulate_ortho_model <- function(participant, data, pest){
     stringsAsFactors = FALSE
   )
   
-  nSims = 5
+  nSims = 1
   this_data <- data
   # Get the angles for each trial
   block_angles <- cbind(this_data[,6], this_data[,14:22])

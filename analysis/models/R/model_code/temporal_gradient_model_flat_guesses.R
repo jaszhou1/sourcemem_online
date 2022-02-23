@@ -191,7 +191,7 @@ simulate_temporal_model <- function(participant, data, pest){
     stringsAsFactors = FALSE
   )
   
-  nSims = 5
+  nSims = 1
   this_data <- data
   # Get the angles for each trial
   block_angles <- cbind(this_data[,7], this_data[,14:22])
@@ -219,18 +219,18 @@ simulate_temporal_model <- function(participant, data, pest){
         sim_angle <- NA
         sim_response <- runif(1, -pi, pi)
         sim_error <- angle_diff(target_angle, sim_response)
-        sim_data[nrow(sim_data)+1,] <- c(word, target_angle, target_position, sim_response, sim_error, no_offset_angles, participant, 'temporal')
+        sim_data[nrow(sim_data)+1,] <- c(word, target_angle, target_position, sim_response, sim_error, no_offset_angles, participant, 'Temporal')
       } else if (sim_intrusion_position[1]){
         # Decide which stimulus angle is the center of this retrieval
         sim_angle <- this_block_angles[sim_intrusion_position == 1]
         sim_response <- rvm(1, sim_angle, prec1)
         sim_error <- angle_diff(target_angle, sim_response)
-        sim_data[nrow(sim_data)+1,] <- c(word, target_angle, target_position, sim_response, sim_error, no_offset_angles, participant, 'temporal')
+        sim_data[nrow(sim_data)+1,] <- c(word, target_angle, target_position, sim_response, sim_error, no_offset_angles, participant, 'Temporal')
       } else {
         sim_angle <- this_block_angles[sim_intrusion_position == 1]
         sim_response <- rvm(1, sim_angle, prec2)
         sim_error <- angle_diff(target_angle, sim_response)
-        sim_data[nrow(sim_data)+1,] <- c(word, target_angle, target_position, sim_response, sim_error, no_offset_angles, participant, 'temporal')
+        sim_data[nrow(sim_data)+1,] <- c(word, target_angle, target_position, sim_response, sim_error, no_offset_angles, participant, 'Temporal')
       }
     }
   }
