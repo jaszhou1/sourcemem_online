@@ -173,91 +173,16 @@ individual_response_error_plot <- function(model_list, data, filename){
   ## Put the outer margin axis labels.
   mtext("Error density", side=2, line=2, outer=TRUE, cex = AXIS.LABEL.CEX)
   mtext("Recentered density", side=4, line=2, outer=TRUE, cex = AXIS.LABEL.CEX)
+  
+  par(fig = c(0, 1, 0, 1), oma = c(0, 0, 0, 0), mar = c(0, 0, 0, 0), new = TRUE)
+  plot(0, 0, type = 'l', bty = 'n', xaxt = 'n', yaxt = 'n')
+  legend("topright", legend= MODEL.TYPES[model_list],
+         col=color_wheel[model_list], lty=2, lwd = 2, bty = "n",cex=AXIS.CEX, title="Models")
+  
   ## If we're writing to a file (i.e. a PDF), close the device.
   if(filename != "") {
     dev.off()
   }
-}
-
-# Load in recentered data
-load("~/git/sourcemem_online/analysis/models/R/experiment_2/output/2022-02-11_recentered_exp2_updated.RData")
-colnames(recentered_all) <- c('error', 'direction', 'participant', 'model', 'filter')
-recenter_data <- recentered_all[recentered_all$model == 'data',]
-recenter_model <- recentered_all[recentered_all$model != 'data',]
-
-## Recentered plot
-# Get densities from recentered points
-get_recenter_density <- function(model){
-  preds <- density(as.numeric(model$error), from = -pi, to = pi, cut = FALSE, kernel = "epanechnikov", adjust = 1)
-  preds$y[1:75] <- mean(preds$y[51:100])
-  preds$y[(length(preds$y)-75):length(preds$y)] <- mean(preds$y[(length(preds$y)-100):(length(preds$y)-50)])
-  this_predictions <- data.frame(matrix(ncol = 3, nrow = 512))
-  this_predictions[1] <- preds$x
-  this_predictions[2] <- preds$y
-  this_predictions[3] <- model$model[1]
-  this_predictions[4] <- model$participant[1]
-  return(this_predictions)
-}
-
-individual_recentered <- data.frame(matrix(ncol = 4, nrow = 0))
-for(i in participants){
-  for(j in 1:length(models)){
-    this_model <- recenter_model[(recenter_model$participant == i) & (recenter_model$model == models[j]),]
-    this_predictions <- get_recenter_density(this_model)
-    individual_recentered <- rbind(individual_recentered , this_predictions)
-  }
-}
-colnames(individual_recentered) <- c("value", "prob", "model", "participant")
-
-group_recentered <- data.frame(matrix(ncol = 4, nrow = 0))
-for(j in 1:length(models)){
-  this_model <- recenter_model[recenter_model$model == models[j],]
-  this_predictions <- get_recenter_density(this_model)
-  this_predictions[4] <- 'Average'
-  group_recentered <- rbind(group_recentered, this_predictions)
-}
-colnames(group_recentered) <- c("value", "prob", "model", "participant")
-
-plot_recentered <- function(model_list, this_recentered_predictions, data, filename){
-  ## Opens a drawing device (either X11 for testing or a
-  ## PDF for saving).
-  if(filename == "") {
-    X11() # Write to the screen
-  } else {
-    png(file=filename, width=10, height=7, units = "in", pointsize = 12, res = 300)
-    #pdf(file=filename, width=8.3, height=10.7)
-  }
-  plot.new()
-  plot.window(xlim=c(X.RESP.LOW, X.RESP.HI),
-              ylim=c(Y.RESP.LOW, 0.25))
-  
-  ## Compute and plot the empirical histograms for response error.
-  resp.hist <- hist(data$error,
-                    breaks=NUM.BINS, freq=FALSE,
-                    plot=FALSE)
-  for(b in 2:length(resp.hist$breaks)) {
-    lo.break <- resp.hist$breaks[b-1]
-    hi.break <- resp.hist$breaks[b]
-    bar.height <- resp.hist$density[b-1]
-    rect(lo.break, 0.0, hi.break, bar.height, border=NA, col="grey70")
-  }
-  
-  for(model.type in MODEL.TYPES[model_list]) {
-    model.data <- this_recentered_predictions[this_recentered_predictions$model == model.type, ]
-    points(model.data$value, model.data$prob, type="l", lty=2, lwd = 2, col=MODEL.COL[[model.type]])
-  }
-  
-  axis(side=1, at=c(-pi, 0, pi), labels=c(expression(-pi), "0", expression(pi)), cex.axis= AXIS.CEX)
-  mtext(paste("Response Offset (rad)"), side=1, cex= AXIS.CEX, cex.lab = AXIS.LABEL.CEX, line=2.5)
-  axis(side=2, at=c(0, 0.25), cex.axis= AXIS.CEX)
-  mtext(paste("Density"), side=2, cex=AXIS.CEX, cex.lab = AXIS.LABEL.CEX, line=2.5)
-  
-  ## Add in legend
-  legend("topright", legend= MODEL.TYPES[model_list],
-         col=color_wheel[model_list], lty=2, lwd = 2, bty = "n",cex=AXIS.CEX, title="Models")
-  
-  # Close the plotting device
-  dev.off()
 }
 
 
@@ -268,7 +193,7 @@ individual_combined_plot <- function(model_list, data, model_predictions, recent
   if(filename == "") {
     X11() # Write to the screen
   } else {
-    png(file=filename, width=10.7, height=8.3, units = "in", pointsize = 12, res = 300)
+    png(file=filename, width=10.7, height=10, units = "in", pointsize = 14, res = 300)
     #pdf(file=filename, width=8.3, height=10.7)
   }
   ## Compute variables required for chart layout.
@@ -436,6 +361,87 @@ individual_combined_plot <- function(model_list, data, model_predictions, recent
   if(filename != "") {
     dev.off()
   }
+}
+# Load in recentered data
+load("~/git/sourcemem_online/analysis/models/R/experiment_2/output/2022-02-18_recentered_exp2_updated.RData")
+colnames(recentered_all) <- c('error', 'direction', 'participant', 
+                              'orthographic','semantic','model', 'filter')
+recenter_data <- recentered_all[recentered_all$model == 'data',]
+recenter_model <- recentered_all[recentered_all$model != 'data',]
+
+## Recentered plot
+# Get densities from recentered points
+get_recenter_density <- function(model){
+  preds <- density(as.numeric(model$error), from = -pi, to = pi, cut = FALSE, kernel = "epanechnikov", adjust = 1)
+  preds$y[1:75] <- mean(preds$y[51:100])
+  preds$y[(length(preds$y)-75):length(preds$y)] <- mean(preds$y[(length(preds$y)-100):(length(preds$y)-50)])
+  this_predictions <- data.frame(matrix(ncol = 3, nrow = 512))
+  this_predictions[1] <- preds$x
+  this_predictions[2] <- preds$y
+  this_predictions[3] <- model$model[1]
+  this_predictions[4] <- model$participant[1]
+  return(this_predictions)
+}
+models <- unique(recenter_model$model)
+individual_recentered <- data.frame(matrix(ncol = 4, nrow = 0))
+for(i in participants){
+  for(j in 1:length(models)){
+    this_model <- recenter_model[(recenter_model$participant == i) & (recenter_model$model == models[j]),]
+    this_predictions <- get_recenter_density(this_model)
+    individual_recentered <- rbind(individual_recentered , this_predictions)
+  }
+}
+colnames(individual_recentered) <- c("value", "prob", "model", "participant")
+
+group_recentered <- data.frame(matrix(ncol = 4, nrow = 0))
+for(j in 1:length(models)){
+  this_model <- recenter_model[recenter_model$model == models[j],]
+  this_predictions <- get_recenter_density(this_model)
+  this_predictions[4] <- 'Average'
+  group_recentered <- rbind(group_recentered, this_predictions)
+}
+colnames(group_recentered) <- c("value", "prob", "model", "participant")
+
+plot_recentered <- function(model_list, this_recentered_predictions, data, filename){
+  ## Opens a drawing device (either X11 for testing or a
+  ## PDF for saving).
+  if(filename == "") {
+    X11() # Write to the screen
+  } else {
+    png(file=filename, width=10, height=7, units = "in", pointsize = 12, res = 300)
+    #pdf(file=filename, width=8.3, height=10.7)
+  }
+  plot.new()
+  plot.window(xlim=c(X.RESP.LOW, X.RESP.HI),
+              ylim=c(Y.RESP.LOW, 0.25))
+  
+  ## Compute and plot the empirical histograms for response error.
+  resp.hist <- hist(data$error,
+                    breaks=NUM.BINS, freq=FALSE,
+                    plot=FALSE)
+  for(b in 2:length(resp.hist$breaks)) {
+    lo.break <- resp.hist$breaks[b-1]
+    hi.break <- resp.hist$breaks[b]
+    bar.height <- resp.hist$density[b-1]
+    rect(lo.break, 0.0, hi.break, bar.height, border=NA, col="grey70")
+  }
+  
+  for(model.type in MODEL.TYPES[model_list]) {
+    model.data <- this_recentered_predictions[this_recentered_predictions$model == model.type, ]
+    points(model.data$value, model.data$prob, type="l", lty=2, lwd = 2, col=MODEL.COL[[model.type]])
+  }
+  
+  axis(side=1, at=c(-pi, 0, pi), labels=c(expression(-pi), "0", expression(pi)), cex.axis= AXIS.CEX)
+  mtext(paste("Response Offset (rad)"), side=1, cex= AXIS.CEX, cex.lab = AXIS.LABEL.CEX, line=2.5)
+  axis(side=2, at=c(0, 0.25), cex.axis= AXIS.CEX)
+  mtext(paste("Density"), side=2, cex=AXIS.CEX, cex.lab = AXIS.LABEL.CEX, line=2.5)
+  
+  ## Add in legend
+  legend("topright", legend= MODEL.TYPES[model_list],
+         col=color_wheel[model_list], lty=2, lwd = 2, bty = "n",cex=AXIS.CEX, title="Models")
+  
+  # Close the plotting device
+  dev.off()
 }
 
 # ## Asymmetric these look messy, maybe just show the group level?
@@ -653,7 +659,7 @@ plot_asymm_recenter <- function(model_list, data, asymm_predictions, filename){
 #   dev.off()
 # }
 ggplot() +
-geom_histogram(data = recentered_data, aes(x = error, y=..density..)) +
-geom_histogram(data = recentered_orthographic, aes(x = error, y = ..density..), fill = 'red',
-             alpha = 0.4, position = "identity") +
-  facet_wrap(participant ~ ortho, ncol = 4)
+  geom_histogram(data = recenter_data, aes(x = error, y=..density..)) +
+  geom_density(data = recenter_model, aes(x = error, fill = model),
+                 alpha = 0.4, position = "identity") +
+  facet_wrap(participant ~ orthographic, ncol = 4)
