@@ -103,7 +103,7 @@ exp2_plot <- function(model_list, data, model_predictions, filename){
   if(filename == "") {
     X11() # Write to the screen
   } else {
-    png(file=filename, width=10.7, height=8.3, units = "in", pointsize = 12, res = 300)
+    png(file=filename, width=10.7, height=8.3, units = "in", pointsize = 14, res = 300)
     #pdf(file=filename, width=8.3, height=10.7)
   }
   
