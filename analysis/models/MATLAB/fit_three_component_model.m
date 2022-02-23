@@ -25,15 +25,15 @@ end
 
 v1_targ = normrnd(4, 2);
 v2_targ = 0;
-v1_int = normrnd(2, 0.5);
+v1_int = normrnd(0.5, 0.1);
 v2_int = 0;
 eta_targ = 0;
 eta_int = 0;
 a_targ = normrnd(1.5, 0.4);
 % a_int = normrnd(1.5, 0.4);
-a_guess = normrnd(1, 0.4);
+a_guess = normrnd(0.5, 0.1);
 gamma = abs(normrnd(0.2, 0.3));
-beta = abs(normrnd(0.1, 0.2));
+beta = abs(normrnd(0.7, 0.05));
 Ter = normrnd(0.2, 0.05);
 st = 0;
 

@@ -6,23 +6,23 @@ if nargin < 2
     badix = 5;
 end
 
-v1_targ = normrnd(4, 0.5);
+v1_targ = normrnd(4, 0.05);
 v2_targ = 0;
-v1_int = normrnd(1, 0.3);
+v1_int = normrnd(1.3, 0.1);
 v2_int = 0;
 eta_targ = normrnd(0.3, 0.1);
-eta_int = normrnd(0.3, 0.1);
-a_targ = normrnd(1.5, 0.4);
-% a_int = normrnd(1.5, 0.4);
-a_guess = normrnd(1, 0.4);
-gamma = abs(normrnd(0.1, 0.1));
-beta = abs(normrnd(0.7, 0.1));
-kappa = normrnd(0.6, 0.1);
-lambda_b = abs(normrnd(1, 0.2));
+eta_int = normrnd(0.03, 0.1);
+a_targ = normrnd(3, 0.5);
+% a_int = normrnd(1.2, 0.1);
+a_guess = normrnd(1.8, 0.2);
+gamma = abs(normrnd(0.1, 0.01));
+beta = abs(normrnd(0.1, 0.05));
+kappa = normrnd(0.8, 0.05);
+lambda_b = abs(normrnd(0.2, 0.2));
 lambda_f = abs(normrnd(1, 0.2));
-zeta = normrnd(0.5, 0.25);
-rho = normrnd(0.5, 0.1);
-Ter = normrnd(0.2, 0.05);
+zeta = normrnd(0.9, 0.01);
+rho = normrnd(0.75, 0.1);
+Ter = normrnd(0.05, 0.05);
 st = 0;
 
 
