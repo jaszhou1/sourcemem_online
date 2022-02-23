@@ -42,21 +42,24 @@ model_recovery <- function(participant){
     this_simulated_data$response_angle <- simulated_error$simulated_response
     this_simulated_data$response_error <- simulated_error$simulated_error
     
+    # Empty dataframe for cross fitted models to live
+    this_crossfit <- data.frame(matrix(nrow = length(MODELS), ncol = 4))
     # Fit each of the models to this simulated dataset
-    for(k in MODELS){
-      if (k  == 'Temporal'){
+    for(k in 1:length(MODELS)){
+      this_fitting_model_name <- MODELS[k]
+      if (this_fitting_model_name  == 'Temporal'){
         this_fitting_model <- temporal_model
         lower <- c(10, 1, 0, 0, 0, 0, 0)
         upper <- c(40, 20, 1, 1, 5, 5, 1)
-      } else if (k  == 'Spatiotemporal'){
+      } else if (this_fitting_model_name  == 'Spatiotemporal'){
         this_fitting_model <- spatiotemporal_model
         lower <- c(10, 1, 0, 0, 0, 0, 0, 0, 0)
         upper <- c(40, 20, 2, 1, 5, 5, 1, 1, 1)
-      } else if (k  == 'Semantic'){
+      } else if (this_fitting_model_name  == 'Semantic'){
         this_fitting_model <- semantic_model
         lower <- c(10, 1, 0, 0, 0, 0, 0, 0, 0, 0)
         upper <- c(40, 20, 1, 1, 5, 5, 0.8, 1, 1, 1)
-      } else if (k  == 'Orthographic'){
+      } else if (this_fitting_model_name  == 'Orthographic'){
         this_fitting_model <- ortho_model
         lower <- c(10, 1, 0, 0, 0, 0, 0, 0, 0, 0)
         upper <- c(40, 20, 1, 1, 5, 5, 0.8, 1, 1, 1)
@@ -69,12 +72,11 @@ model_recovery <- function(participant){
                           this_simulated_data)
       # Calculate aic
       aic <- get_aic(this_fit$optim$bestval, length(upper))
-      this_crossfit <- data.frame()
-      this_crossfit[1,1] <- participant
-      this_crossfit[1,2] <- MODELS[j]
-      this_crossfit[1,3] <- k
-      this_crossfit[1,4] <-aic
-      crossfit <- rbind(crossfit, this_crossfit)
+      this_crossfit[k,1] <- participant
+      this_crossfit[k,2] <- MODELS[j]
+      this_crossfit[k,3] <- MODELS[k]
+      this_crossfit[k,4] <-aic
+      return(this_crossfit)
     }
   }
   colnames(crossfit) <- c("participant", "gen_model", "fit_model", "aic")
