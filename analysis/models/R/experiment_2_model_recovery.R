@@ -68,7 +68,7 @@ model_recovery <- function(participant){
         stop()
       }
       this_fit <- DEoptim(this_fitting_model, lower, upper, 
-                          control = DEoptim.control(itermax = 2), 
+                          control = DEoptim.control(itermax = 200), 
                           this_simulated_data)
       # Calculate aic
       aic <- get_aic(this_fit$optim$bestval, length(upper))
@@ -76,10 +76,11 @@ model_recovery <- function(participant){
       this_crossfit[k,2] <- MODELS[j]
       this_crossfit[k,3] <- MODELS[k]
       this_crossfit[k,4] <-aic
-      return(this_crossfit)
     }
+    return(this_crossfit)
   }
   colnames(crossfit) <- c("participant", "gen_model", "fit_model", "aic")
   crossfit <- as.data.frame(crossfit)
   save(crossfit, file = paste(toString(Sys.Date()), '_P',participant,'_crossfit.RData', sep =""))
+  return(crossfit)
 }
