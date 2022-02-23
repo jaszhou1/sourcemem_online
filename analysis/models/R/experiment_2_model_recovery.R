@@ -9,11 +9,13 @@ MODELS <- c('Temporal', 'Spatiotemporal',
 PARTICIPANTS <- unique(data$participant)
 
 model_recovery <- function(participant){
-  crossfit <- data.frame(matrix(ncol = 4, nrow = 0))
   this_data <- data[data$participant == participant,]
-  for(j in MODELS){
+  cl <- makeForkCluster(4)
+  registerDoParallel(cl)
+  crossfit = foreach (j = 1:length(MODELS),
+                 .combine = rbind) %dopar% {
     # Define the fitted estimates and the simulation function for this model
-    model_name <- j
+    model_name <- MODELS[j]
     if (model_name  == 'Temporal'){
       this_model <- temporal
       this_simulation_function <- simulate_temporal_model
@@ -69,11 +71,13 @@ model_recovery <- function(participant){
       aic <- get_aic(this_fit$optim$bestval, length(upper))
       this_crossfit <- data.frame()
       this_crossfit[1,1] <- participant
-      this_crossfit[1,2] <- j
+      this_crossfit[1,2] <- MODELS[j]
       this_crossfit[1,3] <- k
       this_crossfit[1,4] <-aic
       crossfit <- rbind(crossfit, this_crossfit)
     }
   }
   colnames(crossfit) <- c("participant", "gen_model", "fit_model", "aic")
+  crossfit <- as.data.frame(crossfit)
+  save(crossfit, file = paste(toString(Sys.Date()), '_P',participant,'_crossfit.RData', sep =""))
 }
