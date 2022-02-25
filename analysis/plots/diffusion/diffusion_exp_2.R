@@ -115,7 +115,7 @@ exp2_plot <- function(model_list, data, model_predictions, filename){
   PARTICIPANTS <- unique(data$participant)
   NUM.PARTICIPANTS <- length(PARTICIPANTS) #Adding one for the average plot
   PARTICIPANTS.PER.ROW <- 1
-  NUM.ROWS <- ceiling(NUM.PARTICIPANTS / PARTICIPANTS.PER.ROW)
+  NUM.ROWS <- ceiling(NUM.PARTICIPANTS / PARTICIPANTS.PER.ROW) + 1
   NUM.COLS <- PARTICIPANTS.PER.ROW * 2
   NUM.BINS <- 50
   
@@ -167,14 +167,9 @@ exp2_plot <- function(model_list, data, model_predictions, filename){
     ## Plot the participant number and data type
     mtext(paste0("P", p), side=3, cex=1, line=-2, adj=0.2)
     
-    ## Plot the x axes (for the last two participants only)
-    if(p %in% tail(PARTICIPANTS, n=PARTICIPANTS.PER.ROW)) {
-      axis(side=1, at=c(-pi, 0, pi), labels=c(expression(-pi), "0", expression(pi)), 
-           cex.axis= AXIS.CEX)
-      mtext(paste("Response error (rads)"), side=1, cex=AXIS.LABEL.CEX, line=2.5)
-    } else {
-      axis(side=1, at=c(-pi, pi), lwd.ticks=0, labels=FALSE, cex.axis=AXIS.CEX)
-    }
+    ## Plot the x axes
+    axis(side=1, at=c(-pi, pi), lwd.ticks=0, labels=FALSE, cex.axis=AXIS.CEX)
+    
     
     ## Plot the y axes (for the participants in the first col)
     axis(side=2, at=c(0, 1, 2), cex.axis=AXIS.CEX)
@@ -200,21 +195,72 @@ exp2_plot <- function(model_list, data, model_predictions, filename){
       model.data <- get_response_time_density(p.model[p.model$model == model.type, ])
       points(model.data$value, model.data$prob, type="l", lty = 2, lwd = 1.5, col=MODEL.COL[[model.type]])
     }
-    if(p %in% tail(PARTICIPANTS, n=PARTICIPANTS.PER.ROW)) {
-      axis(side=1, cex.axis=AXIS.CEX)
-      mtext(paste("Response time (s)"), side=1, cex=AXIS.LABEL.CEX, line=2.5)
-    } else {
+
       axis(side=1, at=c(0, 7), lwd.ticks=0, labels=FALSE, cex.axis=AXIS.CEX)
-    }
     
     if((p.idx %% PARTICIPANTS.PER.ROW) == 0) {
       axis(side=4, at=c(0, 3), cex.axis=AXIS.CEX)
     }
   }
   # Plot Group Resonse Error
+  plot.new()
+  plot.window(xlim=c(X.RESP.LOW, X.RESP.HI),
+              ylim=c(Y.RESP.LOW, Y.RESP.HI))
   
+  ## Compute and plot the empirical histograms for response error.
+  resp.hist <- hist(data$response_error,
+                    breaks=NUM.BINS, freq=FALSE,
+                    plot=FALSE)
+  for(b in 2:length(resp.hist$breaks)) {
+    lo.break <- resp.hist$breaks[b-1]
+    hi.break <- resp.hist$breaks[b]
+    bar.height <- resp.hist$density[b-1]
+    rect(lo.break, 0.0, hi.break, bar.height, border=NA, col="grey70")
+  }
+  
+  # Plot model predictions
+  for(model.type in MODEL.TYPES[model_list]) {
+    model.data <- get_response_error_density(model_predictions[model_predictions$model == model.type, ])
+    points(model.data$value, model.data$prob, type="l", lty=2, lwd = 1.5, col=MODEL.COL[[model.type]])
+  }
+  
+  ## Label this plot as the group plot
+  mtext(paste0("Group"), side=3, cex=1, line=-2, adj=0.2)
+  
+  # Plot the x axis
+  axis(side=1, at=c(-pi, 0, pi), labels=c(expression(-pi), "0", expression(pi)), 
+       cex.axis= AXIS.CEX)
+  mtext(paste("Response error (rads)"), side=1, cex=AXIS.LABEL.CEX, line=2.5)
+  # Plot y axis
+  axis(side=2, at=c(0, 1, 2), cex.axis=AXIS.CEX)
   # Plot Group Response Time
+  plot.new()
+  plot.window(xlim=c(X.RT.LOW, X.RT.HI),
+              ylim=c(Y.RT.LOW, Y.RT.HI))
   
+  ## Compute and plot the empirical histograms for response error.
+  resp.hist <- hist(data$source_RT/1000,
+                    breaks=NUM.BINS, freq=FALSE,
+                    plot=FALSE)
+  for(b in 2:length(resp.hist$breaks)) {
+    lo.break <- resp.hist$breaks[b-1]
+    hi.break <- resp.hist$breaks[b]
+    bar.height <- resp.hist$density[b-1]
+    rect(lo.break, 0.0, hi.break, bar.height, border=NA, col="grey70")
+  }
+  
+  for(model.type in MODEL.TYPES[model_list]) {
+    model.data <- get_response_time_density(model_predictions[model_predictions$model == model.type, ])
+    points(model.data$value, model.data$prob, type="l", lty = 2, lwd = 1.5, col=MODEL.COL[[model.type]])
+  }
+  # Plot x axis and label
+  axis(side=1, cex.axis=AXIS.CEX)
+  mtext(paste("Response time (s)"), side=1, cex=AXIS.LABEL.CEX, line=2.5)
+  
+  # plot y axis
+  axis(side=4, at=c(0, 3), cex.axis=AXIS.CEX)
+  
+  # Add Legend
   par(fig = c(0, 1, 0, 1), oma = c(0, 0, 0, 0), mar = c(0, 0, 0, 0), new = TRUE)
   plot(0, 0, type = 'l', bty = 'n', xaxt = 'n', yaxt = 'n')
   legend('topright',legend= MODEL.TYPES[model_list],
@@ -231,23 +277,23 @@ error_quantiles <- c(0.1, 0.3, 0.5, 0.9)
 Q_SYMBOLS <- c(25, 23, 24)
 # Joint Q-Q Plot
 source('~/git/sourcemem_online/analysis/plots/diffusion/qxq.R')
-plot_qq <- function(data, model, filename){
+plot_individual_qq <- function(model_list, data, model, filename){
   data_qq <- all_qq_points(rt_quantiles, error_quantiles, data, 'data')
   model_qq <- data.frame()
   # Covert from ms to s
   data_qq$rt <- data_qq$rt/1000
   # For the model predictions, need to rename columns of simulated data to keep everything consistent
   colnames(model) <- c('response_error', 'source_RT', 'participant', 'model')
-  for(i in MODEL.TYPES){
-    this_model <- model[model$model == i,]
-    this_qq <- all_qq_points(rt_quantiles, error_quantiles, this_model, i)
+  for(model.type in MODEL.TYPES[model_list]){
+    this_model <- model[model$model == model.type,]
+    this_qq <- all_qq_points(rt_quantiles, error_quantiles, this_model, model.type)
     model_qq <- rbind(model_qq, this_qq)
   }
   
   # Plot (ggplot)
   plot <- ggplot() +
     geom_point(data=data_qq, size = 3, aes(x= theta, y = rt, shape = factor(rt_q))) +
-    geom_point(data=model_qq, size = 3, alpha = 0.5, aes(x= theta, y = rt, shape = factor(rt_q), color = model)) +
+    geom_point(data=model_qq, size = 3, alpha = 0.7, aes(x= theta, y = rt, shape = factor(rt_q), color = model)) +
     geom_line(data = model_qq, linetype="dashed", alpha = 0.5, size = 1, aes(x = theta, y = rt,
                                                                              color = model, group = interaction(model, rt_q))) +
     scale_x_continuous(name = 'Absolute Error (rad)', breaks = c(0, pi), limits = c(0, pi),
@@ -277,6 +323,6 @@ setwd("~/git/sourcemem_online/analysis/plots/diffusion")
 individual_qq <- function(){
   for (i in unique(data$participant)){
     filename = sprintf('exp2_p_%i_qxq.png', i)
-    plot_qq(data[data$participant == i,], model_predictions[model_predictions$participant == i,], filename)
+    plot_individual_qq(c(3:7),data[data$participant == i,], model_predictions[model_predictions$participant == i,], filename)
   }
 }
