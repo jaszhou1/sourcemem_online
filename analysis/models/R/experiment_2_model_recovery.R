@@ -3,19 +3,22 @@ source('~/git/sourcemem_online/analysis/models/R/experiment_2_modelling.R')
 source('~/git/sourcemem_online/analysis/models/R/model_code/temporal_gradient_model_flat_guesses.R')
 # Load in fitted model (need the parameter estimates)
 load("~/git/sourcemem_online/analysis/models/R/experiment_2/output/fitted_exp2.RData")
+setwd("~/git/sourcemem_online/analysis/models/R/model_recovery_crossfits")
 
 MODELS <- c('Temporal', 'Spatiotemporal',
             'Semantic', 'Orthographic')
 PARTICIPANTS <- unique(data$participant)
 
-model_recovery <- function(participant){
+model_recovery <- function(participant, n_runs){
+  model_idx <- rep(1:length(MODELS), each = n_runs)
+  
   this_data <- data[data$participant == participant,]
-  cl <- makeForkCluster(4)
+  cl <- makeForkCluster(12)
   registerDoParallel(cl)
-  crossfit = foreach (j = 1:length(MODELS),
+  crossfit = foreach (j = 1:length(model_idx),
                  .combine = rbind) %dopar% {
     # Define the fitted estimates and the simulation function for this model
-    model_name <- MODELS[j]
+    model_name <- MODELS[model_idx[j]]
     if (model_name  == 'Temporal'){
       this_model <- temporal
       this_simulation_function <- simulate_temporal_model
@@ -73,8 +76,8 @@ model_recovery <- function(participant){
       # Calculate aic
       aic <- get_aic(this_fit$optim$bestval, length(upper))
       this_crossfit[k,1] <- participant
-      this_crossfit[k,2] <- MODELS[j]
-      this_crossfit[k,3] <- MODELS[k]
+      this_crossfit[k,2] <- model_name
+      this_crossfit[k,3] <- this_fitting_model_name
       this_crossfit[k,4] <-aic
     }
     return(this_crossfit)
