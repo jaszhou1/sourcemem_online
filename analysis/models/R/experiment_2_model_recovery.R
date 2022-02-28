@@ -11,7 +11,7 @@ PARTICIPANTS <- unique(data$participant)
 
 model_recovery <- function(participant, n_runs){
   model_idx <- rep(1:length(MODELS), each = n_runs)
-  
+  run_idx <- rep(1:n_runs, length(MODELS))
   this_data <- data[data$participant == participant,]
   cl <- makeForkCluster(12)
   registerDoParallel(cl)
@@ -19,6 +19,8 @@ model_recovery <- function(participant, n_runs){
                  .combine = rbind) %dopar% {
     # Define the fitted estimates and the simulation function for this model
     model_name <- MODELS[model_idx[j]]
+    # Find which run of this model this is
+    n_run <- run_idx[j]
     if (model_name  == 'Temporal'){
       this_model <- temporal
       this_simulation_function <- simulate_temporal_model
@@ -46,7 +48,7 @@ model_recovery <- function(participant, n_runs){
     this_simulated_data$response_error <- simulated_error$simulated_error
     
     # Empty dataframe for cross fitted models to live
-    this_crossfit <- data.frame(matrix(nrow = length(MODELS), ncol = 4))
+    this_crossfit <- data.frame(matrix(nrow = length(MODELS), ncol = 5))
     # Fit each of the models to this simulated dataset
     for(k in 1:length(MODELS)){
       this_fitting_model_name <- MODELS[k]
@@ -79,10 +81,11 @@ model_recovery <- function(participant, n_runs){
       this_crossfit[k,2] <- model_name
       this_crossfit[k,3] <- this_fitting_model_name
       this_crossfit[k,4] <-aic
+      this_crossfit[k,5] <- n_run
     }
     return(this_crossfit)
   }
-  colnames(crossfit) <- c("participant", "gen_model", "fit_model", "aic")
+  colnames(crossfit) <- c("participant", "gen_model", "fit_model", "aic", "run")
   crossfit <- as.data.frame(crossfit)
   save(crossfit, file = paste(toString(Sys.Date()), '_P',participant,'_crossfit.RData', sep =""))
   return(crossfit)
