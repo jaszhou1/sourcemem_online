@@ -370,12 +370,15 @@ plot_individual_qq <- function(model_list, data, model, filename, confidence){
   }
 }
 setwd("~/git/sourcemem_online/analysis/plots/diffusion")
-individual_qq <- function(){
+individual_qq <- function(confidence){
+  if(missing(confidence)){
+    confidence <- FALSE
+  }
   for (i in unique(data$participant)){
     filename = sprintf('exp2_p_%i_v2_qxq.png', i)
-    plot_individual_qq(c(3:7),data[data$participant == i,], model_predictions[model_predictions$participant == i,], filename)
+    plot_individual_qq(c(3:7),data[data$participant == i,], model_predictions[model_predictions$participant == i,], filename, confidence)
   }
   filename = sprintf('exp2_group_v2_qxq.png', i)
-  plot_individual_qq(c(3:7),data, model_predictions, filename)
+  plot_individual_qq(c(3:7),data, model_predictions, filename, confidence)
 }
 
