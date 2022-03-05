@@ -1,5 +1,5 @@
 # Plot Experiment 2 Diffusion
-
+library(ggplot2)
 ## Read in, and transform data as required. ##
 
 # Plot marginal response error and time model predictions against data
@@ -195,8 +195,8 @@ exp2_plot <- function(model_list, data, model_predictions, filename){
       model.data <- get_response_time_density(p.model[p.model$model == model.type, ])
       points(model.data$value, model.data$prob, type="l", lty = 2, lwd = 1.5, col=MODEL.COL[[model.type]])
     }
-
-      axis(side=1, at=c(0, 7), lwd.ticks=0, labels=FALSE, cex.axis=AXIS.CEX)
+    
+    axis(side=1, at=c(0, 7), lwd.ticks=0, labels=FALSE, cex.axis=AXIS.CEX)
     
     if((p.idx %% PARTICIPANTS.PER.ROW) == 0) {
       axis(side=4, at=c(0, 3), cex.axis=AXIS.CEX)
@@ -274,14 +274,19 @@ exp2_plot <- function(model_list, data, model_predictions, filename){
 
 rt_quantiles <- c(0.1, 0.5, 0.9)
 error_quantiles <- c(0.1, 0.3, 0.5, 0.9)
-Q_SYMBOLS <- c(25, 23, 24)
+Q_SYMBOLS <- c(25, 23, 24, 22)
 # Joint Q-Q Plot
 source('~/git/sourcemem_online/analysis/plots/diffusion/qxq.R')
-plot_individual_qq <- function(model_list, data, model, filename){
-  data_qq <- all_qq_points(rt_quantiles, error_quantiles, data, 'data')
-  model_qq <- data.frame()
+source('~/git/sourcemem_online/analysis/plots/diffusion/RT_confidence_interval.R')
+plot_individual_qq <- function(model_list, data, model, filename, confidence){
+  if(missing(confidence)){
+    confidence <- FALSE
+  }
   # Covert from ms to s
-  data_qq$rt <- data_qq$rt/1000
+  data$source_RT <- data$source_RT/1000
+  # Get data quantiles
+  data_qq <- qq_CI(rt_quantiles, error_quantiles, data, 'data')
+  model_qq <- data.frame()
   # For the model predictions, need to rename columns of simulated data to keep everything consistent
   colnames(model) <- c('response_error', 'source_RT', 'participant', 'model')
   for(model.type in MODEL.TYPES[model_list]){
@@ -290,39 +295,87 @@ plot_individual_qq <- function(model_list, data, model, filename){
     model_qq <- rbind(model_qq, this_qq)
   }
   
-  # Plot (ggplot)
-  plot <- ggplot() +
-    geom_point(data=data_qq, size = 3, aes(x= theta, y = rt, shape = factor(rt_q))) +
-    geom_point(data=model_qq, size = 3, alpha = 0.7, aes(x= theta, y = rt, shape = factor(rt_q), color = model)) +
-    geom_line(data = model_qq, linetype="dashed", alpha = 0.5, size = 1, aes(x = theta, y = rt,
-                                                                             color = model, group = interaction(model, rt_q))) +
-    scale_x_continuous(name = 'Absolute Error (rad)', breaks = c(0, pi), limits = c(0, pi),
-                       labels = c(0, expression(pi))) +
-    scale_y_continuous(name = 'Response Time (s)', breaks = c(0.5, 1.0, 1.5, 2.0)) +
-    guides(size = "none",
-           color= guide_legend(title="Model"),
-           shape= guide_legend(title="Response Time Quantile")) +
-    theme(
-      axis.text.x = element_text(color="black", size = 14),
-      axis.text.y = element_text(color="black", size = 14),
-      plot.title = element_blank(),
-      axis.title.x = element_text(color="black", size=16),
-      axis.title.y = element_text(color="black", size=16),
-      plot.background = element_rect(fill = "white"),
-      panel.grid.major = element_blank(), 
-      panel.grid.minor = element_blank(),
-      panel.background = element_blank(),
-      legend.key = element_rect(colour = "transparent", fill = "white"),
-      legend.text=element_text(size= 14),
-      axis.line = element_line(colour = "black")
-    )
-  ggsave(filename, width=10.7, height=4, units = "in")
-  return(plot)
+  # Plot (ggplot) - add switch here for if we want RT confidence plotted or not
+  if(confidence == TRUE){
+    plot <- ggplot() +
+      geom_point(data = data_qq, size = 3, aes(x= theta, y = rt, shape = factor(rt_q))) +
+      geom_segment(data = data_qq, linetype = "solid", size = 1, alpha = 0.4, 
+                   aes(x = theta, xend = theta, y = rt_lower, yend = rt_upper, group = rt_q)) +
+      geom_point(data = model_qq, size = 3, alpha = 0.7, aes(x= theta, y = rt, shape = factor(rt_q), color = model)) +
+      geom_line(data = model_qq, linetype="dashed", alpha = 0.5, size = 1, aes(x = theta, y = rt,
+                                                                               color = model, group = interaction(model, rt_q))) +
+      scale_x_continuous(name = 'Absolute Error (rads)', breaks = c(0, pi), limits = c(0, pi),
+                         labels = c(0, expression(pi))) +
+      scale_y_continuous(name = 'Response Time (s)', breaks = c(0.5, 1.0, 1.5, 2.0)) +
+      scale_color_manual(values=c('#42B540FF',
+                                  '#FDAF91FF',
+                                  '#AD002AFF',
+                                  '#925E9FFF',
+                                  '#0099B4FF')) +
+      guides(size = "none",
+             color= guide_legend(title="Model"),
+             shape= guide_legend(title="Response Time Quantile")) +
+      theme(
+        axis.text.x = element_text(color="black", size = 14),
+        axis.text.y = element_text(color="black", size = 14),
+        plot.title = element_blank(),
+        axis.title.x = element_text(color="black", size=16),
+        axis.title.y = element_text(color="black", size=16),
+        plot.background = element_rect(fill = "white"),
+        panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        legend.key = element_rect(colour = "transparent", fill = "white"),
+        legend.text=element_text(size= 14),
+        axis.line = element_line(colour = "black")
+      )
+  }
+  else{
+    plot <- ggplot() +
+      geom_point(data=data_qq, size = 3, aes(x= theta, y = rt, shape = factor(rt_q))) +
+      geom_point(data=model_qq, size = 3, alpha = 0.7, aes(x= theta, y = rt, shape = factor(rt_q), color = model)) +
+      geom_line(data = model_qq, linetype="dashed", alpha = 0.5, size = 1, aes(x = theta, y = rt,
+                                                                               color = model, group = interaction(model, rt_q))) +
+      scale_x_continuous(name = 'Absolute Error (rads)', breaks = c(0, pi), limits = c(0, pi),
+                         labels = c(0, expression(pi))) +
+      scale_y_continuous(name = 'Response Time (s)', breaks = c(0.5, 1.0, 1.5, 2.0)) +
+      scale_color_manual(values=c('#42B540FF',
+                                  '#FDAF91FF',
+                                  '#AD002AFF',
+                                  '#925E9FFF',
+                                  '#0099B4FF')) +
+      guides(size = "none",
+             color= guide_legend(title="Model"),
+             shape= guide_legend(title="Response Time Quantile")) +
+      theme(
+        axis.text.x = element_text(color="black", size = 14),
+        axis.text.y = element_text(color="black", size = 14),
+        plot.title = element_blank(),
+        axis.title.x = element_text(color="black", size=16),
+        axis.title.y = element_text(color="black", size=16),
+        plot.background = element_rect(fill = "white"),
+        panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        legend.key = element_rect(colour = "transparent", fill = "white"),
+        legend.text=element_text(size= 14),
+        axis.line = element_line(colour = "black")
+      )
+  }
+  if(filename == ""){
+    return(plot)
+  } else {
+    ggsave(filename, width=10.7, height=4, units = "in")
+    return(plot)
+  }
 }
 setwd("~/git/sourcemem_online/analysis/plots/diffusion")
 individual_qq <- function(){
   for (i in unique(data$participant)){
-    filename = sprintf('exp2_p_%i_qxq.png', i)
+    filename = sprintf('exp2_p_%i_v2_qxq.png', i)
     plot_individual_qq(c(3:7),data[data$participant == i,], model_predictions[model_predictions$participant == i,], filename)
   }
+  filename = sprintf('exp2_group_v2_qxq.png', i)
+  plot_individual_qq(c(3:7),data, model_predictions, filename)
 }
+

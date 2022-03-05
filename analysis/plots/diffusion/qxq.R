@@ -41,7 +41,12 @@ all_qq_points <- function(rt_quantile, error_quantiles, data, model_string){
     this_qq <- data.frame(matrix(nrow = length(rt_quantiles), ncol = 5))
     colnames(this_qq) <- c('theta', 'rt', 'theta_q', 'rt_q', 'model')
     # Calculate RT quantiles for this bin of responses
-    this_bin <- data[data$response_error < this_error_quantiles[[i]],]
+    if(i == 1){
+      this_bin <- data[data$response_error < this_error_quantiles[[i]],]
+    } else{
+      this_bin <- data[((data$response_error > this_error_quantiles[[i-1]])) & 
+                         (data$response_error < this_error_quantiles[[i]]),]
+    }
     this_rt_quantiles <- quantile(this_bin$source_RT, probs = rt_quantiles)
     # Populate dataframe with requisite information for plot
     this_qq[,1] <- this_error_quantiles[[i]]
