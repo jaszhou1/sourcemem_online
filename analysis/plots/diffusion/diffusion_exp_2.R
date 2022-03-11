@@ -40,9 +40,12 @@ add$model <- 'Four Factor (Additive)'
 multi <- read.csv('sim_multi.csv', header = FALSE)
 multi$model <- "Four Factor (Multiplicative)"
 
+spatiotemporal_no_eta <- read.csv('sim_spatiotemporal_no_eta.csv', header = FALSE)
+spatiotemporal_no_eta$model <- "Spatiotemporal (no eta)"
+
 
 model_predictions <- rbind(pure_guess, pure_intrusion, intrusion, temporal, spatiotemporal,
-                           orthographic, semantic, add, multi)
+                           orthographic, semantic, add, multi, spatiotemporal_no_eta)
 colnames(model_predictions) <- c('error', 'time', 'participant', 'model')
 
 MODEL.TYPES <- unique(model_predictions$model)
@@ -57,7 +60,8 @@ color_wheel <- c('#00468BFF',
                  '#FDAF91FF',
                  '#AD002AFF',
                  '#8F7700FF',
-                 '#80796BFF')
+                 '#80796BFF',
+                 '#FF0000')
 
 MODEL.COL <- list(
   "Pure Guess"= color_wheel[1],
@@ -68,8 +72,8 @@ MODEL.COL <- list(
   "Orthographic" = color_wheel[6],
   "Semantic" = color_wheel[7],
   "Four Factor (Additive)" = color_wheel[8],
-  "Four Factor (Multiplicative)" = color_wheel[9]
-  #"Unrecognised = Guesses" = color_wheel[8]
+  "Four Factor (Multiplicative)" = color_wheel[9],
+  "Spatiotemporal (no eta)" = color_wheel[10]
 )
 
 # Functions to get wrapped densities from simulated data
@@ -272,7 +276,7 @@ exp2_plot <- function(model_list, data, model_predictions, filename){
   }
 }
 
-rt_quantiles <- c(0.1, 0.5, 0.9)
+rt_quantiles <- c(0.1, 0.5, 0.7, 0.9)
 error_quantiles <- c(0.1, 0.3, 0.5, 0.9)
 Q_SYMBOLS <- c(25, 23, 24, 22)
 # Joint Q-Q Plot
@@ -307,11 +311,8 @@ plot_individual_qq <- function(model_list, data, model, filename, confidence){
       scale_x_continuous(name = 'Absolute Error (rads)', breaks = c(0, pi), limits = c(0, pi),
                          labels = c(0, expression(pi))) +
       scale_y_continuous(name = 'Response Time (s)', breaks = c(0.5, 1.0, 1.5, 2.0)) +
-      scale_color_manual(values=c('#42B540FF',
-                                  '#FDAF91FF',
-                                  '#AD002AFF',
-                                  '#925E9FFF',
-                                  '#0099B4FF')) +
+      # Use the same colour mapping as other plot
+      scale_color_manual(values= unlist(MODEL.COL[model_list], use.names = FALSE)) +
       guides(size = "none",
              color= guide_legend(title="Model"),
              shape= guide_legend(title="Response Time Quantile")) +
@@ -339,11 +340,8 @@ plot_individual_qq <- function(model_list, data, model, filename, confidence){
       scale_x_continuous(name = 'Absolute Error (rads)', breaks = c(0, pi), limits = c(0, pi),
                          labels = c(0, expression(pi))) +
       scale_y_continuous(name = 'Response Time (s)', breaks = c(0.5, 1.0, 1.5, 2.0)) +
-      scale_color_manual(values=c('#42B540FF',
-                                  '#FDAF91FF',
-                                  '#AD002AFF',
-                                  '#925E9FFF',
-                                  '#0099B4FF')) +
+      # Use the same colour mapping as other plot
+      scale_color_manual(values= unlist(MODEL.COL[model_list], use.names = FALSE)) +
       guides(size = "none",
              color= guide_legend(title="Model"),
              shape= guide_legend(title="Response Time Quantile")) +
@@ -375,10 +373,10 @@ individual_qq <- function(confidence){
     confidence <- FALSE
   }
   for (i in unique(data$participant)){
-    filename = sprintf('exp2_p_%i_v2_qxq.png', i)
+    filename = sprintf('exp2_p_%i_v3_qxq.png', i)
     plot_individual_qq(c(3:7),data[data$participant == i,], model_predictions[model_predictions$participant == i,], filename, confidence)
   }
-  filename = sprintf('exp2_group_v2_qxq.png', i)
+  filename = sprintf('exp2_group_v3_qxq.png', i)
   plot_individual_qq(c(3:7),data, model_predictions, filename, confidence)
 }
 

@@ -208,11 +208,12 @@ error_quantiles <- c(0.1, 0.3, 0.5, 0.9)
 Q_SYMBOLS <- c(25, 23, 24)
 # Joint Q-Q Plot
 source('~/git/sourcemem_online/analysis/plots/diffusion/qxq.R')
+source('~/git/sourcemem_online/analysis/plots/diffusion/RT_confidence_interval.R')
 plot_qq <- function(data, model, filename){
-  data_qq <- all_qq_points(rt_quantiles, error_quantiles, data, 'data')
-  model_qq <- data.frame()
   # Covert from ms to s
-  data_qq$rt <- data_qq$rt/1000
+  data$source_RT <- data$source_RT/1000
+  data_qq <- qq_CI(rt_quantiles, error_quantiles, data, 'data')
+  model_qq <- data.frame()
   # For the model predictions, need to rename columns of simulated data to keep everything consistent
   colnames(model) <- c('response_error', 'source_RT', 'participant', 'model')
   for(i in MODEL.TYPES){
@@ -224,6 +225,8 @@ plot_qq <- function(data, model, filename){
   # Plot (ggplot)
   plot <- ggplot() +
     geom_point(data=data_qq, size = 3, aes(x= theta, y = rt, shape = factor(rt_q))) +
+    geom_segment(data = data_qq, linetype = "solid", size = 1, alpha = 0.4, 
+                 aes(x = theta, xend = theta, y = rt_lower, yend = rt_upper, group = rt_q)) +
     geom_point(data=model_qq, size = 3, alpha = 0.5, aes(x= theta, y = rt, shape = factor(rt_q), color = model)) +
     geom_line(data = model_qq, linetype="dashed", alpha = 0.5, size = 1, aes(x = theta, y = rt,
                                    color = model, group = interaction(model, rt_q))) +
@@ -252,8 +255,13 @@ plot_qq <- function(data, model, filename){
       legend.text=element_text(size= 14),
       axis.line = element_line(colour = "black")
     )
-  ggsave(filename, width=10.7, height=4, units = "in")
-  return(plot)
+  
+  if(filename == ""){
+    return(plot)
+  } else {
+    ggsave(filename, width=10.7, height=4, units = "in")
+    return(plot)
+  }
 }
 setwd("~/git/sourcemem_online/analysis/plots/diffusion")
 individual_qq <- function(){
