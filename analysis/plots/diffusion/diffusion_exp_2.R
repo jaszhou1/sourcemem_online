@@ -1,5 +1,6 @@
 # Plot Experiment 2 Diffusion
 library(ggplot2)
+library(tidyr)
 ## Read in, and transform data as required. ##
 
 # Plot marginal response error and time model predictions against data
@@ -11,7 +12,7 @@ data <- data[data$block!= 0,]
 # Exclude invalid RTs
 data <- data[data$valid_RT==TRUE,]
 
-setwd("~/git/sourcemem_online/analysis/models/MATLAB/experiment_2")
+setwd("~/git/sourcemem_online/analysis/models/MATLAB")
 
 pure_guess <- read.csv('sim_pure_guess.csv', header = FALSE)
 pure_guess$model <- 'Pure Guess'
@@ -60,8 +61,7 @@ color_wheel <- c('#00468BFF',
                  '#FDAF91FF',
                  '#AD002AFF',
                  '#8F7700FF',
-                 '#80796BFF',
-                 '#FF0000')
+                 '#80796BFF')
 
 MODEL.COL <- list(
   "Pure Guess"= color_wheel[1],
@@ -72,8 +72,7 @@ MODEL.COL <- list(
   "Orthographic" = color_wheel[6],
   "Semantic" = color_wheel[7],
   "Four Factor (Additive)" = color_wheel[8],
-  "Four Factor (Multiplicative)" = color_wheel[9],
-  "Spatiotemporal (no eta)" = color_wheel[10]
+  "Four Factor (Multiplicative)" = color_wheel[9]
 )
 
 # Functions to get wrapped densities from simulated data
@@ -129,7 +128,7 @@ exp2_plot <- function(model_list, data, model_predictions, filename){
   Y.RESP.HI <- 2
   
   X.RT.LOW <- 0.0
-  X.RT.HI <- 7
+  X.RT.HI <- 4
   Y.RT.LOW <- 0.0
   Y.RT.HI <- 3
   
@@ -373,10 +372,55 @@ individual_qq <- function(confidence){
     confidence <- FALSE
   }
   for (i in unique(data$participant)){
-    filename = sprintf('exp2_p_%i_v4_qxq.png', i)
+    filename = sprintf('exp2_p_%i_qxq.png', i)
     plot_individual_qq(c(3:7),data[data$participant == i,], model_predictions[model_predictions$participant == i,], filename, confidence)
   }
-  filename = sprintf('exp2_group_v4_qxq.png', i)
+  filename = sprintf('exp2_group_qxq.png', i)
   plot_individual_qq(c(3:7),data, model_predictions, filename, confidence)
 }
 
+# Plot RT distributions for each error quantile
+
+# Append error quantile labels
+append_quantile_label <- function(this_data){
+  this_error_quantile <- quantile(abs(this_data$response_error), probs = error_quantiles)
+  this_error_quantile <- append(0, this_error_quantile)
+  for (i in 1:length(error_quantiles)){
+    this_data[(abs(this_data$response_error) > this_error_quantile[[i]]) &
+                 (abs(this_data$response_error) < this_error_quantile[[i+1]]),'error_quantile'] <- error_quantiles[[i]] 
+  }
+  this_data$error_quantile[is.na(this_data$error_quantile)] <- 1
+  return(this_data)
+}
+
+plot_rt_quantiles <- function(model_list, data, model_predictions){
+  # Covert from ms to s
+  data$source_RT <- data$source_RT/1000
+  participants <- unique(data$participant)
+  models <- unique(model_predictions$model)
+  model_predictions <- model_predictions[model_predictions$model %in% models[model_list],]
+  colnames(model_predictions) <- c('response_error', 'source_RT', 'participant', 'model')
+  # Append error quantile labels
+  appended_data <- data.frame()
+  for(i in participants){
+    this_data <- data[data$participant == i, ]
+    this_data <- append_quantile_label(this_data)
+    appended_data <- rbind(appended_data, this_data)
+  }
+  appended_model_predictions <- data.frame()
+  for(i in participants){
+    for (j in unique(model_predictions$model)){
+      this_model <- model_predictions[(model_predictions$participant == i) &
+                                        (model_predictions$model == j),]
+      this_model <- append_quantile_label(this_model)
+      appended_model_predictions <- rbind(appended_model_predictions, this_model)
+    }
+  }
+  plot <- ggplot() +
+    geom_histogram(data = appended_data, aes(x = source_RT, y = ..density..)) +
+    geom_density(data = appended_model_predictions, aes(x = source_RT, color = model)) + 
+    facet_wrap(~participant + error_quantile, ncol = 5) +
+    theme(legend.position="bottom") +
+    theme(text = element_text(size = 20))
+  ggsave(filename = 'participant_RTdistributions.png', plot, width = 30, height = 40, units = "cm")
+}
