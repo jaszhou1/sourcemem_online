@@ -12,7 +12,7 @@ data <- data[data$block!= 0,]
 # Exclude invalid RTs
 data <- data[data$valid_RT==TRUE,]
 
-setwd("~/git/sourcemem_online/analysis/models/MATLAB")
+setwd("~/git/sourcemem_online/analysis/models/MATLAB/experiment_2")
 
 pure_guess <- read.csv('sim_pure_guess.csv', header = FALSE)
 pure_guess$model <- 'Pure Guess'
@@ -276,7 +276,7 @@ exp2_plot <- function(model_list, data, model_predictions, filename){
 }
 
 rt_quantiles <- c(0.1, 0.5, 0.7, 0.9)
-error_quantiles <- c(0.1, 0.3, 0.5, 0.9)
+error_quantiles <- c(0.3, 0.6, 0.9)
 Q_SYMBOLS <- c(25, 23, 24, 22)
 # Joint Q-Q Plot
 source('~/git/sourcemem_online/analysis/plots/diffusion/qxq.R')
@@ -372,10 +372,10 @@ individual_qq <- function(confidence){
     confidence <- FALSE
   }
   for (i in unique(data$participant)){
-    filename = sprintf('exp2_p_%i_qxq.png', i)
+    filename = sprintf('exp2_p_%i_qxq2.png', i)
     plot_individual_qq(c(3:7),data[data$participant == i,], model_predictions[model_predictions$participant == i,], filename, confidence)
   }
-  filename = sprintf('exp2_group_qxq.png', i)
+  filename = sprintf('exp2_group_qxq2.png', i)
   plot_individual_qq(c(3:7),data, model_predictions, filename, confidence)
 }
 
@@ -389,7 +389,8 @@ append_quantile_label <- function(this_data){
     this_data[(abs(this_data$response_error) > this_error_quantile[[i]]) &
                  (abs(this_data$response_error) < this_error_quantile[[i+1]]),'error_quantile'] <- error_quantiles[[i]] 
   }
-  this_data$error_quantile[is.na(this_data$error_quantile)] <- 1
+  #this_data$error_quantile[is.na(this_data$error_quantile)] <- 1
+  this_data <- na.omit(this_data)
   return(this_data)
 }
 
@@ -419,8 +420,9 @@ plot_rt_quantiles <- function(model_list, data, model_predictions){
   plot <- ggplot() +
     geom_histogram(data = appended_data, aes(x = source_RT, y = ..density..)) +
     geom_density(data = appended_model_predictions, aes(x = source_RT, color = model)) + 
-    facet_wrap(~participant + error_quantile, ncol = 5) +
+    facet_wrap(~participant + error_quantile, ncol = 3) +
     theme(legend.position="bottom") +
     theme(text = element_text(size = 20))
   ggsave(filename = 'participant_RTdistributions.png', plot, width = 30, height = 40, units = "cm")
 }
+

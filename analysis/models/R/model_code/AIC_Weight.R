@@ -30,4 +30,4 @@ setwd("~/git/sourcemem_online/analysis/models/R/experiment_2/output")
 exp2 <- read.csv('Exp2_AIC_trimmed.csv')
 
 setwd("~/git/sourcemem_online/analysis/models/MATLAB/experiment_2")
-exp2_diff <- read.csv("~/git/sourcemem_online/analysis/models/MATLAB/experiment_2/AIC_v3.csv")
+exp2_diff <- read.csv("~/git/sourcemem_online/analysis/models/MATLAB/experiment_2/AIC.csv")
