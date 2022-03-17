@@ -38,7 +38,7 @@ bootstrap_quantiles <- function(this_data, n){
   quantiles <- data.frame(matrix(nrow = n, ncol = length(rt_quantiles)))
   for(i in 1:n){
     # Sample with replacement and calculate RT quantiles for this sample
-    boot <- sample(1:length(this_data), length(this_data)/3, replace=TRUE)
+    boot <- sample(1:length(this_data), length(this_data), replace=TRUE)
     boot_sample <- this_data[boot]
     this_sample_quantile <- quantile(boot_sample, probs = rt_quantiles)
     quantiles[i, 1:length(rt_quantiles)] <- this_sample_quantile

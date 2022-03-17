@@ -4,7 +4,7 @@ library(ggplot2)
 
 # Plot marginal response error and time model predictions against data
 setwd("~/git/sourcemem_online/analysis/models/MATLAB/")
-data <- read.csv('experiment_2.csv')
+data <- read.csv('experiment_2_cutoff.csv')
 # Exclude practice block
 data <- data[data$block!= 0,]
 
@@ -40,12 +40,12 @@ add$model <- 'Four Factor (Additive)'
 multi <- read.csv('sim_multi.csv', header = FALSE)
 multi$model <- "Four Factor (Multiplicative)"
 
-spatiotemporal_no_eta <- read.csv('sim_spatiotemporal_no_eta.csv', header = FALSE)
-spatiotemporal_no_eta$model <- "Spatiotemporal (no eta)"
+# spatiotemporal_no_eta <- read.csv('sim_spatiotemporal_no_eta.csv', header = FALSE)
+# spatiotemporal_no_eta$model <- "Spatiotemporal (no eta)"
 
 
 model_predictions <- rbind(pure_guess, pure_intrusion, intrusion, temporal, spatiotemporal,
-                           orthographic, semantic, add, multi, spatiotemporal_no_eta)
+                           orthographic, semantic, add, multi)
 colnames(model_predictions) <- c('error', 'time', 'participant', 'model')
 
 MODEL.TYPES <- unique(model_predictions$model)
@@ -373,10 +373,10 @@ individual_qq <- function(confidence){
     confidence <- FALSE
   }
   for (i in unique(data$participant)){
-    filename = sprintf('exp2_p_%i_v3_qxq.png', i)
+    filename = sprintf('exp2_p_%i_v4_qxq.png', i)
     plot_individual_qq(c(3:7),data[data$participant == i,], model_predictions[model_predictions$participant == i,], filename, confidence)
   }
-  filename = sprintf('exp2_group_v3_qxq.png', i)
+  filename = sprintf('exp2_group_v4_qxq.png', i)
   plot_individual_qq(c(3:7),data, model_predictions, filename, confidence)
 }
 
