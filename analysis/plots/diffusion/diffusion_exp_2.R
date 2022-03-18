@@ -276,7 +276,7 @@ exp2_plot <- function(model_list, data, model_predictions, filename){
 }
 
 rt_quantiles <- c(0.1, 0.5, 0.7, 0.9)
-error_quantiles <- c(0.3, 0.6, 0.9)
+error_quantiles <- c(0.1, 0.3, 0.5, 0.9)
 Q_SYMBOLS <- c(25, 23, 24, 22)
 # Joint Q-Q Plot
 source('~/git/sourcemem_online/analysis/plots/diffusion/qxq.R')
@@ -375,7 +375,7 @@ individual_qq <- function(confidence){
     filename = sprintf('exp2_p_%i_qxq2.png', i)
     plot_individual_qq(c(3:7),data[data$participant == i,], model_predictions[model_predictions$participant == i,], filename, confidence)
   }
-  filename = sprintf('exp2_group_qxq2.png', i)
+  filename = sprintf('exp2_group_qxq_three_errorq.png', i)
   plot_individual_qq(c(3:7),data, model_predictions, filename, confidence)
 }
 
