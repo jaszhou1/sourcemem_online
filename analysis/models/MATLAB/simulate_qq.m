@@ -1,4 +1,4 @@
-function simulate_qq(P)
+function simulate_qq(P, model)
 % This is a function to play around with parameter values and see what it
 % does to the qq plots.
 

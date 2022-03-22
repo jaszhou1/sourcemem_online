@@ -51,6 +51,11 @@ colnames(model_predictions) <- c('error', 'time', 'participant', 'model')
 
 MODEL.TYPES <- unique(model_predictions$model)
 
+#temporarily exclude p5
+data <- data[data$participant != 5,]
+model_predictions <- model_predictions[model_predictions$participant != 5,]
+
+
 # Assign models to colours
 
 color_wheel <- c('#00468BFF',
@@ -275,7 +280,7 @@ exp2_plot <- function(model_list, data, model_predictions, filename){
   }
 }
 
-rt_quantiles <- c(0.1, 0.5, 0.7, 0.9)
+rt_quantiles <- c(0.1, 0.5, 0.9)
 error_quantiles <- c(0.1, 0.3, 0.5, 0.9)
 Q_SYMBOLS <- c(25, 23, 24, 22)
 # Joint Q-Q Plot
@@ -311,7 +316,7 @@ plot_individual_qq <- function(model_list, data, model, filename, confidence){
                          labels = c(0, expression(pi))) +
       scale_y_continuous(name = 'Response Time (s)', breaks = c(0.5, 1.0, 1.5, 2.0)) +
       # Use the same colour mapping as other plot
-      scale_color_manual(values= unlist(MODEL.COL[model_list], use.names = FALSE)) +
+      scale_color_manual(values= unlist(MODEL.COL[model_list], use.names = TRUE)) +
       guides(size = "none",
              color= guide_legend(title="Model"),
              shape= guide_legend(title="Response Time Quantile")) +
@@ -375,7 +380,7 @@ individual_qq <- function(confidence){
     filename = sprintf('exp2_p_%i_qxq2.png', i)
     plot_individual_qq(c(3:7),data[data$participant == i,], model_predictions[model_predictions$participant == i,], filename, confidence)
   }
-  filename = sprintf('exp2_group_qxq_three_errorq.png', i)
+  filename = sprintf('exp2_group_qxq.png')
   plot_individual_qq(c(3:7),data, model_predictions, filename, confidence)
 }
 
