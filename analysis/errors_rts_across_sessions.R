@@ -22,4 +22,4 @@ for(i in participants){
 }
 colnames(res) <- c('error_mean', 'error_sd', 'rt_median', 'rt_sd', 'participant', 'session')
 
-ggplot(res) + geom_point(aes(x = session, y = error_mean)) + facet_wrap(participant)
+ggplot(data=res, aes(x=session, y=error_mean)) + geom_line() + facet_wrap(~participant)
