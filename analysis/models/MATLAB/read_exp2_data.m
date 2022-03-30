@@ -10,7 +10,7 @@ function [data] = read_exp2_data()
 % % J1 is all the numbers, J2 is all the strings, and J3 is the full array
 % % MATLAB doesnt like having strings and numbers together
 
-[J1, J2, J3] = xlsread("experiment_2_cutoff.csv");
+[J1, J2, J3] = xlsread("experiment_1.csv");
 
 % First, exclude the practice blocks
 all_data = J1(J1(:,10) ~= 0,:);
