@@ -12,13 +12,16 @@ library(statip)
 
 # Load in data
 setwd("~/git/sourcemem_online/analysis/models/R/data")
-data <- read.csv('experiment_2.csv')
+# data <- read.csv('experiment_2.csv') # Experiment 2
+
+data <- read.csv('experiment_1.csv') # Experiment 1
+
 
 # Exclude practice block
 data <- data[data$block != 0,]
 
 # Exclude first session as a practice sessions
-data <- data[data$session != 1,]
+# data <- data[data$session != 1,]
 
 # Exclude invalid RTs
 data <- data[data$valid_RT==TRUE,]
@@ -372,7 +375,7 @@ fit_all_x_all <- function(){
 }
 ## Top-level function to fit all models and save the parameter estimates and simulated datasets
 fit_all_models <- function(){
-  #SxT <- fit_space_x_time_all()
+  SxT <- fit_space_x_time_all()
   #SxTpOpSe <- fit_space_x_time_plus_ortho_plus_sem_all()
   ortho <- fit_ortho_all()
   semantic <- fit_semantic_all()

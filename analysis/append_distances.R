@@ -61,6 +61,9 @@ append_orthographic_semantic <- function(data){
       # Since all stimuli are 4 letters, the maximum distance is 4 (swapping all letters)
       str_dist = stringdist(this_word, this_intruding_word, method = 'lv')/4
       this_block_orthographic[idx] <- str_dist
+      if (is.null(word2vec[[tolower(this_intruding_word)]])){
+        browser()
+      }
       semantic_dist = cosine(word2vec[[tolower(this_word)]], word2vec[[tolower(this_intruding_word)]])
       
       # Truncate semantic similarity at 0, per Adam's email (alternative is to shift all values by largest minimum value)
