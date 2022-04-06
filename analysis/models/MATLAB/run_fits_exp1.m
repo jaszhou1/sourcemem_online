@@ -19,43 +19,43 @@ load('exp1_data_v2.mat')
 
 % COMMENTING OUT PRE-RUN MODELS
 
-% pure_guess = cell(n_participants,4);
-% 
-% parfor (i = 1:n_participants, num_workers)
-%     % Initial log likelihood value
-%     ll = 1e7;
-%     % Run each participant nrun times
-%     this_fit = cell(1,4);
-%     for j = 1:n_runs
-%         this_participant_data = data{i};
-%         [ll_new, aic, pest, pest_penalty] = fit_pure_guess(this_participant_data);
-%         % If this ll is better than the last one, replace it in the saved
-%         % structure
-%         if (ll_new < ll)
-%             this_fit{1} = ll_new;
-%             this_fit{2} = aic;
-%             this_fit{3} = pest;
-%             this_fit{4} = pest_penalty;
-%             pure_guess(i,:) = this_fit;
-%         end
-%     end
-% end
+pure_guess = cell(n_participants,4);
+
+parfor (i = 1:n_participants, num_workers)
+    % Initial log likelihood value
+    ll = 1e7;
+    % Run each participant nrun times
+    this_fit = cell(1,4);
+    for j = 1:n_runs
+        this_participant_data = data{i};
+        [ll_new, aic, pest, pest_penalty] = fit_pure_guess(this_participant_data);
+        % If this ll is better than the last one, replace it in the saved
+        % structure
+        if (ll_new < ll)
+            this_fit{1} = ll_new;
+            this_fit{2} = aic;
+            this_fit{3} = pest;
+            this_fit{4} = pest_penalty;
+            pure_guess(i,:) = this_fit;
+        end
+    end
+end
 % filename = [datestr(now,'yyyy_mm_dd_HH'),'_Experiment1_diffusion_temp'];
 % save(filename)
 % 
 % % Simulate data, concatenate participants, and save simulated dataset
-% simulated_pure_guess = [];
-% for i = 1:n_participants
-%     % Add zeros to estimated parameters to make it play nice with
-%     % simulation of more complex model.
-%     P = pure_guess{i,3};
-%     this_pest = [P(1), P(2), 0, 0, P(3), 0, P(4), P(5), 0, P(6), P(7), P(8)];
-% 
-%     this_simulated_data = simulate_three_component(data{i}, this_pest);
-%     % Label this dataset with participant number
-%     this_simulated_data(:,3) = i; 
-%     simulated_pure_guess = vertcat(simulated_pure_guess, this_simulated_data);
-% end
+simulated_pure_guess = [];
+for i = 1:n_participants
+    % Add zeros to estimated parameters to make it play nice with
+    % simulation of more complex model.
+    P = pure_guess{i,3};
+    this_pest = [P(1), P(2), 0, 0, P(3), 0, P(4), P(5), 0, P(6), P(7), P(8)];
+
+    this_simulated_data = simulate_three_component(data{i}, this_pest);
+    % Label this dataset with participant number
+    this_simulated_data(:,3) = i; 
+    simulated_pure_guess = vertcat(simulated_pure_guess, this_simulated_data);
+end
 % save(filename)
 
 % %% Pure Intrusion Model
