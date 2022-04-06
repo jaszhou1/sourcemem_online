@@ -1,5 +1,4 @@
-load("~/git/sourcemem_online/analysis/models/R/model_code/2022-01-17_recentered_exp1.RData")
-
+load("~/git/sourcemem_online/analysis/models/R/experiment_1/output/2022-01-17_recentered_exp1.RData")
 # Get a number of equally spaced colours
 # gg_color_hue <- function(n) {
 #   hues = seq(15, 375, length = n + 1)
@@ -25,8 +24,8 @@ MODEL.COL <- list(
   "Temporal Gradient" = color_wheel[4],
   "Spatiotemporal Gradient" = color_wheel[5]
 )
-AXIS.CEX <- 1.2
-AXIS.LABEL.CEX <- 1.5
+AXIS.CEX <- 2
+AXIS.LABEL.CEX <- 2.2
 NUM.BINS <- 50
 X.RESP.LOW <- -pi - 0.01
 X.RESP.HI <- pi + 0.01
@@ -82,13 +81,13 @@ plot_recentered <- function(model_list, this_recentered_predictions, filename){
   
   for(model.type in MODEL.TYPES[model_list]) {
     model.data <- this_recentered_predictions[this_recentered_predictions$model == model.type, ]
-    points(model.data$value, model.data$prob, type="l", lty=2, lwd = 2, col=MODEL.COL[[model.type]])
+    points(model.data$value, model.data$prob, type="l", lty=2, lwd = 3, col=MODEL.COL[[model.type]])
   }
   
   axis(side=1, at=c(-pi, 0, pi), labels=c(expression(-pi), "0", expression(pi)), cex.axis= AXIS.CEX)
   mtext(paste("Response Offset (rad)"), side=1, cex= AXIS.CEX, cex.lab = AXIS.LABEL.CEX, line=2.5)
-  axis(side=2, at=c(0, 0.1, 0.2, 0.3), cex.axis= AXIS.CEX)
-  mtext(paste("Density"), side=2, cex=AXIS.CEX, cex.lab = AXIS.LABEL.CEX, line=2.5)
+  axis(side=4, at=c(0, 0.1, 0.2, 0.3), cex.axis= AXIS.CEX)
+  #mtext(paste("Density"), side=2, cex=AXIS.CEX, cex.lab = AXIS.LABEL.CEX, line=2.5)
   
   ## Add in legend
   legend("topright", legend= MODEL.TYPES[model_list],
@@ -125,13 +124,13 @@ plot_asymm_recenter <- function(model_list, this_asymm_predictions, filename){
   if(filename == "") {
     X11() # Write to the screen
   } else {
-    png(file=filename, width=10.7, height=8.3, units = "in", pointsize = 12, res = 300)
+    png(file=filename, width=17 , height=8.3, units = "in", pointsize = 12, res = 300)
   }
   
   # Set up panels
   par(mfrow=c(2,3))
   par(mar=c(0.1, 1.5, 0.5, 0.1),
-      oma=c(4, 4, 3, 4),
+      oma=c(6, 4, 3, 4),
       xaxs="i")
   
   panel_idx <- 1
@@ -158,33 +157,35 @@ plot_asymm_recenter <- function(model_list, this_asymm_predictions, filename){
       
       for(model.type in MODEL.TYPES[model_list]) {
         model.data <- this_panel_model[this_panel_model$model == model.type, ]
-        points(model.data$value, model.data$prob, type="l", lty=2, lwd = 2.5, col=MODEL.COL[[model.type]])
+        points(model.data$value, model.data$prob, type="l", lty=2, lwd = 3, col=MODEL.COL[[model.type]])
       }
       ## Plot the participant number and data type
-      mtext(paste0("Lag", panel_labs[panel_idx]), side=3, cex=0.85, line=-2, adj=0.1)
+      mtext(paste0("Lag", panel_labs[panel_idx]), side=3, cex= 1.5, line=-2, adj=0.1)
       
       ## Plot the x axes (for the bottom row only)
       if(panel_idx %in% c(4, 5, 6)) {
         axis(side=1, at=c(-pi, 0, pi), labels=c(expression(-pi), "0", expression(pi)), 
              cex.axis=AXIS.CEX)
-        mtext(paste("Response Offset (rad)"), side=1, cex=0.75, line=2.5)
       } else {
-        axis(side=1, at=c(-pi, pi), lwd.ticks=0, labels=FALSE, cex.axis=0.75)
+        axis(side=1, at=c(-pi, pi), lwd.ticks=0, labels=FALSE, cex.axis=AXIS.CEX)
       }
       
       ## Plot the y axes (for the participants in the first col)
       if(panel_idx %in% c(1,4)) {
         axis(side=2, at=c(0, 0.2), cex.axis= AXIS.CEX)
-        mtext(paste("Density"), side=2, cex=AXIS.CEX, cex.lab = AXIS.LABEL.CEX, line=2.5)
       }
       panel_idx <- panel_idx + 1
     }
   }
-  ## Add in legend
-  par(fig = c(0, 1, 0, 1), oma = c(0, 0, 0, 0), mar = c(0, 0, 0, 0), new = TRUE)
-  plot(0, 0, type = 'l', bty = 'n', xaxt = 'n', yaxt = 'n')
-  legend('topright',legend= MODEL.TYPES[model_list],
-         col=color_wheel[model_list], lty=2, lwd = 2, xpd = TRUE, horiz = TRUE, cex = AXIS.CEX, seg.len=1, bty = 'n')
+  # Outer Margin axis labels
+
+  mtext(paste("Density"), side=2, cex=AXIS.CEX, cex.lab = AXIS.LABEL.CEX, outer=T, line=2)
+  mtext(paste("Response Error (rad)"), side=1, cex=AXIS.CEX, cex.lab = AXIS.LABEL.CEX, outer=T, line=4)
+  ## Add in legend - dont need in multi panel
+  # par(fig = c(0, 1, 0, 1), oma = c(0, 0, 0, 0), mar = c(0, 0, 0, 0), new = TRUE)
+  # plot(0, 0, type = 'l', bty = 'n', xaxt = 'n', yaxt = 'n')
+  # legend('topright',legend= MODEL.TYPES[model_list],
+  #        col=color_wheel[model_list], lty=2, lwd = 2, xpd = TRUE, horiz = TRUE, cex = AXIS.CEX, seg.len=1, bty = 'n')
   # xpd = TRUE makes the legend plot to the figure
   dev.off()
 }

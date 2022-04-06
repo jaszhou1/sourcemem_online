@@ -135,20 +135,20 @@ generate_recentered_model <- function(data, model_string){
 
 recenter_all <- function(){
   recentered_data <- generate_recentered_dataset(data)
-  #recentered_threshold <- generate_recentered_model(sim_no_intrusion, 'Pure Guess')
-  #recentered_pure_intrusion <- generate_recentered_model(sim_pure_intrusion, 'Pure Intrusion')
+  recentered_threshold <- generate_recentered_model(sim_mix, 'Pure Guess')
+  recentered_pure_intrusion <- generate_recentered_model(sim_pure_intrusion, 'Pure Intrusion')
   recentered_intrusion <- generate_recentered_model(sim_flat_intrusion, 'Intrusion + Guess')
   recentered_temporal <- generate_recentered_model(sim_temporal, 'Temporal')
   recentered_spatiotemporal <- generate_recentered_model(sim_SxT, 'Spatiotemporal')
   recentered_orthographic <- generate_recentered_model(sim_ortho, 'Orthographic')
   recentered_semantic <- generate_recentered_model(sim_semantic, 'Semantic')
-  # recentered_additive <- generate_recentered_model(sim_SxTpOxSe, 'Four Factor (Additive)')
+  recentered_additive <- generate_recentered_model(sim_SxTpOxSe, 'Four Factor (Additive)')
   recentered_multiplicative <- generate_recentered_model(sim_all_x, 'Four Factor (Multiplicative)')
   # recentered_recognition <- generate_recentered_model(sim_SxT_recog, 'Unrecognised = Guesses')
   recentered_all <- rbind(recentered_data, recentered_intrusion, 
                           recentered_temporal, recentered_spatiotemporal,
                           recentered_orthographic, recentered_semantic,
                           recentered_multiplicative)
-  save(recentered_all, file = paste(toString(Sys.Date()), '_recentered_exp2_updated.RData', sep =""))
+  save(recentered_all, file = paste(toString(Sys.Date()), '_recentered_exp1_updated.RData', sep =""))
   return(recentered_all)
 }

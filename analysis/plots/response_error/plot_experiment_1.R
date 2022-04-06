@@ -60,8 +60,8 @@ MODEL.COL <- list(
 
 ## Compute variables required for chart layout.
 
-AXIS.CEX <- 1.2
-AXIS.LABEL.CEX <- 1.5
+AXIS.CEX <- 2
+AXIS.LABEL.CEX <- 2.2
 NUM.BINS <- 50
 X.RESP.LOW <- -pi - 0.01
 X.RESP.HI <- pi + 0.01
@@ -96,7 +96,7 @@ plot_response_error <- function(model_list, data, filename){
   
   for(model.type in MODEL.TYPES[model_list]) {
     model.data <- response_error_predictions[response_error_predictions$model == model.type, ]
-    points(model.data$value, model.data$prob, type="l", lty=2, lwd = 2.5, col=MODEL.COL[[model.type]])
+    points(model.data$value, model.data$prob, type="l", lty=2, lwd = 3, col=MODEL.COL[[model.type]])
   }
   
   axis(side=1, at=c(-pi, 0, pi), labels=c(expression(-pi), "0", expression(pi)), cex.axis= AXIS.CEX)
@@ -105,8 +105,8 @@ plot_response_error <- function(model_list, data, filename){
   mtext(paste("Density"), side=2, cex=AXIS.CEX, cex.lab = AXIS.LABEL.CEX, line=2.5)
   
   ## Add in legend
-  legend("topright", legend= MODEL.TYPES[model_list],
-         col=color_wheel[model_list], lty=2, lwd = 2, bty = "n",cex=AXIS.CEX, title="Models")
+  # legend("topright", legend= MODEL.TYPES[model_list],
+  #        col=color_wheel[model_list], lty=2, lwd = 2, bty = "n",cex=AXIS.CEX, title="Models")
   
   # Close the plotting device
   dev.off()
@@ -119,6 +119,10 @@ serial_position <- function(position, data){
   this_position_data <- data[data$present_trial == position,]
   this_position_absolute_error <- abs(this_position_data$response_error)
   avg_absolute_error <- mean(this_position_absolute_error)
+  # Sample with replacement and calculate RT quantiles for this sample
+  boot <- sample(1:length(this_position_absolute_error), 
+                 length(this_position_absolute_error), replace=TRUE)
+  CI <- quantile(boot, probs = c(0.05, 0.95))
   return(avg_absolute_error)
 }
 
