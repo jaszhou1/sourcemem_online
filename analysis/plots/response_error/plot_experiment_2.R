@@ -193,7 +193,7 @@ individual_combined_plot <- function(model_list, data, model_predictions, recent
   if(filename == "") {
     X11() # Write to the screen
   } else {
-    png(file=filename, width=10.7, height=10, units = "in", pointsize = 14, res = 300)
+    png(file=filename, width=12, height=10, units = "in", pointsize = 16, res = 300)
     #pdf(file=filename, width=8.3, height=10.7)
   }
   ## Compute variables required for chart layout.

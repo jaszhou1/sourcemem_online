@@ -9,6 +9,9 @@
 setwd("~/git/sourcemem_online/analysis/plots/response_error")
 source('~/git/sourcemem_online/analysis/plots/response_error/plot_experiment_1.R')
 setwd("~/git/sourcemem_online/analysis/plots/output")
+
+# Plot Sequential vs Simultaneous data
+
 # Response error distributions of models with and without intrusions
 plot_response_error(c(1,2,3), data, 'fig6.png')
 

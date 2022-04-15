@@ -1,3 +1,4 @@
+library(ggplot2)
 # Load in best fits of the models
 setwd("~/git/sourcemem_online/analysis/models/R/experiment_1/output")
 load("2022-01-14.RData")
@@ -114,15 +115,18 @@ plot_response_error <- function(model_list, data, filename){
 
 
 ## Functions to plot average error across serial positions
+# Want bootstrap 95% confidence intervals
+library(boot)
+mean.fun <- function(dat, idx) mean(dat[idx], na.rm = TRUE) 
 
 serial_position <- function(position, data){
   this_position_data <- data[data$present_trial == position,]
   this_position_absolute_error <- abs(this_position_data$response_error)
   avg_absolute_error <- mean(this_position_absolute_error)
   # Sample with replacement and calculate RT quantiles for this sample
-  boot <- sample(1:length(this_position_absolute_error), 
-                 length(this_position_absolute_error), replace=TRUE)
-  CI <- quantile(boot, probs = c(0.05, 0.95))
+  bootobject <- boot(data= this_position_absolute_error, statistic= mean.fun, R= 5000, sim="ordinary")
+  CI <- boot.ci(bootobject, conf = 0.95, type = "norm")
+  avg_absolute_error <- c(avg_absolute_error, CI$normal[2:3])
   return(avg_absolute_error)
 }
 
@@ -130,16 +134,19 @@ sim_serial_position <- function(position, data){
   this_position_data <- data[data$target_position == position,]
   this_position_absolute_error <- abs(as.numeric(this_position_data$simulated_error))
   avg_absolute_error <- mean(this_position_absolute_error)
+  bootobject <- boot(data= this_position_absolute_error, statistic= mean.fun, R= 5000, sim="ordinary")
+  CI <- boot.ci(bootobject, conf = 0.95, type = "norm")
+  avg_absolute_error <- c(avg_absolute_error, CI$normal[2:3])
   return(avg_absolute_error)
 }
 
 get_average_error_across_position <- function(this_data, model_string){
-  this_average_error <- data.frame(matrix(nrow = 10, ncol = 3))
-  colnames(this_average_error) <- c('position','error','model')
-  this_average_error[,3] <- model_string
+  this_average_error <- data.frame(matrix(nrow = 10, ncol = 5))
+  colnames(this_average_error) <- c('position','error', 'lower', 'upper', 'model')
+  this_average_error[,5] <- model_string
   for (i in 1:10){
     this_average_error[i,1] <- i
-    this_average_error[i,2] <- sim_serial_position(i, this_data)
+    this_average_error[i,2:4] <- sim_serial_position(i, this_data)
   }
   return(this_average_error)
 }
@@ -155,25 +162,27 @@ concatenate_model_average_error <- function(){
 }
 
 errors_across_serial_position <- function(data){
-  serial_position_data <- data.frame(matrix(nrow = 10, ncol = 3))
-  colnames(serial_position_data) <- c('position','error','model')
-  serial_position_data[,3] <- 'data'
+  serial_position_data <- data.frame(matrix(nrow = 10, ncol = 5))
+  colnames(serial_position_data) <- c('position','error', 'lower', 'upper', 'model')
+  serial_position_data[,5] <- 'data'
   for (i in 1:10){
     serial_position_data[i,1] <- i
-    serial_position_data[i,2] <- serial_position(i, data)
+    serial_position_data[i,2:4] <- serial_position(i, data)
   }
   models <- concatenate_model_average_error()
   plot <- ggplot(data=serial_position_data, aes(x=position, y = error)) +
     geom_point(size = 3) +
-    geom_point(data = models, aes(x = position, color = model)) +
-    geom_smooth(data = models, method = 'loess', se = FALSE, linetype="solid", aes(x = position, color = model), span = 1.5) +
+    geom_segment(data = serial_position_data, linetype = "solid", size = 1, alpha = 0.2, 
+                 aes(x = position, xend = position, y = lower, yend = upper)) +
+    #geom_point(data = models, aes(x = position, color = model)) +
+    geom_smooth(data = models, method = 'loess', se = FALSE, linetype="dashed", aes(x = position, color = model), span = 1.5) +
     scale_color_manual(values=c('#42B540FF',
                                 '#00468BFF',
                                 '#ED0000FF',
                                 '#925E9FFF',
                                 '#0099B4FF')) +
     scale_x_continuous(name = 'Study List Position', breaks = 1:10) +
-    scale_y_continuous(name = 'Average Absolute Error (rad)', breaks = c(1, 1.05), limits = c(0.95, 1.1)) +
+    scale_y_continuous(name = 'Average Absolute Error (rad)', breaks = c(0.9, 1.0, 1.1), limits = c(0.90, 1.1)) +
     guides(color= guide_legend(title="Model")) +
     theme(
       axis.text.x = element_text(color="black", size = 12),
