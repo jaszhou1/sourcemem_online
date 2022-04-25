@@ -99,7 +99,7 @@ recenter_all <- function(data, sim_data){
   registerDoParallel(cl)
   res = foreach (i = unique(sim_data$model),
                  .combine = rbind) %dopar% {
-                   recenter_model(sim_data[sim_data$model == i,], i)
+                   recenter_model(data, sim_data[sim_data$model == i,], i)
                  }
   recentered_model <- as.data.frame(res)
   recentered_data <- recenter_data(data)
