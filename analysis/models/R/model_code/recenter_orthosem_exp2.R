@@ -1,7 +1,8 @@
 # Generate recentered histograms (errors recentered on intrusion angles) and plot the recentered
 # histograms
 library(R.utils)
-
+library(foreach)
+library(doParallel)
 # Load in Experiment 2 Fits
 load("~/git/sourcemem_online/analysis/models/R/experiment_2/output/exp_2_sim_data_updated.RData")
 
@@ -104,6 +105,7 @@ recenter_all <- function(data, sim_data){
   recentered_model <- as.data.frame(res)
   recentered_data <- recenter_data(data)
   recentered_all <- rbind(recentered_data, recentered_model)
+  setwd("~/git/sourcemem_online/analysis/models/R/experiment_2/output")
   save(recentered_all, file = paste(toString(Sys.Date()), '_recentered_exp2_v2.RData', sep =""))
   return(recentered_all)
 }
