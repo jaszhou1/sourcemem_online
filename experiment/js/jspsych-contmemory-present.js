@@ -41,7 +41,7 @@ jsPsych.plugins['contmemory-present'] = (function() {
             circle_buffer_px: {
                 type: jsPsych.plugins.parameterType.INT,
                 pretty_name: 'Circle radius buffer (px)',
-                default: 80, // I have made the circle smaller so the word doesn't clip the 500*500 canvas. Ask simon about size
+                default: 100, // I have made the circle smaller so the word doesn't clip the 500*500 canvas. Ask simon about size
                 description: 'The number of pixels between the circumference of the circle and the SVG canvas edge'
             },
             word_buffer_px: {

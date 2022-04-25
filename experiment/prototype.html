@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <script src="js/jspsych.js" type="text/javascript"></script>
+    <script src="js/jspsych-contmemory-present.js" type="text/javascript"></script>
+    <script src="js/jspsych-math-distractor.js" type="text/javascript"></script>
+    <script src="js/jspsych-contmemory-recall.js" type="text/javascript"></script>
+    <script src="js/jspsych-html-keyboard-response.js" type="text/javascript"></script>
+    <script src="stimuli/orthographic-lists.js"></script>
+    <script src="stimuli/semantic-lists.js"></script>
+    <title>Source Memory Experiment</title>
+    <link rel="stylesheet" href="css/jspsych.css" type="text/css" />
+    <link rel="stylesheet" href="css/custom.css" type="text/css" />
+  </head>
+<body>
+</body>
+<script>
+
+// SOURCE MEMORY EXPERIMENT
+// Online (jspsych) version of Jason Zhou's second PhD experiment
+
+// Simon Lilburn <lilburns AT unimelb DOT edu DOT au>
+// Jason Zhou <jaszhou AT unimelb DOT edu DOT au>
+
+  /* - - - - PARAMETERS - - - - */
+  var num_con_blocks = 4 // Number of blocks per condition
+  var num_cons = 3 // Number of conditions
+  var num_blocks = num_con_blocks * num_cons; // Subject to pilot testing for session timing
+  var num_trials = 8 // Subject to pilot testing for session timing
+  var num_prac = Math.round(num_trials/2);
+  var num_stim = num_blocks * num_trials; // Total number of words needed for the session
+  var num_foil = num_stim; // Number of foil words for the recognition task
+
+
+  // Timing
+  var isi = 250; // Inter-stimulus interval
+  var post_trial = 750;
+  var maths_time = 10000;
+
+
+  /* - - - - INSTRUCTIONS - - - - */
+
+  // Welcome message
+  var welcome = {
+    type: "html-keyboard-response",
+    stimulus: '<p style = "colour:white">Welcome to the experiment. Press any key to begin reading the instructions.</p>'
+  };
+
+  var instructions = {
+    type: "html-keyboard-response",
+    stimulus: '<p style = "colour:white"> This experiment is made up of 14 blocks. In each block you will be asked to complete four steps:<br><br> (1) STUDY: Study a series of words and locations<br>(2) MATH: Complete a series of math problems<br>(3) RECOGNITION: Rate your confidence that words were presented in the STUDY step <br> (4) SOURCE: Reproduce the locations of words that were studied in (1) <br><br> Press any key to contiue.</p>'
+  };
+
+  var instructions_practice_start = {
+    type: "html-keyboard-response",
+    stimulus: '<p style = "colour:white"> You will now have the chance to familiarize yourself with the task by completing a practice block. <br><br> Before each step in the practice block, you will be shown detailed instructions for that step. <br><br> Press any key to begin the practice block.</p>'
+  };
+
+  var instructions_study = {
+    type: "html-keyboard-response",
+    stimulus: '<p style = "colour:white"> STEP 1: STUDY <br><br> You will first be shown a series of words located along a circle. After each word, you will be asked to confirm you saw its location by moving your cursor from the center of the circle to the location. <br><br> Press any key to contiue. </p>'
+  };
+
+  var instructions_math = {
+    type: "html-keyboard-response",
+    stimulus:'<p style = "colour:white"> STEP 2: MATH <br><br> You will now be shown a series of math problems of the form A + B + C = D, where A, B, C, and D are numbers. You will be asked whether D is the true sum of these numbers, pressing "1" for TRUE and "0" for FALSE. Try to perform these math problems as quickly and accurately as possible. <br><br> Press any key to continue.</p>'
+  };
+
+  var instructions_recog = {
+    type: "html-keyboard-response",
+    stimulus:'<p style = "colour:white"> STEP 3: RECOGNITION <br><br> You will now be asked to use number keys on your keyboard to rate a list on words on how confident you are that they were in the study list. <br><br> The numbers 1, 2, and 3 mean that the item was NOT on the list (a NEW word), with 1 meaning you are certain it is a new word. <br><br>The numbers 4, 5, and 6 mean you are sure it was on the list (an OLD word), with 6 meaning you are certain it is an old word. <br><br> Press any key to continue. </p>'
+  };
+
+  var instructions_source = {
+    type: "html-keyboard-response",
+    stimulus:'<p style = "colour:white"> STEP 4: SOURCE <br><br> You will now be shown the words that were studied. Please use your cursor to reproduce the locations that each of the words were originally presented in during the study phase. <br><br> Press any key to continue.</p>'
+  };
+
+  var instructions_practice_end = {
+    type: "html-keyboard-response",
+    stimulus: '<p style = "colour:white"> Together, these four steps make up a "block" of the experiment. <br><br> You have now completed the practice block. <br><br> Press any key to begin the experiment.</p>'
+  };
+
+// End message
+  var ending = {
+    type: "html-keyboard-response",
+    stimulus: '<p id="inst">You have now completed the study.</p><p>Thank you for participating! Press any key to submit your data and end the experiment.</p><p>Once you have done so, feel free to close your browser.</p>'
+  };
+
+  /* - - - - STIMULI - - - - */
+
+  // Function to subset out a list based on the "list" number property
+  function listNumber(x, y) {
+     return x.list == y;
+}
+
+//Function to shuffle stimuli (Fisher-Yates)
+function shuffle(originalArray){
+  // Added this line, otherwise it shuffles the encode list, rather than just returning a new array
+  var array = [].concat(originalArray);
+  var currentIndex = array.length, temporaryValue, randomIndex;
+
+  // While there remain elements to shuffle...
+  while (0 !== currentIndex) {
+
+    // Pick a remaining element...
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+
+    // And swap it with the current element.
+    temporaryValue = array[currentIndex];
+    array[currentIndex] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
+  }
+  return array;
+}
+
+// Modified version of the Fisher Yates function I copied off stack overflow
+// that shuffles multiple arrays in the exact same way (this is to shuffle
+// encode, recog and source blocks of different conditions) with checks for
+// equal array length
+var isArray = Array.isArray || function(value) {
+  return {}.toString.call(value) !== "[object Array]"
+};
+
+function shuffle_multiple() {
+  var arrLength = 0;
+  var argsLength = arguments.length;
+  var rnd, tmp;
+
+  for (var index = 0; index < argsLength; index += 1) {
+    if (!isArray(arguments[index])) {
+      throw new TypeError("Argument is not an array.");
+    }
+
+    if (index === 0) {
+      arrLength = arguments[0].length;
+    }
+
+    if (arrLength !== arguments[index].length) {
+      throw new RangeError("Array lengths do not match.");
+    }
+  }
+
+  while (arrLength) {
+    rnd = Math.floor(Math.random() * arrLength);
+    arrLength -= 1;
+    for (argsIndex = 0; argsIndex < argsLength; argsIndex += 1) {
+      tmp = arguments[argsIndex][arrLength];
+      arguments[argsIndex][arrLength] = arguments[argsIndex][rnd];
+      arguments[argsIndex][rnd] = tmp;
+    }
+  }
+}
+
+// Function to generate a random angle between 0 and 2*pi
+function getRandomAng(max) {
+  return Math.random() * max;
+}
+
+
+// Assemble lists for each condition
+/* - - - - ORTHOGRAPHIC - - - - */
+// Shuffle orthographic lists
+var num_orthographic_lists = Math.max.apply(Math, orthographic_lists.map(function(o) { return o.list; })) + 1
+// Get a shuffled array of indexes to use to select lists in a random order when contructing encode lists.
+  var orthographic_index = shuffle(Array.from(Array(num_orthographic_lists).keys())).map(n => n + 1)
+
+// Similar
+var encode_orthographic = []; // Empty array for all stimuli to go into
+var recog_orthographic = [];
+var source_orthographic = [];
+
+for (i = 0; i < num_con_blocks; i++) {
+  // Get the index in position i in the shuffled array of indices
+  idx = orthographic_index[i]
+  this_list = shuffle(orthographic_lists.filter(x => x.list === idx)); // Returns words in list[idx[i]], and shuffles the inner list of stimuli
+
+  // ENCODE
+  // Populate an array with random angles for every item in this list
+  var this_stim_angles = [];
+  for (j = 0; j < this_list.length; j++){
+    this_stim_angles[j] = getRandomAng(2*Math.PI)
+  }
+
+  this_stim_words = this_list.slice(0,num_trials)
+  this_foil_words = this_list.slice(num_trials, num_trials *2)
+
+  var this_block = [] ;
+  for (j = 0; j <num_trials; j++) {
+    this_block[j] = {word: this_stim_words[j].word,
+                      angle: this_stim_angles[j],
+                      cond: "orthographic",
+                      stim: "TRUE"};
+  }
+  encode_orthographic[i] = this_block;
+
+  // RECOGNITION
+  var this_block_foil = [] ;
+  for (j = 0; j <num_trials; j++) {
+    this_block_foil[j] = {word: this_foil_words[j].word, // Not strictly necessary, but treating foils the same as stimuli for consistent indexing
+                          angle: "N/A",
+                          cond: "orthographicr",
+                          stim: "FALSE"};
+  }
+  // The recognition list is constructed by shuffling foils with stim words
+  recog_orthographic[i] = shuffle(this_block_foil.concat(encode_orthographic[i]));
+
+  // The source task list is a shuffled copy of the encode list
+  source_orthographic[i] = shuffle(encode_orthographic[i])
+}
+
+/* - - - - SEMANTIC - - - - */
+// Shuffle semantic lists
+var num_semantic_lists = Math.max.apply(Math, semantic_lists.map(function(o) { return o.list; })) + 1
+// Get a shuffled array of indexes to use to select lists in a random order when contructing encode lists.
+  var semantic_index = shuffle(Array.from(Array(num_semantic_lists).keys())).map(n => n + 1)
+// Similar
+var encode_semantic = []; // Empty array for all stimuli to go into
+var recog_semantic = [];
+var source_semantic = [];
+
+for (i = 0; i < num_con_blocks; i++) {
+  // Get the index in position i in the shuffled array of indices
+  idx = semantic_index[i]
+  this_list = shuffle(semantic_lists.filter(x => x.list === idx)); // Returns words in list[idx[i]], and shuffles the inner list of stimuli
+
+  // ENCODE
+  // Populate an array with random angles for every item in this list
+  var this_stim_angles = [];
+  for (j = 0; j < this_list.length; j++){
+    this_stim_angles[j] = getRandomAng(2*Math.PI)
+  }
+
+  this_stim_words = this_list.slice(0,num_trials)
+  this_foil_words = this_list.slice(num_trials, num_trials *2)
+
+  var this_block = [] ;
+  for (j = 0; j <num_trials; j++) {
+    this_block[j] = {word: this_stim_words[j].word,
+                      angle: this_stim_angles[j],
+                      cond: "semantic",
+                      stim: "TRUE"};
+  }
+  encode_semantic[i] = this_block;
+
+  // RECOGNITION
+  var this_block_foil = [] ;
+  for (j = 0; j <num_trials; j++) {
+    this_block_foil[j] = {word: this_foil_words[j].word, // Not strictly necessary, but treating foils the same as stimuli for consistent indexing
+                      angle: "N/A",
+                    cond: "semantic",
+                  stim: "FALSE"};
+  }
+  // The recognition list is constructed by shuffling foils with stim words
+  recog_semantic[i] = shuffle(this_block_foil.concat(encode_semantic[i]));
+
+  // The source task list is a shuffled copy of the encode list
+  source_semantic[i] = shuffle(encode_semantic[i])
+}
+
+/* - - - - UNRELATED - - - - */
+// Dissimilar words are selected from the semantic lists that are unused in the
+// similar lists. This is so we can be sure any difference between similar/Dissimilar
+// conditions are not due to the specific items
+
+var orthographic_dissimilar_words = shuffle(orthographic_lists.filter(x => !(x.list in orthographic_index.slice(0, num_con_blocks))))
+var semantic_dissimilar_words = shuffle(semantic_lists.filter(x => !(x.list in semantic_index.slice(0, num_con_blocks))))
+var unrelated_words = shuffle(semantic_dissimilar_words.concat(orthographic_dissimilar_words))
+
+var unrelated_stim = unrelated_words.slice(0, num_con_blocks * num_trials)
+var unrelated_foil = unrelated_words.slice(num_con_blocks * num_trials, num_con_blocks * num_trials *2)
+
+var encode_unrelated = []; // Empty array for all stimuli to go into
+var recog_unrelated = [];
+var source_unrelated = [];
+
+for (i = 0; i < num_con_blocks; i++) {
+  word_offset = i * num_trials
+  this_stim_words = unrelated_stim .slice(word_offset, word_offset + num_trials)
+  this_foil_words = unrelated_foil.slice(word_offset, word_offset + num_trials)
+  // Populate an array with random angles for every item in this list
+  var this_block_angles = [];
+  for (j = 0; j < this_stim_words.length; j++){
+    this_block_angles[j] = getRandomAng(2*Math.PI)
+  }
+
+  var this_block = [] ;
+  for (j = 0; j < num_trials; j++) {
+    this_block[j] = {word: this_stim_words[j].word,
+                      angle: this_block_angles[j],
+                      cond: "unrelated",
+                      stim: "TRUE"};
+  }
+  encode_unrelated[i] = this_block;
+
+  // RECOGNITION
+  var this_block_foil = [] ;
+  for (j = 0; j <num_trials; j++) {
+    this_block_foil[j] = {word: this_foil_words[j].word, // Not strictly necessary, but treating foils the same as stimuli for consistent indexing
+                      angle: "N/A",
+                      cond: "unrelated",
+                      stim: "FALSE"};
+  }
+  // The recognition list is constructed by shuffling foils with stim words
+  recog_unrelated[i] = shuffle(this_block_foil.concat(encode_unrelated[i]));
+
+  // The source task list is a shuffled copy of the encode list
+  source_unrelated[i] = shuffle(encode_unrelated[i])
+}
+
+  /* - - - - GENERATE DESIGN - - - - */
+
+  // TODO: Set up practice block from unused words.
+
+  // Concatenate encode lists of all conditions into one array.
+  var encode_list = encode_orthographic.concat(encode_semantic,
+                                                encode_unrelated)
+
+  // same for recognition blocks. Make sure these are concatenated in the same order
+  var recog_list = recog_orthographic.concat(recog_semantic,
+                                              recog_unrelated)
+
+  // and one more time for source test blocks
+  var source_list = source_orthographic.concat(source_semantic,
+                                                source_unrelated)
+
+ shuffle_multiple(encode_list, recog_list, source_list)
+
+ /* - - - - PRACTICE LIST - - - - */
+ // Draw prac words from unused orthographic list contents
+ var prac_words = shuffle(unrelated_words).slice(recog_list.length*recog_list[1].length, recog_list.length*recog_list[1].length + num_prac*2)
+ var prac_stim_words = shuffle(prac_words.slice(0, num_prac))
+ var prac_foil_words = shuffle(prac_words.slice(num_prac, num_prac*2))
+
+ // Generate a practice block
+ // Encode
+  var prac_encode_list = [];
+  for (j = 0; j <num_prac; j++) {
+    prac_encode_list[j] = {word: prac_stim_words[j].word,
+                     angle: Math.PI,
+                     cond: "practice",
+                     stim: "TRUE"};
+  }
+  // Recognition
+  var prac_recog_list = [];
+  for (j = 0; j <num_prac; j++) {
+    prac_recog_list[j] = {word: prac_foil_words[j].word,
+                     angle: "N/A",
+                     cond: "practice",
+                     stim: "FALSE"};
+  }
+  prac_recog_list = prac_recog_list.concat(prac_encode_list);
+  prac_recog_list = shuffle(prac_recog_list);
+
+  // Source
+  var prac_source_list = [];
+  prac_source_list = shuffle(prac_encode_list);
+
+
+/* - - - - TIMELINE - - - - */
+  //  var TIMELINE = [welcome, instructions, instructions_practice_start]
+
+  // // Practice block
+  //   TIMELINE.push(instructions_study);
+  //   TIMELINE.push({
+  //         type: 'html-keyboard-response',
+  //         stimulus: '<p style="color:white">STUDY</p>',
+  //         choices: jsPsych.NO_KEYS,
+  //         trial_duration: 2000,
+  //     });
+  //
+  //     // Trial
+  //   for(j = 0; j < num_prac; j++){
+  //     TIMELINE.push({
+  //         type: 'contmemory-present',
+  //         stimulus: prac_encode_list[j].word,
+  //         angle: prac_encode_list[j].angle,
+  //         data: {
+  //           phase: 'practice study',
+  //           trial: j
+  //         }
+  //     });
+  //   }
+  //
+  //   // MATHS
+  //   TIMELINE.push(instructions_math);
+  //   TIMELINE.push({
+  //       type: 'html-keyboard-response',
+  //       stimulus: '<p style="color:white">MATH</p>',
+  //       choices: jsPsych.NO_KEYS,
+  //       trial_duration: 2000,
+  //   });
+  //
+  //   TIMELINE.push({
+  //     type: 'math-distractor',
+  //     duration: maths_time,
+  //     data: {
+  //       phase: 'delay',
+  //       trial: j
+  //     }
+  //   });
+  //
+  //
+  //   // RECOGNITION
+  //   TIMELINE.push(instructions_recog);
+  //   TIMELINE.push({
+  //       type: 'html-keyboard-response',
+  //       stimulus: '<p style="color:white">RECOGNITION</p>',
+  //       choices: jsPsych.NO_KEYS,
+  //       trial_duration: 2000,
+  //   });
+  //
+  //     // Trial
+  //     for(j = 0; j < prac_recog_list.length; j++){
+  //       TIMELINE.push({
+  //           type: 'html-keyboard-response',
+  //           stimulus: prac_recog_list[j].word,
+  //           choices: ['1','2','3','8','9','0'],
+  //           prompt: '<p style="colour:white">Please enter a number. <br><br> (SURE NEW) 1 2 3 8 9 0 (SURE OLD)</p>',
+  //           post_trial_gap: isi,
+  //           data: {
+  //             phase: 'recognition',
+  //             trial: j
+  //           },
+  //           on_finish: function(data){
+  //             data.response = jsPsych.pluginAPI.convertKeyCodeToKeyCharacter(data.key_press)
+  //           }
+  //       });
+  //     }
+  //
+  //   // SOURCE
+  //   TIMELINE.push(instructions_source);
+  //   TIMELINE.push({
+  //       type: 'html-keyboard-response',
+  //       stimulus: '<p style="color:white">SOURCE</p>',
+  //       choices: jsPsych.NO_KEYS,
+  //       trial_duration: 2000,
+  //   });
+  //
+  //   //  var correct_trials = [];
+  //     // Trial
+  //     for(j = 0; j < num_prac; j++){
+  //       TIMELINE.push({
+  //           type: 'contmemory-recall',
+  //           stimulus: prac_source_list[j].word,
+  //           angle: prac_source_list[j].angle,
+  //           data: {
+  //             phase: 'recall',
+  //             trial: j
+  //           },
+  //           on_finish: function(data){
+  //             data.correct = Math.abs(data.angular_error) <= Math.PI/8  // How do I actually get this to save into an array that I can use for block feedback?
+  //           }
+  //       });
+  //     }
+  //
+  // TIMELINE.push(instructions_practice_end);
+
+  /* - - - - TIMELINE - - - - */
+  var TIMELINE = [welcome, instructions, instructions_practice_start]
+
+// Practice block
+// STUDY
+  // Instructions
+  TIMELINE.push(instructions_study);
+  TIMELINE.push({
+      type: 'html-keyboard-response',
+      stimulus: '<p style="color:white">STUDY</p>',
+      choices: jsPsych.NO_KEYS,
+      trial_duration: 2000,
+  });
+
+    // Trial
+  for(j = 0; j < num_prac; j++){
+    TIMELINE.push({
+        type: 'contmemory-present',
+        stimulus: prac_encode_list[j].word,
+        angle: prac_encode_list[j].angle,
+        data: {
+          phase: 'study',
+          block: -1,
+          trial: j,
+          cond: prac_encode_list[j].cond,
+          stim: prac_encode_list[j].stim
+        }
+    });
+  }
+
+  // MATHS
+  // Instructions
+  TIMELINE.push(instructions_math);
+  TIMELINE.push({
+      type: 'html-keyboard-response',
+      stimulus: '<p style="color:white">MATH</p>',
+      choices: jsPsych.NO_KEYS,
+      trial_duration: 2000,
+  });
+
+  // Trial
+  TIMELINE.push({
+    type: 'math-distractor',
+    duration: maths_time,
+    data: {
+      phase: 'delay',
+      block: -1,
+      trial: j
+    }
+  });
+
+
+  // RECOGNITION
+  // Instructions
+  TIMELINE.push(instructions_recog);
+  TIMELINE.push({
+      type: 'html-keyboard-response',
+      stimulus: '<p style="color:white">RECOGNITION</p>',
+      choices: jsPsych.NO_KEYS,
+      trial_duration: 2000,
+  });
+
+    // Trial
+    for(j = 0; j < prac_recog_list.length; j++){
+      TIMELINE.push({
+          type: 'html-keyboard-response',
+          stimulus: prac_recog_list[j].word,
+          choices: ['1','2','3','8','9','0'],
+          prompt: '<p style="colour:white">Please enter a number. <br><br> (SURE NEW) 1 2 3 8 9 0 (SURE OLD)</p>',
+          post_trial_gap: isi,
+          data: {
+            phase: 'recognition',
+            block: -1,
+            trial: j,
+            cond: prac_recog_list[j].cond,
+            stim: prac_recog_list[j].stim
+          },
+          on_finish: function(data){
+            data.response = jsPsych.pluginAPI.convertKeyCodeToKeyCharacter(data.key_press)
+          }
+      });
+    }
+
+  // SOURCE
+  // Instructions
+  TIMELINE.push(instructions_source);
+  TIMELINE.push({
+      type: 'html-keyboard-response',
+      stimulus: '<p style="color:white">SOURCE</p>',
+      choices: jsPsych.NO_KEYS,
+      trial_duration: 2000,
+  });
+
+  //  var correct_trials = [];
+    // Trial
+    for(j = 0; j < num_prac; j++){
+      TIMELINE.push({
+          type: 'contmemory-recall',
+          stimulus: prac_source_list[j].word,
+          angle: prac_source_list[j].angle,
+          data: {
+            phase: 'recall',
+            block: -1,
+            trial: j,
+            cond: prac_source_list[j].cond,
+            stim: prac_source_list[j].stim
+          },
+          on_finish: function(data){
+            data.correct = Math.abs(data.angular_error) <= Math.PI/8
+          }
+      });
+    }
+
+  TIMELINE.push(instructions_practice_end);
+
+  // Main experiment loop here
+  // For each block
+  for (i = 0; i < num_blocks; i++) {
+
+    // ENCODE
+      // Instructions
+      TIMELINE.push({
+          type: 'html-keyboard-response',
+          stimulus: '<p style="color:white">STUDY</p>',
+          choices: jsPsych.NO_KEYS,
+          trial_duration: 2000,
+      });
+
+      // Trial
+    for(j = 0; j < num_trials; j++){
+      TIMELINE.push({
+          type: 'contmemory-present',
+          stimulus: encode_list[i][j].word,
+          angle: encode_list[i][j].angle,
+          data: {
+            phase: 'study',
+            block: i,
+            trial: j,
+            cond: encode_list[i][j].cond, // Add condition tag
+            stim: encode_list[i][j].stim // and a "is stim or foil" tag
+          }
+      });
+    }
+
+    // MATHS
+    // Instructions
+    TIMELINE.push({
+        type: 'html-keyboard-response',
+        stimulus: '<p style="color:white">MATH</p>',
+        choices: jsPsych.NO_KEYS,
+        trial_duration: 2000,
+    });
+
+    // TODO: this plug-in was originally written for an older version of jspsych, ISI is defined within the function. Neater to treat as a parameter.
+    TIMELINE.push({
+      type: 'math-distractor',
+      duration: maths_time,
+      data: {
+        phase: 'delay',
+        block: i,
+        trial: j
+      }
+    });
+
+
+    // RECOGNITION
+    // Instructions
+    TIMELINE.push({
+        type: 'html-keyboard-response',
+        stimulus: '<p style="color:white">RECOGNITION</p>',
+        choices: jsPsych.NO_KEYS,
+        trial_duration: 2000,
+    });
+
+      // Trial
+      for(j = 0; j < num_trials*2; j++){
+        TIMELINE.push({
+            type: 'html-keyboard-response',
+            stimulus: recog_list[i][j].word,
+            choices: ['1','2','3','8','9','0'],
+            prompt: '<p style="colour:white">Please enter a number. <br><br> (SURE NEW) 1 2 3 8 9 0 (SURE OLD)</p>',
+            post_trial_gap: isi,
+            data: {
+              phase: 'recognition',
+              block: i,
+              trial: j,
+              cond: recog_list[i][j].cond,
+              stim: recog_list[i][j].stim
+            },
+            on_finish: function(data){
+              data.response = jsPsych.pluginAPI.convertKeyCodeToKeyCharacter(data.key_press)
+            }
+        });
+      }
+
+    // SOURCE
+    // Instructions
+    TIMELINE.push({
+        type: 'html-keyboard-response',
+        stimulus: '<p style="color:white">SOURCE</p>',
+        choices: jsPsych.NO_KEYS,
+        trial_duration: 2000,
+    });
+
+    //  var correct_trials = [];
+      // Trial
+      for(j = 0; j < num_trials; j++){
+        TIMELINE.push({
+            type: 'contmemory-recall',
+            stimulus: source_list[i][j].word,
+            angle: source_list[i][j].angle,
+            data: {
+              phase: 'recall',
+              block: i,
+              trial: j,
+              cond: source_list[i][j].cond,
+              stim: source_list[i][j].stim
+            },
+            on_finish: function(data){
+              data.correct = Math.abs(data.angular_error) <= Math.PI/8
+            }
+        });
+      }
+
+    // BLOCK FEEDBACK
+    // Calculate feedback percentage and assemble string to be displayed
+    // Function to construct string for html keyboard response stimulus
+
+    TIMELINE.push({
+      type: "html-keyboard-response",
+      stimulus: function() {
+        var this_block_correct = jsPsych.data.get().last(num_trials).filter({trial_type: 'contmemory-recall',correct: true}).count()
+        var accuracy = Math.round(this_block_correct/num_trials * 100); // change to actual output from cont-recall
+        return "<p>End of Block</p>" +
+                "<p>You responded correctly on "+accuracy+"% of the trials in this block.</p>"+
+                "<p>Press any key to begin the next block.</p>";
+      }
+    });
+
+  }
+  /* create timeline */
+    jsPsych.init({
+        timeline: TIMELINE,
+        on_finish: function() {
+            jsPsych.data.displayData(); // Going to have to save this somewhere with a timestamp in the filename
+        }
+    });
+
+  /* - - - - OUTPUT - - - - */
+
+</script>
+</html>
