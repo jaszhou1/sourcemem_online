@@ -1,11 +1,24 @@
 # Generate recentered histograms (errors recentered on intrusion angles) and plot the recentered
 # histograms
 library(R.utils)
+library(foreach)
+library(doParallel)
 # Load in Experiment 1 Fits
-load("~/git/sourcemem_online/analysis/models/R/experiment_1/output/2022-01-14.RData")
+load("~/git/sourcemem_online/analysis/models/R/experiment_1/output/2022-04-05.RData")
 data <- read.csv('~/git/sourcemem_online/analysis/models/R/data/experiment_1.csv')
 data <- data[data$valid_RT == TRUE,]
 
+sim_mix$model <- 'Pure Guess'
+sim_pure_intrusion$model <- 'Pure Intrusion'
+sim_intrusion$model <- 'Intrusion + Guess'
+sim_temporal$model <- 'Temporal'
+sim_spatiotemporal$model <- 'Spatiotemporal'
+sim_ortho$model <- 'Orthographic'
+sim_semantic$model <- 'Semantic'
+sim_all_x$model <- 'Four Factor (Multiplicative)'
+sim_SxTpOxSe$model <- 'Four Factor (Additive)'
+sim_data <- rbind(sim_mix, sim_pure_intrusion, sim_intrusion, sim_temporal, sim_spatiotemporal, 
+                  sim_ortho, sim_semantic, sim_all_x, sim_SxTpOxSe)
 
 n_intrusions <- 9
 
@@ -75,14 +88,15 @@ recenter_model <- function(data, model, model_string){
 
 
 recenter_all <- function(){
+  cl <- makeForkCluster((detectCores() - 1))
+  registerDoParallel(cl)
+  res = foreach (i = unique(sim_data$model),
+                 .combine = rbind) %dopar% {
+                   recenter_model(data, sim_data[sim_data$model == i,], i)
+                 }
+  recentered_model <- as.data.frame(res)
   recentered_data <- recenter_data(data)
-  recentered_threshold <- recenter_model(data, sim_mix, 'Pure Guess')
-  recentered_pure_intrusion <- recenter_model(data, sim_pure_intrusion, 'Pure Intrusion')
-  recentered_intrusion <- recenter_model(data, sim_intrusion, 'Intrusion + Guess')
-  recentered_temporal <- recenter_model(data, sim_temporal, 'Temporal')
-  recentered_spatiotemporal <- recenter_model(data, sim_spatiotemporal, 'Spatiotemporal')
-  recentered_all <- rbind(recentered_data, recentered_threshold, recentered_pure_intrusion,
-                          recentered_intrusion, recentered_temporal, recentered_spatiotemporal)
+  recentered_all <- rbind(recentered_data, recentered_model)
   setwd("~/git/sourcemem_online/analysis/models/R/experiment_1/output")
   save(recentered_all, file = paste(toString(Sys.Date()), '_recentered_exp1_v2.RData', sep =""))
   return(recentered_all)
