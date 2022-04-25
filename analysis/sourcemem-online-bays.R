@@ -264,6 +264,21 @@ plot_participant <- function(p){
   return(this.user.data)
 }
 
+## Save raw data
+save.raw.data <- function(){
+  setwd("~/git/sourcemem_online/analysis/raw_data/small_n")
+  for(p in 1:length(completed.users)){
+    # Session Loop
+    for(s in 1:length(sessions)){
+      this.session.data <- get.session.data.by.user.id(SERVER.BASE.URL, completed.users[[p]], s,
+                                                       SERVER.PORT, SERVER.MASTER.API.KEY)
+      filename <- sprintf('Subject_%s_Session_%i.RData', p, s)
+      save(this.session.data, file = filename)
+    }
+  }
+}
+
+
 ## Save all the data as one csv
 
 save.all.data <- function(filename){
@@ -275,13 +290,9 @@ save.all.data <- function(filename){
     for(j in 1:length(sessions)){
       data <- get_session(completed.users[[h]],j)
       # Bind sessions together
-      
       this.user.data <- rbind(this.user.data, data)
-      # Filter out invalid RTs
-      #this.user.data <- this.user.data[this.user.data$valid_RT == TRUE,]
-      
     }
-    this.user.data$participant <- h
+    this.user.data$participant <- h 
     all.data <- rbind(all.data, this.user.data)
   }
   
