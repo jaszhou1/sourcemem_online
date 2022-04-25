@@ -1,6 +1,6 @@
 # Generate recentered histograms (errors recentered on intrusion angles) and plot the recentered
 # histograms
-
+library(R.utils)
 # Load in Experiment 1 Fits
 load("~/git/sourcemem_online/analysis/models/R/experiment_1/output/2022-01-14.RData")
 

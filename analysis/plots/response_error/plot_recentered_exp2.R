@@ -1,5 +1,5 @@
 load("~/git/sourcemem_online/analysis/models/R/experiment_2/output/2022-02-11_recentered_exp2_updated.RData")
-
+colnames(recentered_all) <- c('error', 'direction', 'participant', 'model', 'filter')
 # Get a number of equally spaced colours
 # gg_color_hue <- function(n) {
 #   hues = seq(15, 375, length = n + 1)
@@ -59,6 +59,7 @@ get_response_error_density <- function(model){
   this_predictions[1] <- preds$x
   this_predictions[2] <- preds$y
   this_predictions[3] <- model$model[1]
+  colnames(this_predictions) <- c("value", "prob", "model")
   return(this_predictions)
 }
 
@@ -133,7 +134,13 @@ for(i in 1:length(models)){
 }
 colnames(asymm_predictions) <- c("value", "prob", "model", "direction", "lag")
 
-plot_asymm_recenter <- function(model_list, this_asymm_predictions, filename){
+exp_2_plot_asymm_recenter <- function(model_list, recentered_all, p, filename){
+  # Get the required data and predictions
+  data <- recentered_all[(recentered_all$participant == p) &
+                           (recentered_all$model == 'data'),]
+  asymm_predictions <- recentered_all[(recentered_all$participant == p) &
+                                        !(recentered_all$model == 'data'),]
+  
   ## Opens a drawing device (either X11 for testing or a
   ## PDF for saving).
   if(filename == "") {
@@ -141,11 +148,10 @@ plot_asymm_recenter <- function(model_list, this_asymm_predictions, filename){
   } else {
     png(file=filename, width=10.7, height=8.3, units = "in", pointsize = 12, res = 300)
   }
-  
   # Set up panels
   par(mfrow=c(2,3))
   par(mar=c(0.1, 1.5, 0.5, 0.1),
-      oma=c(4, 4, 3, 4),
+      oma=c(5, 4, 6, 4),
       xaxs="i")
   
   panel_idx <- 1
@@ -154,7 +160,7 @@ plot_asymm_recenter <- function(model_list, this_asymm_predictions, filename){
     for(j in lags){
       this_panel_data <- data[(data$direction == i) & (data$filter == j),]
       this_panel_model <- asymm_predictions[(asymm_predictions$direction == i) & 
-                                              (asymm_predictions$lag == j),]
+                                              (asymm_predictions$filter == j),]
       plot.new()
       plot.window(xlim=c(X.RESP.LOW, X.RESP.HI),
                   ylim=c(Y.RESP.LOW, Y.RESP.HI))
@@ -171,7 +177,7 @@ plot_asymm_recenter <- function(model_list, this_asymm_predictions, filename){
       }
       
       for(model.type in MODEL.TYPES[model_list]) {
-        model.data <- this_panel_model[this_panel_model$model == model.type, ]
+        model.data <- get_response_error_density(this_panel_model[this_panel_model$model == model.type, ])
         points(model.data$value, model.data$prob, type="l", lty=2, lwd = 2.5, col=MODEL.COL[[model.type]])
       }
       ## Plot the participant number and data type
@@ -181,7 +187,6 @@ plot_asymm_recenter <- function(model_list, this_asymm_predictions, filename){
       if(panel_idx %in% c(4, 5, 6)) {
         axis(side=1, at=c(-pi, 0, pi), labels=c(expression(-pi), "0", expression(pi)), 
              cex.axis=AXIS.CEX)
-        mtext(paste("Response Offset (rad)"), side=1, cex=0.75, line=2.5)
       } else {
         axis(side=1, at=c(-pi, pi), lwd.ticks=0, labels=FALSE, cex.axis=0.75)
       }
@@ -189,17 +194,28 @@ plot_asymm_recenter <- function(model_list, this_asymm_predictions, filename){
       ## Plot the y axes (for the participants in the first col)
       if(panel_idx %in% c(1,4)) {
         axis(side=2, at=c(0, 0.2), cex.axis= AXIS.CEX)
-        mtext(paste("Density"), side=2, cex=AXIS.CEX, cex.lab = AXIS.LABEL.CEX, line=2.5)
       }
       panel_idx <- panel_idx + 1
     }
   }
+  mtext(paste0("P", p), side=3, cex=AXIS.CEX, cex.lab = AXIS.LABEL.CEX, outer=T, line=2, adj = 0)
+  mtext(paste("Density"), side=2, cex=AXIS.CEX, cex.lab = AXIS.LABEL.CEX, outer=T, line=2)
+  mtext(paste("Response Error (rad)"), side=1, cex=AXIS.CEX, cex.lab = AXIS.LABEL.CEX, outer=T, line=3)
   ## Add in legend
   par(fig = c(0, 1, 0, 1), oma = c(0, 0, 0, 0), mar = c(0, 0, 0, 0), new = TRUE)
   plot(0, 0, type = 'l', bty = 'n', xaxt = 'n', yaxt = 'n')
   legend('topright',legend= MODEL.TYPES[model_list],
          col=color_wheel[model_list], lty=2, lwd = 2, xpd = TRUE, horiz = TRUE, cex = AXIS.CEX, seg.len=1, bty = 'n')
   # xpd = TRUE makes the legend plot to the figure
-  dev.off()
+  if(filename != "") {
+    dev.off()
+  }
+}
+
+## LOOP TO PLOT INDIVIDUAL ASYMM
+plot_individual_asymm <- function(){
+  for(i in 1:5){
+    exp_2_plot_asymm_recenter(c(1:5), recentered_all, i, sprintf('exp_2_asymm_recenter_%i.png', i))
+  }
 }
 

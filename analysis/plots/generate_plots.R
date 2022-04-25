@@ -40,3 +40,4 @@ setwd("~/git/sourcemem_online/analysis/plots/output")
 individual_combined_plot(c(1,3,4), data, response_error_predictions, recenter_data, 
                          individual_recentered, group_response_error_predictions, group_recentered, "fig11c.png")
 plot_asymm_recenter(c(1,2,3), recenter_data, asymm_group_densities, "fig12.png")
+
