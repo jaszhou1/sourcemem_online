@@ -14,7 +14,7 @@ n_sims = 50; % The number of times to simulate each trial
 num_intrusions = 9;
 
 % Expected number of parameters
-n_params = 17;
+n_params = 19;
 % Check the length of the parameter vector
 if length(pest) ~= n_params
     [name, errmg1], length(pest), return;
@@ -47,6 +47,8 @@ rho = P(15); % Spatial component weight in intrusion probability calculation
 % Nondecision Time
 ter = P(16);
 st = P(17);
+iota_t = P(18);
+iota_sp = P(19);
 
 % Assume eta components in the x and y directions are the same
 eta1_targ = eta_targ;
@@ -85,6 +87,10 @@ temporal_similarities = reshape(temporal_similarities, size(lags));
 % Multiply temporal similarity with spatial similarity
 spatial_distances = data(:,23:31);
 spatial_similarities = shepard(spatial_distances, zeta);
+
+% Scale similarity values
+temporal_similarities = temporal_similarities * iota_t;
+spatial_similarities = spatial_distances * iota_sp;
 
 spatiotemporal_similarities = (temporal_similarities.^(1-rho)) .* (spatial_similarities.^rho);
 

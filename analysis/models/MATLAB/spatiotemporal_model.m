@@ -31,7 +31,7 @@ errmg3 = 'Component weights do not sum to 1...';
 errmg4 = 'Negative trial weight';
 %% Global variables
 
-np = 17; % Number of parameters
+np = 19; % Number of parameters
 epsx = 1e-9; % Small values to substitute for zeroes
 cden = 0.05;  % Contaminant density.
 tmax = 5.1; % Maximum response time
@@ -90,6 +90,8 @@ rho = P(15); % Spatial component weight in intrusion probability calculation
 % Nondecision Time
 ter = P(16);
 st = P(17);
+iota_t = P(18);
+iota_sp = P(19);
 
 % Check to see if component weights sum to 1.
 if gamma + beta > 1
@@ -111,12 +113,12 @@ eta2_int = eta_int;
 penalty = 0; % Set the penalty to an initial value of zero
 pest_penalty(1,:) = P;
 % ----------------------------------------------------------------------------
-%   [v1t, v2t,  v1i, v2i, eta_t, eta_i,   at,  ag,  gamma, beta, kappa, l_b,   l_f,   zeta,  rho, Ter, st]
+%   [v1t, v2t,  v1i, v2i, eta_t, eta_i,   at,  ag,  gamma, beta, kappa, l_b,   l_f,   zeta,  rho, Ter, st, iota_t, iota_sp]
 % ----------------------------------------------------------------------------
-Ub= [ 8,   0,    8,   0,   1,    1,       4.5, 4.5,  1.0,  1.0,  1.0,    5,    5,     2.0,    1,   0.3,  0.2];
-Lb= [ 2,   0,    0,   0,   0,    0,       0.1, 0.5,  0,    0,    0.4,      0,    0,     0,      0,   0,    0];
-Pub=[ 7.5, 0,    7.5, 0,   0.9,  0.9,     4.0, 4.0,  0.9, 0.9,  0.9,    4.5,  4.5,   0.99,   0.9, 0.25, 0.15];
-Plb=[ 3,   0,    0,   0,   0,    0,       0.7, 0.7,  0.01, 0.01, 0.5,   0.01, 0.01,  0.01,   0.01,0.01, 0.01];
+Ub= [ 8,   0,    8,   0,   1,    1,       4.5, 4.5,  1.0,  1.0,  1.0,    5,    5,     2.0,    1,   0.3,  0.2, 2, 2];
+Lb= [ 2,   0,    0,   0,   0,    0,       0.1, 0.5,  0,    0,    0.4,      0,    0,     0,      0,   0,    0, -2, -2];
+Pub=[ 7.5, 0,    7.5, 0,   0.9,  0.9,     4.0, 4.0,  0.9, 0.9,  0.9,    4.5,  4.5,   0.99,   0.9, 0.25, 0.15, 1.5, 1.5];
+Plb=[ 3,   0,    0,   0,   0,    0,       0.7, 0.7,  0.01, 0.01, 0.5,   0.01, 0.01,  0.01,   0.01,0.01, 0.01, -1.5, -1.5];
 
 if any(P - Ub > 0) || any(Lb - P > 0)
     ll = 1e7 + ...
@@ -161,7 +163,12 @@ temporal_similarities = reshape(temporal_similarities, size(lags));
 
 % Multiply temporal similarity with spatial similarity
 spatial_distances = Data(:,23:31);
+
 spatial_similarities = shepard(spatial_distances, zeta);
+
+% Scale similarity values
+temporal_similarities = temporal_similarities * iota_t;
+spatial_similarities = spatial_distances * iota_sp;
 
 spatiotemporal_similarities = (temporal_similarities.^(1-rho)) .* (spatial_similarities.^rho);
 

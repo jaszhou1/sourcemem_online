@@ -39,10 +39,11 @@ lambda_b = abs(normrnd(1, 0.2));
 lambda_f = abs(normrnd(1, 0.2));
 Ter = normrnd(0.2, 0.05);
 st = 0;
+iota_t = 1;
 
 
-P = [v1_targ, v2_targ, v1_int, v2_int, eta_targ, eta_int,  a_targ, a_guess, gamma, beta, kappa, lambda_b, lambda_f, Ter, st];
-Sel = [1,        0,     1,       0,       1,        1,        1,       1,      1,    1,     1,      1,        1,      1,   0];  
+P = [v1_targ, v2_targ, v1_int, v2_int, eta_targ, eta_int,  a_targ, a_guess, gamma, beta, kappa, lambda_b, lambda_f, Ter, st, iota_t];
+Sel = [1,        0,     1,       0,       1,        1,        1,       1,      1,    1,     1,      1,        1,      1,   0, 1];  
 
 pest = fminsearch(@temporal_gradient_flat_guess, P(Sel==1), options, P(Sel==0), Sel, data, badix);
 P(Sel==1) = pest;
