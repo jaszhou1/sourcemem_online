@@ -62,14 +62,22 @@ for(i in unique(data$participant)){
 seq_hit_rates <- hit_rates[hit_rates$cond == TRUE,]
 sim_hit_rates <- hit_rates[hit_rates$cond == FALSE,]
 
-# - Source error, pooled within and compared across condition
-seq_data <- data[data$is_sequential == TRUE,]
-sim_data <- data[data$is_sequential == FALSE,]
-
-t.test(seq_data$response_error, sim_data$response_error)
-
 data[data$is_sequential == TRUE,]$is_sequential <- 'Sequential Presentation'
 data[data$is_sequential == FALSE,]$is_sequential <- 'Simultaneous Presentation'
+
+absolute_error <- setNames(data.frame(matrix(ncol = 3, nrow = length(unique(data$participant)))), 
+                           c("participant", "condition", "error"))
+# Individual absolute error
+for(i in unique(data$participant)){
+  this_data <- data[data$participant == i,]
+  this_error <- abs(mean(this_data$response_error))
+  absolute_error[i, 'participant'] <- i
+  absolute_error[i, 'condition'] <- unique(this_data$is_sequential)
+  absolute_error[i, 'error'] <- this_error
+}
+
+t.test(absolute_error[absolute_error$condition=='Sequential Presentation', 'error'], 
+       absolute_error[absolute_error$condition=='Simultaneous Presentation', 'error'], var.equal = TRUE)
 
 condition_plot <- ggplot(data, aes(response_error)) + geom_histogram(aes(y=..density..)) + facet_wrap(~is_sequential) +
     theme_pubr() + theme(strip.text = element_text(size=12,lineheight=5.0)) +

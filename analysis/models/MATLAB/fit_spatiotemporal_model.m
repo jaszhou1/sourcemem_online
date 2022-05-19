@@ -24,12 +24,10 @@ zeta = normrnd(0.01, 0.001);
 rho = normrnd(0.9, 0.05);
 Ter = normrnd(0.1, 0.05);
 st = 0;
-iota_t = 1;
-iota_sp = 1;
 
 
-P = [v1_targ, v2_targ, v1_int, v2_int, eta_targ, eta_int,  a_targ, a_guess, gamma, beta, kappa, lambda_b, lambda_f, zeta, rho, Ter, st, iota_t, iota_sp];
-Sel = [1,        0,     1,       0,       1,        1,        1,       1,      1,    1,     1,      1,        1,      1,    1,   1,   0, 1, 1];  
+P = [v1_targ, v2_targ, v1_int, v2_int, eta_targ, eta_int,  a_targ, a_guess, gamma, beta, kappa, lambda_b, lambda_f, zeta, rho, Ter, st];
+Sel = [1,        0,     1,       0,       1,        1,        1,       1,      1,    1,     1,      1,        1,      1,    1,   1,   0];  
 
 pest = fminsearch(@spatiotemporal_model, P(Sel==1), options, P(Sel==0), Sel, data, badix);
 P(Sel==1) = pest;

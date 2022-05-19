@@ -31,7 +31,7 @@ errmg3 = 'Component weights do not sum to 1...';
 
 %% Global variables
 
-np = 16; % Number of parameters
+np = 15; % Number of parameters
 epsx = 1e-9; % Small values to substitute for zeroes
 cden = 0.05;  % Contaminant density.
 tmax = 5.1; % Maximum response time
@@ -86,7 +86,6 @@ lambda_f = P(13); % Decay of the forwards slope
 % Nondecision Time
 ter = P(14);
 st = P(15);
-iota_t = P(16);
 
 % Check to see if component weights sum to 1.
 if gamma + beta > 1
@@ -110,10 +109,10 @@ pest_penalty(1,:) = P;
 % ----------------------------------------------------------------------------
 %   [v1t, v2t,  v1i, v2i, eta_t, eta_i,   at,  ag,  gamma, beta, kappa, l_b, l_f, Ter, st, iota_t]
 % ----------------------------------------------------------------------------
-Ub= [ 8,   0,    8,   0,   1,    1,       4.5, 4.5,  1.0,  1.0,    1.0,  5,   5, 0.3,  0.2, 2];
-Lb= [ 1,   0,    0,   0,   0,    0,       0.1, 0.5,  0,    0,      0,    0,   0,  0,    0, -2];
-Pub=[ 7.5, 0,    7.5, 0,   0.9,  0.9,     4.0, 4.0,  0.99, 0.8,    0.9,  4.5, 4.5,0.25, 0.15, 1.5];
-Plb=[ 1.5,   0,    0,   0,   0,    0,       0.7, 0.7,  0.01, 0.01,   0.01, 0.01,0.01,0.01, 0.01, -1.5];
+Ub= [ 8,   0,    8,   0,   1,    1,       4.5, 4.5,  1.0,  1.0,    1.0,  5,   5, 0.3,  0.2];
+Lb= [ 1,   0,    0,   0,   0,    0,       0.1, 0.5,  0,    0,      0,    0,   0,  0,    0];
+Pub=[ 7.5, 0,    7.5, 0,   0.9,  0.9,     4.0, 4.0,  0.99, 0.8,    0.9,  4.5, 4.5,0.25, 0.15];
+Plb=[ 1.5,   0,    0,   0,   0,    0,       0.7, 0.7,  0.01, 0.01,   0.01, 0.01,0.01,0.01, 0.01];
 
 if any(P - Ub > 0) || any(Lb - P > 0)
     ll = 1e7 + ...
@@ -159,8 +158,8 @@ lags = Data(:,14:22);
 temporal_similarities = temporal_similarity_values(lag_index);
 temporal_similarities = reshape(temporal_similarities, size(lags));
 
-temporal_similarities = temporal_similarities * iota_t;
-
+% Normalise all components
+temporal_similarities = temporal_similarities./(max(temporal_similarities(:)));
 %% Intrusion processes
 
 % Zero-Drift component shared between intrusions

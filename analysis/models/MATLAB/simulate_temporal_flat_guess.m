@@ -14,7 +14,7 @@ n_sims = 50; % The number of times to simulate each trial
 num_intrusions = 9;
 
 % Expected number of parameters
-n_params = 16;
+n_params = 15;
 % Check the length of the parameter vector
 if length(pest) ~= n_params
     [name, errmg1], length(pest), return;
@@ -44,7 +44,6 @@ lambda_f = P(13); % Decay of the forwards slope
 % Nondecision Time
 ter = P(14);
 st = P(15);
-iota_t = P(16);
 
 % Assume eta components in the x and y directions are the same
 eta1_targ = eta_targ;
@@ -79,8 +78,8 @@ lags = data(:,14:22);
 temporal_similarities = temporal_similarity_values(lag_index);
 temporal_similarities = reshape(temporal_similarities, size(lags));
 
-
-temporal_similarities = temporal_similarities * iota_t;
+% Normalise all components
+temporal_similarities = temporal_similarities./(max(temporal_similarities(:)));
 
 target_weights = 1- sum(temporal_similarities,2);
 

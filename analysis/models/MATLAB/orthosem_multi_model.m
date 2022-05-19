@@ -9,7 +9,7 @@ errmg3 = 'Component weights do not sum to 1...';
 errmg4 = 'Negative trial weight';
 %% Global variables
 
-np = 23; % Number of parameters
+np = 20; % Number of parameters
 epsx = 1e-9; % Small values to substitute for zeroes
 cden = 0.05;  % Contaminant density.
 tmax = 5.1; % Maximum response time
@@ -70,10 +70,7 @@ psi = P(17); %Weighting of semantic component within word features (chi)
 % Nondecision Time
 ter = P(18);
 st = P(19);
-iota_t = P(20);
-iota_sp = P(21);
-iota_o = P(22);
-iota_se = P(23);
+iota = P(20);
 
 % Check to see if component weights sum to 1.
 if gamma + beta > 1
@@ -95,12 +92,12 @@ eta2_int = eta_int;
 penalty = 0; % Set the penalty to an initial value of zero
 pest_penalty(1,:) = P;
 % ----------------------------------------------------------------------------
-%   [v1t, v2t,  v1i, v2i, eta_t, eta_i,   at,  ag,  gamma, beta, kappa, l_b,   l_f,   zeta,  rho, chi, psi, Ter, st]
+%   [v1t, v2t,  v1i, v2i, eta_t, eta_i,   at,  ag,  gamma, beta, kappa, l_b,   l_f,   zeta,  rho, chi, psi, Ter, st, iota]
 % ----------------------------------------------------------------------------
-Ub= [ 6,   0,    4,   0,   1,    1,       4.5, 4.5,  1.0,  1.0,  1.0,    5,    5,     2.0,    1,   1, 1, 0.3,  0.2, 2, 2, 2, 2];
-Lb= [ 1,   0,    0,   0,   0,    0,       0.1, 0.5,  0,    0,    0.4,      0,    0,     0,      0,  0, 0, 0,    0, -2, -2, -2, -2];
-Pub=[ 5, 0,    3.5, 0,   0.9,  0.9,     4.0, 4.0,  0.99, 0.8,  0.9,    4.5,  4.5,   0.99,   0.9, 1, 1, 0.25, 0.15, 1, 1, 1, 1];
-Plb=[ 1.1,   0,    0,   0,   0,    0,       0.7, 0.7,  0.01, 0.01, 0.5,   0.01, 0.01,  0.01,   0.01, 0, 0, 0.01, 0.01, -1, -1, -1, -1];
+Ub= [ 6,   0,    4,   0,   1,    1,       4.5, 4.5,  1.0,  1.0,  1.0,   5,    5,     2.0,    1,    1, 1,    0.3,  0.2,  2];
+Lb= [ 1,   0,    0,   0,   0,    0,       0.1, 0.5,  0,    0,    0.4,   0,    0,     0,      0,    0, 0,    0,    0,    0];
+Pub=[ 5,   0,    3.5, 0,   0.9,  0.9,     4.0, 4.0,  0.99, 0.8,  0.9,   4.5,  4.5,   1.5,   0.9,  1, 1,    0.25, 0.15,  1.5];
+Plb=[ 1.1, 0,    0,   0,   0,    0,       0.7, 0.7,  0.01, 0.01, 0.5,   0.01, 0.01,  0.01,   0.01, 0, 0,    0.01, 0.01, 0.01];
 
 if any(P - Ub > 0) || any(Lb - P > 0)
     ll = 1e7 + ...
@@ -148,16 +145,17 @@ spatial_distances = Data(:,23:31);
 spatial_similarities = shepard(spatial_distances, zeta);
 
 % Orthographic similarity
-orthographic_similarities = Data(:, 33:41);
+orthographic_distances = 1- Data(:, 33:41);
+orthographic_similarities = shepard(orthographic_distances, iota);
 
 % Semantic similarity
 semantic_similarities = Data(:, 42:50);
 
-% Scale similarity values
-temporal_similarities = temporal_similarities * iota_t;
-spatial_similarities = spatial_distances * iota_sp;
-orthographic_similarities = orthographic_similarities * iota_o;
-semantic_similarities = semantic_similarities * iota_se;
+% Normalise all components
+temporal_similarities = temporal_similarities./(max(temporal_similarities(:)));
+spatial_similarities = spatial_similarities./(max(spatial_similarities(:)));
+orthographic_similarities = orthographic_similarities./(max(orthographic_similarities(:)));
+semantic_similarities = semantic_similarities./(max(semantic_similarities(:)));
 
 intrusion_similarities = ((temporal_similarities.^(1-rho)) .* (spatial_similarities.^rho)).^(1-chi)...
     .* ((orthographic_similarities.^(1-psi)) .* (semantic_similarities.^psi)).^chi;

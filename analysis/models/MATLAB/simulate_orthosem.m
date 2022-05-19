@@ -14,7 +14,7 @@ n_sims = 50; % The number of times to simulate each trial
 num_intrusions = 9;
 
 % Expected number of parameters
-n_params = 23;
+n_params = 20;
 % Check the length of the parameter vector
 if length(pest) ~= n_params
     [name, errmg1], length(pest), return;
@@ -49,10 +49,7 @@ psi = P(17); %Weighting of semantic component within word features (chi)
 % Nondecision Time
 ter = P(18);
 st = P(19);
-iota_t = P(20);
-iota_sp = P(21);
-iota_o = P(22);
-iota_se = P(23);
+iota = P(20);
 
 % Assume eta components in the x and y directions are the same
 eta1_targ = eta_targ;
@@ -93,16 +90,17 @@ spatial_distances = data(:,23:31);
 spatial_similarities = shepard(spatial_distances, zeta);
 
 % Orthographic similarity
-orthographic_similarities = data(:, 33:41);
+orthographic_distances = 1- data(:, 33:41);
+orthographic_similarities = shepard(orthographic_distances, iota);
 
 % Semantic similarity
 semantic_similarities = data(:, 42:50);
 
-% Scale similarity values
-temporal_similarities = temporal_similarities * iota_t;
-spatial_similarities = spatial_distances * iota_sp;
-orthographic_similarities = orthographic_similarities * iota_o;
-semantic_similarities = semantic_similarities * iota_se;
+% Normalise all components
+temporal_similarities = temporal_similarities./(max(temporal_similarities(:)));
+spatial_similarities = spatial_similarities./(max(spatial_similarities(:)));
+orthographic_similarities = orthographic_similarities./(max(orthographic_similarities(:)));
+semantic_similarities = semantic_similarities./(max(semantic_similarities(:)));
 
 intrusion_similarities = ((temporal_similarities.^(1-rho)) .* (spatial_similarities.^rho)).^(1-chi)...
     .* ((orthographic_similarities.^(1-psi)) .* (semantic_similarities.^psi)).^chi;
