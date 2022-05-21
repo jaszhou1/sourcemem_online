@@ -1,4 +1,4 @@
-function [ll, aic, P, penalty] = fit_ortho_model(data, badix)
+function [ll, aic, P, penalty] = fit_temporal_model(data, badix)
 setopt;
 
 % Default value for badix
@@ -19,20 +19,20 @@ beta = normrnd(0.3, 0.1);
 kappa = normrnd(0.6, 0.1);
 lambda_b = normrnd(0.8, 0.1);
 lambda_f = normrnd(0.6, 0.1);
-zeta = normrnd(0.5, 0.1);
-rho = normrnd(0.3, 0.1);
-chi = normrnd(0.1, 0.1); 
+zeta = 0;
+rho = 0;
+chi = 0; 
 psi = 0; 
 Ter = normrnd(0.2, 0.05);
 st = 0;
-iota = normrnd(0.5, 0.1);
+iota = 0;
 
 P = [v1_targ, v2_targ, v1_int, v2_int, eta_targ, eta_int,  a_targ, a_guess,...
     gamma, beta, kappa, lambda_b, lambda_f, zeta, rho, chi, psi, Ter, st, ...
     iota];
 Sel = [1,        0,     1,       0,       1,        1,        1,       1,...
-    1,    1,     1,      1,        1,      1,    1,   1,  0,  1,   0, ...
-    1];   
+    1,    1,     1,      1,        1,      0,    0,   0,  0,  1,   0, ...
+    0];   
 
 pest = fminsearch(@intrusion_gradient_model, P(Sel==1), options, P(Sel==0), Sel, data, badix);
 P(Sel==1) = pest;

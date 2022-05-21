@@ -140,12 +140,12 @@ P_guess = [0, 0, 0, 0, sigma, a_guess];
 
 % Raw temporal similarity values from the lags -9 to 9, skipping 0 (in a
 % list of 10)
-backwards_similarity = (1-kappa)*exp(-lambda_b*(abs(-num_intrusions:-1)));
-forwards_similarity = kappa*exp(-lambda_f*(abs(1:num_intrusions)));
+backwards_similarity = (1-kappa)*exp(-lambda_b*(abs((-num_intrusions:-1)/10)));
+forwards_similarity = kappa*exp(-lambda_f*((abs(1:num_intrusions)/10)));
 
 % Concatenate, and normalise
-temporal_similarity_values = [backwards_similarity, forwards_similarity];
-temporal_similarity_values = (temporal_similarity_values/sum(temporal_similarity_values))';
+temporal_similarity_values = [backwards_similarity, forwards_similarity]';
+temporal_similarity_values = temporal_similarity_values/max(temporal_similarity_values);
 
 % Scale temporal similarity values by gamma
 temporal_similarity_values = temporal_similarity_values * gamma;
@@ -158,8 +158,7 @@ lags = Data(:,14:22);
 temporal_similarities = temporal_similarity_values(lag_index);
 temporal_similarities = reshape(temporal_similarities, size(lags));
 
-% Normalise all components
-temporal_similarities = temporal_similarities./(max(temporal_similarities(:)));
+
 %% Intrusion processes
 
 % Zero-Drift component shared between intrusions
