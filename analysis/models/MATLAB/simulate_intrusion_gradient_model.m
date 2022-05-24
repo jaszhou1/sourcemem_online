@@ -79,23 +79,23 @@ temporal_similarity_values = temporal_similarity_values/max(temporal_similarity_
 
 % Replace all raw lags with the corresponding normalised temporal
 % similarity
-lags = Data(:,14:22);
+lags = data(:,14:22);
 [lag_val, ~, lag_index] = unique(lags);
 
 temporal_similarities = temporal_similarity_values(lag_index);
 temporal_similarities = reshape(temporal_similarities, size(lags));
 
 %% Spatial gradient
-spatial_distances = Data(:,23:31)/2; %2 is maximum cosine distance
+spatial_distances = data(:,23:31)/2; %2 is maximum cosine distance
 
 spatial_similarities = shepard(spatial_distances, zeta);
 
 % Orthographic similarity
-orthographic_distances = 1- Data(:, 33:41);
+orthographic_distances = 1- data(:, 33:41);
 orthographic_similarities = shepard(orthographic_distances, iota);
 
 % Semantic similarity
-semantic_similarities = Data(:, 42:50);
+semantic_similarities = data(:, 42:50);
 
 intrusion_similarities = ((temporal_similarities.^(1-rho)) .* (spatial_similarities.^rho)).^(1-chi)...
     .* ((orthographic_similarities.^(1-psi)) .* (semantic_similarities.^psi)).^chi;

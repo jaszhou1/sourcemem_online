@@ -32,6 +32,7 @@ all_x_model <- function(params, data){
   rho <- params[9]
   chi <- params[10]
   psi <- params[11]
+  iota <- params[12]
   
   if(rho+chi+psi >= 1){
     print("Invalid intrusion component weight")

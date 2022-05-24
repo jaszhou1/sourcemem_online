@@ -30,6 +30,7 @@ ortho_model <- function(params, data){
   zeta <- params[8]
   rho <- params[9]
   chi <- params[10]
+  iota <- params[11]
   
   # Function to compute angular difference
   

@@ -129,7 +129,7 @@ parfor (i = 1:n_participants, num_workers)
     this_fit = cell(1,4);
     for j = 1:n_runs
         this_participant_data = data{i};
-        [ll_new, aic, pest, pest_penalty] = fit_flat_model(this_participant_data);
+        [ll_new, aic, pest, pest_penalty] = fit_three_component_model_eta(this_participant_data);
         % If this ll is better than the last one, replace it in the saved
         % structure
         if (ll_new < ll)
@@ -177,12 +177,12 @@ parfor (i = 1:n_participants, num_workers)
 end
 
 % Simulate data, concatenate participants, and save simulated dataset
-simulated_temporal_flat_guess = [];
+simulated_temporal = [];
 for i = 1:n_participants
     this_simulated_data = simulate_intrusion_gradient_model(data{i}, temporal{i,3});
     % Label this dataset with participant number
     this_simulated_data(:,3) = i; 
-    simulated_temporal_flat_guess = vertcat(simulated_temporal_flat_guess, this_simulated_data);
+    simulated_temporal = vertcat(simulated_temporal, this_simulated_data);
 end
 save(filename)
 %% Spatiotemporal Model
@@ -329,41 +329,41 @@ for i = 1:n_participants
     simulated_multi = vertcat(simulated_multi, this_simulated_data);
 end
 
-% %% Spatiotemporal + ortho * Semantic Model
-% add = cell(n_participants,4);
-% 
-% parfor (i = 1:n_participants, num_workers)
-%     % Initial log likelihood value
-%     ll = 1e7;
-%     % Run each participant nrun times
-%     this_fit = cell(1,4);
-%     for j = 1:n_runs
-%         this_participant_data = data{i};
-%         [ll_new, aic, pest, pest_penalty] = fit_orthosem_additive_model(this_participant_data);
-%         % If this ll is better than the last one, replace it in the saved
-%         % structure
-%         if (ll_new < ll)
-%             ll = ll_new;
-%             this_fit{1} = ll_new;
-%             this_fit{2} = aic;
-%             this_fit{3} = pest;
-%             this_fit{4} = pest_penalty;
-%             add(i,:) = this_fit;
-%         end
-%     end
-% end
-% 
-% filename = [datestr(now,'yyyy_mm_dd_HH'),'_temp'];
-% save(filename)
+%% Spatiotemporal + ortho * Semantic Model
+add = cell(n_participants,4);
 
-% Simulate data, concatenate participants, and save simulated dataset
-% simulated_add = [];
-% for i = 1:n_participants
-%     this_simulated_data = simulate_orthosem_additive(data{i}, add{i,3});
-%     % Label this dataset with participant number
-%     this_simulated_data(:,3) = i; 
-%     simulated_add = vertcat(simulated_add, this_simulated_data);
-% end
+parfor (i = 1:n_participants, num_workers)
+    % Initial log likelihood value
+    ll = 1e7;
+    % Run each participant nrun times
+    this_fit = cell(1,4);
+    for j = 1:n_runs
+        this_participant_data = data{i};
+        [ll_new, aic, pest, pest_penalty] = fit_orthosem_additive_model(this_participant_data);
+        % If this ll is better than the last one, replace it in the saved
+        % structure
+        if (ll_new < ll)
+            ll = ll_new;
+            this_fit{1} = ll_new;
+            this_fit{2} = aic;
+            this_fit{3} = pest;
+            this_fit{4} = pest_penalty;
+            add(i,:) = this_fit;
+        end
+    end
+end
+
+filename = [datestr(now,'yyyy_mm_dd_HH'),'_temp'];
+save(filename)
+
+%Simulate data, concatenate participants, and save simulated dataset
+simulated_add = [];
+for i = 1:n_participants
+    this_simulated_data = simulate_orthosem_additive(data{i}, add{i,3});
+    % Label this dataset with participant number
+    this_simulated_data(:,3) = i; 
+    simulated_add = vertcat(simulated_add, this_simulated_data);
+end
 
 
 % Save workspace
@@ -384,30 +384,30 @@ header_line = 'participant, model_name, AIC, v1_targ, v2_targ, v1_int, v2_int, e
 param_to_csv(filename, 1:n_participants, flat_intrusion_eta, 'Intrusion + Guess', header_line)
 
 filename = [datestr(now,'yyyy_mm_dd_HH'),'_pest_temporal.csv'];
-header_line = 'participant, model_name, AIC, v1_targ, v2_targ, v1_int, v2_int, eta_targ, eta_int,  a_targ, a_guess, gamma, beta, kappa, lambda_b, lambda_f, Ter, st';
+header_line = 'participant, model_name, AIC, v1_targ, v2_targ, v1_int, v2_int, eta_targ, eta_int,  a_targ, a_guess, gamma, beta, kappa, lambda_b, lambda_f, zeta, rho, chi, psi, Ter, st, iota';
 param_to_csv(filename, 1:n_participants, temporal, 'Temporal Gradient', header_line)
 
 filename = [datestr(now,'yyyy_mm_dd_HH'),'_pest_spatiotemporal.csv'];
-header_line = 'participant, model_name, AIC, v1_targ, v2_targ, v1_int, v2_int, eta_targ, eta_int,  a_targ, a_guess, gamma, beta, kappa, lambda_b, lambda_f, zeta, rho, Ter, st';
+header_line = 'participant, model_name, AIC, v1_targ, v2_targ, v1_int, v2_int, eta_targ, eta_int,  a_targ, a_guess, gamma, beta, kappa, lambda_b, lambda_f, zeta, rho, chi, psi, Ter, st, iota';
 param_to_csv(filename, 1:n_participants, spatiotemporal, 'Spatiotemporal Gradient', header_line)
 
 filename = [datestr(now,'yyyy_mm_dd_HH'),'_pest_ortho.csv'];
-header_line = 'participant, model_name, AIC, v1_targ, v2_targ, v1_int, v2_int, eta_targ, eta_int,  a_targ, a_guess, gamma, beta, kappa, lambda_b, lambda_f, zeta, rho, chi, psi, Ter, st';
+header_line = 'participant, model_name, AIC, v1_targ, v2_targ, v1_int, v2_int, eta_targ, eta_int,  a_targ, a_guess, gamma, beta, kappa, lambda_b, lambda_f, zeta, rho, chi, psi, Ter, st, iota';
 param_to_csv(filename, 1:n_participants, ortho, 'Orthographic', header_line)
 
 filename = [datestr(now,'yyyy_mm_dd_HH'),'_pest_semantic.csv'];
-header_line = 'participant, model_name, AIC, v1_targ, v2_targ, v1_int, v2_int, eta_targ, eta_int,  a_targ, a_guess, gamma, beta, kappa, lambda_b, lambda_f, zeta, rho, chi, psi, Ter, st';
+header_line = 'participant, model_name, AIC, v1_targ, v2_targ, v1_int, v2_int, eta_targ, eta_int,  a_targ, a_guess, gamma, beta, kappa, lambda_b, lambda_f, zeta, rho, chi, psi, Ter, st, iota';
 param_to_csv(filename, 1:n_participants, semantic, 'Semantic', header_line)
 
-% filename = [datestr(now,'yyyy_mm_dd_HH'),'_pest_additive.csv'];
-% header_line = 'participant, model_name, AIC, v1_targ, v2_targ, v1_int, v2_int, eta_targ, eta_int,  a_targ, a_guess, gamma, beta, kappa, lambda_b, lambda_f, zeta, rho, chi, psi, Ter, st';
-% param_to_csv(filename, 1:n_participants, add, 'Additive', header_line)
+filename = [datestr(now,'yyyy_mm_dd_HH'),'_pest_additive.csv'];
+header_line = 'participant, model_name, AIC, v1_targ, v2_targ, v1_int, v2_int, eta_targ, eta_int,  a_targ, a_guess, gamma, beta, kappa, lambda_b, lambda_f, zeta, rho, chi, psi, Ter, st, iota';
+param_to_csv(filename, 1:n_participants, add, 'Additive', header_line)
 
 filename = [datestr(now,'yyyy_mm_dd_HH'),'_pest_multiplicative.csv'];
-header_line = 'participant, model_name, AIC, v1_targ, v2_targ, v1_int, v2_int, eta_targ, eta_int,  a_targ, a_guess, gamma, beta, kappa, lambda_b, lambda_f, zeta, rho, chi, psi, Ter, st';
+header_line = 'participant, model_name, AIC, v1_targ, v2_targ, v1_int, v2_int, eta_targ, eta_int,  a_targ, a_guess, gamma, beta, kappa, lambda_b, lambda_f, zeta, rho, chi, psi, Ter, st, iota';
 param_to_csv(filename, 1:n_participants, multi, 'Multiplicative', header_line)
 
-% csvwrite('sim_add.csv', simulated_add)
+csvwrite('sim_add.csv', simulated_add)
 csvwrite('sim_flat.csv', simulated_flat_intrusion_eta)
 csvwrite('sim_multi.csv', simulated_multi)
 csvwrite('sim_ortho.csv', simulated_ortho)
@@ -415,4 +415,4 @@ csvwrite('sim_pure_guess.csv', simulated_pure_guess)
 csvwrite('sim_pure_intrusion.csv', simulated_pure_intrusion)
 csvwrite('sim_semantic.csv', simulated_semantic)
 csvwrite('sim_spatiotemporal.csv', simulated_spatiotemporal)
-csvwrite('sim_temporal.csv', simulated_temporal_flat_guess)
+csvwrite('sim_temporal.csv', simulated_temporal)
