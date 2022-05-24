@@ -184,7 +184,7 @@ simulate_dataset_space_x_time <- function(data, res){
   for (i in participants){
     this_data <- data[data$participant == i,]
     this_pest <- res[(res$participant == i),4:12]
-    this_simulated_data <- simulate_space_x_time_model(i, this_data, this_pest)
+    this_simulated_data <- simulate_spatiotemporal_model(i, this_data, this_pest)
     simulated_data <- rbind(simulated_data, this_simulated_data)
   }
   return(simulated_data)
