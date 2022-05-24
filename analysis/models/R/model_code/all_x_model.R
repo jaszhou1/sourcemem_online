@@ -33,13 +33,7 @@ all_x_model <- function(params, data){
   chi <- params[10]
   psi <- params[11]
   iota <- params[12]
-  
-  if(rho+chi+psi >= 1){
-    print("Invalid intrusion component weight")
-    nLL <- 1e7
-    return(nLL)
-  }
-  
+
   # Function to compute angular difference
   
   angle_diff <- function(a,b){
@@ -52,24 +46,24 @@ all_x_model <- function(params, data){
     return(x)
   }
   
-  # Turn levenshtein distance into similarity
-  orthographic_similarity <- data.frame(matrix(nrow = nrow(data), ncol = n_intrusions))
-  orthographic_similarity[,1:9] <- 1- data[,51:59]
-  
   # Scale semantic cosine similarity
   semantic_similarity <- data.frame(matrix(nrow = nrow(data), ncol = n_intrusions))
   semantic_similarity[,1:9] <- data[,60:68] 
   
+  # Turn levenshtein distance into similarity
+  orthographic_similarity <- data.frame(matrix(nrow = nrow(data), ncol = n_intrusions))
+  orthographic_similarity[,1:9] <- lapply((1- data[,51:59]), shepard_similarity, k = iota)
+  
   # Turn cosine distances between target and intrusions into Shepard similarity
   spatial_similarity <- data.frame(matrix(nrow = nrow(data), ncol = n_intrusions))
-  spatial_similarity[,1:9] <- lapply(data[,42:50], shepard_similarity, k = zeta)
+  spatial_similarity[,1:9] <- lapply((data[,42:50]/2), shepard_similarity, k = zeta)
   
   # Define a vector of raw temporal similarities
   temporal_gradient <- setNames(data.frame(matrix(ncol = n_intrusions*2, nrow = 0)), setdiff(seq(-n_intrusions, n_intrusions), 0))
   # Backwards intrusion slope
-  temporal_gradient[1,1:n_intrusions] <- (1-kappa)*exp(-lambda_b*(abs(-n_intrusions:-1)))
+  temporal_gradient[1,1:n_intrusions] <- (1-kappa)*exp(-lambda_b*(abs(-n_intrusions:-1)/10))
   # Forwards intrusion slope
-  temporal_gradient[1,(n_intrusions+1):(n_intrusions*2)] <- kappa*exp(-lambda_f*(abs(1:n_intrusions)))
+  temporal_gradient[1,(n_intrusions+1):(n_intrusions*2)] <- kappa*exp(-lambda_f*(abs(1:n_intrusions)/10))
   # Normalise across serial positions
   temporal_gradient <- temporal_gradient/sum(temporal_gradient)
   
@@ -182,24 +176,24 @@ simulate_all_x_model <- function(participant, data, pest){
     return(x)
   }
   
-  # Turn levenshtein distance into similarity
-  orthographic_similarity <- data.frame(matrix(nrow = nrow(data), ncol = n_intrusions))
-  orthographic_similarity[,1:9] <- 1- data[,51:59]
-  
   # Scale semantic cosine similarity
   semantic_similarity <- data.frame(matrix(nrow = nrow(data), ncol = n_intrusions))
   semantic_similarity[,1:9] <- data[,60:68] 
   
+  # Turn levenshtein distance into similarity
+  orthographic_similarity <- data.frame(matrix(nrow = nrow(data), ncol = n_intrusions))
+  orthographic_similarity[,1:9] <- lapply((1- data[,51:59]), shepard_similarity, k = iota)
+  
   # Turn cosine distances between target and intrusions into Shepard similarity
   spatial_similarity <- data.frame(matrix(nrow = nrow(data), ncol = n_intrusions))
-  spatial_similarity[,1:9] <- lapply(data[,42:50], shepard_similarity, k = zeta)
+  spatial_similarity[,1:9] <- lapply((data[,42:50]/2), shepard_similarity, k = zeta)
   
   # Define a vector of raw temporal similarities
   temporal_gradient <- setNames(data.frame(matrix(ncol = n_intrusions*2, nrow = 0)), setdiff(seq(-n_intrusions, n_intrusions), 0))
   # Backwards intrusion slope
-  temporal_gradient[1,1:n_intrusions] <- (1-kappa)*exp(-lambda_b*(abs(-n_intrusions:-1)))
+  temporal_gradient[1,1:n_intrusions] <- (1-kappa)*exp(-lambda_b*(abs(-n_intrusions:-1)/10))
   # Forwards intrusion slope
-  temporal_gradient[1,(n_intrusions+1):(n_intrusions*2)] <- kappa*exp(-lambda_f*(abs(1:n_intrusions)))
+  temporal_gradient[1,(n_intrusions+1):(n_intrusions*2)] <- kappa*exp(-lambda_f*(abs(1:n_intrusions)/10))
   # Normalise across serial positions
   temporal_gradient <- temporal_gradient/sum(temporal_gradient)
   

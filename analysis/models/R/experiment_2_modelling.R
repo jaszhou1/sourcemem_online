@@ -71,7 +71,7 @@ fit_space_x_time <- function(participant){
   upper <- c(50, 50, 2, 1, 5, 5, 1, 1, 1)
   
   # Optimise
-  this_fit <- DEoptim(space_x_time_model, lower, upper, control = DEoptim.control(itermax = 200), this_data)
+  this_fit <- DEoptim(spatiotemporal_model, lower, upper, control = DEoptim.control(itermax = 200), this_data)
   
   # Calculate aic
   aic <- get_aic(this_fit$optim$bestval, length(upper))
