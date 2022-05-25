@@ -1,2252 +1,1122 @@
 semantic_lists = [
   {
-    "word": "EXCUSE",
+    "word": "shorts",
     "list": 1,
     "list_type": "semantic"
   },
   {
-    "word": "CHOICE",
+    "word": "shirts",
     "list": 1,
     "list_type": "semantic"
   },
   {
-    "word": "DECIDE",
+    "word": "skirts",
     "list": 1,
     "list_type": "semantic"
   },
   {
-    "word": "CHOOSE",
+    "word": "drapes",
     "list": 1,
     "list_type": "semantic"
   },
   {
-    "word": "PREFER",
+    "word": "tights",
     "list": 1,
     "list_type": "semantic"
   },
   {
-    "word": "SWITCH",
+    "word": "sweats",
     "list": 1,
     "list_type": "semantic"
   },
   {
-    "word": "PROPER",
+    "word": "attire",
     "list": 1,
     "list_type": "semantic"
   },
   {
-    "word": "DIRECT",
+    "word": "slacks",
     "list": 1,
     "list_type": "semantic"
   },
   {
-    "word": "OBJECT",
+    "word": "undies",
     "list": 1,
     "list_type": "semantic"
   },
   {
-    "word": "CHOSEN",
+    "word": "scrubs",
     "list": 1,
     "list_type": "semantic"
   },
   {
-    "word": "FAVOUR",
+    "word": "bonnet",
     "list": 1,
     "list_type": "semantic"
   },
   {
-    "word": "OPTION",
+    "word": "cloths",
     "list": 1,
     "list_type": "semantic"
   },
   {
-    "word": "DESIGN",
+    "word": "cleats",
     "list": 1,
     "list_type": "semantic"
   },
   {
-    "word": "APPEAL",
+    "word": "frilly",
     "list": 1,
     "list_type": "semantic"
   },
   {
-    "word": "METHOD",
+    "word": "garter",
     "list": 1,
     "list_type": "semantic"
   },
   {
-    "word": "SELECT",
+    "word": "frocks",
     "list": 1,
     "list_type": "semantic"
   },
   {
-    "word": "HONEST",
+    "word": "noises",
     "list": 2,
     "list_type": "semantic"
   },
   {
-    "word": "SIMPLE",
+    "word": "groans",
     "list": 2,
     "list_type": "semantic"
   },
   {
-    "word": "STRONG",
+    "word": "grunts",
     "list": 2,
     "list_type": "semantic"
   },
   {
-    "word": "SUPPLE",
+    "word": "rattle",
     "list": 2,
     "list_type": "semantic"
   },
   {
-    "word": "EARTHY",
+    "word": "squeal",
     "list": 2,
     "list_type": "semantic"
   },
   {
-    "word": "COMMON",
+    "word": "growls",
     "list": 2,
     "list_type": "semantic"
   },
   {
-    "word": "DECENT",
+    "word": "echoes",
     "list": 2,
     "list_type": "semantic"
   },
   {
-    "word": "BORING",
+    "word": "snores",
     "list": 2,
     "list_type": "semantic"
   },
   {
-    "word": "CLEVER",
+    "word": "buzzes",
     "list": 2,
     "list_type": "semantic"
   },
   {
-    "word": "HUMBLE",
+    "word": "blares",
     "list": 2,
     "list_type": "semantic"
   },
   {
-    "word": "QUAINT",
+    "word": "cooing",
     "list": 2,
     "list_type": "semantic"
   },
   {
-    "word": "FLASHY",
+    "word": "croaks",
     "list": 2,
     "list_type": "semantic"
   },
   {
-    "word": "ROBUST",
+    "word": "bugles",
     "list": 2,
     "list_type": "semantic"
   },
   {
-    "word": "RUSTIC",
+    "word": "mooing",
     "list": 2,
     "list_type": "semantic"
   },
   {
-    "word": "CLUMSY",
+    "word": "bleeps",
     "list": 2,
     "list_type": "semantic"
   },
   {
-    "word": "USEFUL",
+    "word": "clangs",
     "list": 2,
     "list_type": "semantic"
   },
   {
-    "word": "SUBTLE",
-    "list": 2,
-    "list_type": "semantic"
-  },
-  {
-    "word": "MODEST",
-    "list": 2,
-    "list_type": "semantic"
-  },
-  {
-    "word": "QUIRKY",
-    "list": 2,
-    "list_type": "semantic"
-  },
-  {
-    "word": "FOLLOW",
+    "word": "classy",
     "list": 3,
     "list_type": "semantic"
   },
   {
-    "word": "NOTICE",
+    "word": "snappy",
     "list": 3,
     "list_type": "semantic"
   },
   {
-    "word": "REMIND",
+    "word": "superb",
     "list": 3,
     "list_type": "semantic"
   },
   {
-    "word": "ASSUME",
+    "word": "mellow",
     "list": 3,
     "list_type": "semantic"
   },
   {
-    "word": "REPEAT",
+    "word": "groovy",
     "list": 3,
     "list_type": "semantic"
   },
   {
-    "word": "REMOVE",
+    "word": "trendy",
     "list": 3,
     "list_type": "semantic"
   },
   {
-    "word": "RECALL",
+    "word": "dainty",
     "list": 3,
     "list_type": "semantic"
   },
   {
-    "word": "REVIEW",
+    "word": "homely",
     "list": 3,
     "list_type": "semantic"
   },
   {
-    "word": "INFORM",
+    "word": "spiffy",
     "list": 3,
     "list_type": "semantic"
   },
   {
-    "word": "ADVISE",
+    "word": "sporty",
     "list": 3,
     "list_type": "semantic"
   },
   {
-    "word": "REVEAL",
+    "word": "prissy",
     "list": 3,
     "list_type": "semantic"
   },
   {
-    "word": "POSTED",
+    "word": "breezy",
     "list": 3,
     "list_type": "semantic"
   },
   {
-    "word": "NOTIFY",
+    "word": "snazzy",
     "list": 3,
     "list_type": "semantic"
   },
   {
-    "word": "UPDATE",
+    "word": "dressy",
     "list": 3,
     "list_type": "semantic"
   },
   {
-    "word": "SUBMIT",
+    "word": "flirty",
     "list": 3,
     "list_type": "semantic"
   },
   {
-    "word": "REMARK",
+    "word": "swanky",
     "list": 3,
     "list_type": "semantic"
   },
   {
-    "word": "NOTING",
-    "list": 3,
-    "list_type": "semantic"
-  },
-  {
-    "word": "ACCEPT",
+    "word": "lively",
     "list": 4,
     "list_type": "semantic"
   },
   {
-    "word": "REFUSE",
+    "word": "solemn",
     "list": 4,
     "list_type": "semantic"
   },
   {
-    "word": "IGNORE",
+    "word": "rugged",
     "list": 4,
     "list_type": "semantic"
   },
   {
-    "word": "INSIST",
+    "word": "dreamy",
     "list": 4,
     "list_type": "semantic"
   },
   {
-    "word": "COMMIT",
+    "word": "joyous",
     "list": 4,
     "list_type": "semantic"
   },
   {
-    "word": "DEMAND",
+    "word": "sedate",
     "list": 4,
     "list_type": "semantic"
   },
   {
-    "word": "RESIST",
+    "word": "serene",
     "list": 4,
     "list_type": "semantic"
   },
   {
-    "word": "PURSUE",
+    "word": "upbeat",
     "list": 4,
     "list_type": "semantic"
   },
   {
-    "word": "AGREES",
+    "word": "supple",
     "list": 4,
     "list_type": "semantic"
   },
   {
-    "word": "UPHOLD",
+    "word": "chaste",
     "list": 4,
     "list_type": "semantic"
   },
   {
-    "word": "OPPOSE",
+    "word": "docile",
     "list": 4,
     "list_type": "semantic"
   },
   {
-    "word": "ASSERT",
+    "word": "hushed",
     "list": 4,
     "list_type": "semantic"
   },
   {
-    "word": "REFUTE",
+    "word": "demure",
     "list": 4,
     "list_type": "semantic"
   },
   {
-    "word": "RECANT",
+    "word": "placid",
     "list": 4,
     "list_type": "semantic"
   },
   {
-    "word": "DISOWN",
+    "word": "somber",
     "list": 4,
     "list_type": "semantic"
   },
   {
-    "word": "AFFIRM",
+    "word": "jovial",
     "list": 4,
     "list_type": "semantic"
   },
   {
-    "word": "RENEGE",
-    "list": 4,
-    "list_type": "semantic"
-  },
-  {
-    "word": "RELENT",
-    "list": 4,
-    "list_type": "semantic"
-  },
-  {
-    "word": "BOTTLE",
+    "word": "forbid",
     "list": 5,
     "list_type": "semantic"
   },
   {
-    "word": "DRINKS",
+    "word": "expose",
     "list": 5,
     "list_type": "semantic"
   },
   {
-    "word": "SCOTCH",
+    "word": "accuse",
     "list": 5,
     "list_type": "semantic"
   },
   {
-    "word": "LIQUID",
+    "word": "offend",
     "list": 5,
     "list_type": "semantic"
   },
   {
-    "word": "REFILL",
+    "word": "impose",
     "list": 5,
     "list_type": "semantic"
   },
   {
-    "word": "WHISKY",
+    "word": "banish",
     "list": 5,
     "list_type": "semantic"
   },
   {
-    "word": "SQUIRT",
+    "word": "compel",
     "list": 5,
     "list_type": "semantic"
   },
   {
-    "word": "CARTON",
+    "word": "indict",
     "list": 5,
     "list_type": "semantic"
   },
   {
-    "word": "GARGLE",
+    "word": "hinder",
     "list": 5,
     "list_type": "semantic"
   },
   {
-    "word": "BEAKER",
+    "word": "coerce",
     "list": 5,
     "list_type": "semantic"
   },
   {
-    "word": "GOBLET",
+    "word": "depose",
     "list": 5,
     "list_type": "semantic"
   },
   {
-    "word": "ROTGUT",
+    "word": "incite",
     "list": 5,
     "list_type": "semantic"
   },
   {
-    "word": "CLARET",
+    "word": "demean",
     "list": 5,
     "list_type": "semantic"
   },
   {
-    "word": "CORKED",
+    "word": "thwart",
     "list": 5,
     "list_type": "semantic"
   },
   {
-    "word": "SPRITZ",
+    "word": "stifle",
     "list": 5,
     "list_type": "semantic"
   },
   {
-    "word": "FLAGON",
+    "word": "berate",
     "list": 5,
     "list_type": "semantic"
   },
   {
-    "word": "NATURE",
+    "word": "tastes",
     "list": 6,
     "list_type": "semantic"
   },
   {
-    "word": "BEAUTY",
+    "word": "senses",
     "list": 6,
     "list_type": "semantic"
   },
   {
-    "word": "SPIRIT",
+    "word": "values",
     "list": 6,
     "list_type": "semantic"
   },
   {
-    "word": "ANIMAL",
+    "word": "belief",
     "list": 6,
     "list_type": "semantic"
   },
   {
-    "word": "SOCIAL",
+    "word": "habits",
     "list": 6,
     "list_type": "semantic"
   },
   {
-    "word": "ACTUAL",
+    "word": "morals",
     "list": 6,
     "list_type": "semantic"
   },
   {
-    "word": "DIVINE",
+    "word": "ideals",
     "list": 6,
     "list_type": "semantic"
   },
   {
-    "word": "SENSES",
+    "word": "faults",
     "list": 6,
     "list_type": "semantic"
   },
   {
-    "word": "BELIEF",
+    "word": "shapes",
     "list": 6,
     "list_type": "semantic"
   },
   {
-    "word": "INTENT",
+    "word": "styles",
     "list": 6,
     "list_type": "semantic"
   },
   {
-    "word": "SAVAGE",
+    "word": "haunts",
     "list": 6,
     "list_type": "semantic"
   },
   {
-    "word": "VIRTUE",
+    "word": "traits",
     "list": 6,
     "list_type": "semantic"
   },
   {
-    "word": "EXTENT",
+    "word": "quirks",
     "list": 6,
     "list_type": "semantic"
   },
   {
-    "word": "ASPECT",
+    "word": "trends",
     "list": 6,
     "list_type": "semantic"
   },
   {
-    "word": "ORIGIN",
+    "word": "doings",
     "list": 6,
     "list_type": "semantic"
   },
   {
-    "word": "POETIC",
+    "word": "tenets",
     "list": 6,
     "list_type": "semantic"
   },
   {
-    "word": "BENIGN",
-    "list": 6,
-    "list_type": "semantic"
-  },
-  {
-    "word": "PHYSIC",
-    "list": 6,
-    "list_type": "semantic"
-  },
-  {
-    "word": "INSANE",
+    "word": "greedy",
     "list": 7,
     "list_type": "semantic"
   },
   {
-    "word": "BLOODY",
+    "word": "savage",
     "list": 7,
     "list_type": "semantic"
   },
   {
-    "word": "DAMNED",
+    "word": "sneaky",
     "list": 7,
     "list_type": "semantic"
   },
   {
-    "word": "FILTHY",
+    "word": "vulgar",
     "list": 7,
     "list_type": "semantic"
   },
   {
-    "word": "CREEPY",
+    "word": "rascal",
     "list": 7,
     "list_type": "semantic"
   },
   {
-    "word": "ABSURD",
+    "word": "sleazy",
     "list": 7,
     "list_type": "semantic"
   },
   {
-    "word": "MANIAC",
+    "word": "grumpy",
     "list": 7,
     "list_type": "semantic"
   },
   {
-    "word": "FREAKY",
+    "word": "shrewd",
     "list": 7,
     "list_type": "semantic"
   },
   {
-    "word": "MADMAN",
+    "word": "stingy",
     "list": 7,
     "list_type": "semantic"
   },
   {
-    "word": "RAGING",
+    "word": "brazen",
     "list": 7,
     "list_type": "semantic"
   },
   {
-    "word": "RAVING",
+    "word": "grubby",
     "list": 7,
     "list_type": "semantic"
   },
   {
-    "word": "WEIRDO",
+    "word": "shifty",
     "list": 7,
     "list_type": "semantic"
   },
   {
-    "word": "MORBID",
+    "word": "spoilt",
     "list": 7,
     "list_type": "semantic"
   },
   {
-    "word": "HORRID",
+    "word": "craven",
     "list": 7,
     "list_type": "semantic"
   },
   {
-    "word": "SENILE",
+    "word": "odious",
     "list": 7,
     "list_type": "semantic"
   },
   {
-    "word": "ANTICS",
+    "word": "amoral",
     "list": 7,
     "list_type": "semantic"
   },
   {
-    "word": "LUNACY",
-    "list": 7,
-    "list_type": "semantic"
-  },
-  {
-    "word": "IDIOCY",
-    "list": 7,
-    "list_type": "semantic"
-  },
-  {
-    "word": "HUNGRY",
+    "word": "united",
     "list": 8,
     "list_type": "semantic"
   },
   {
-    "word": "LONELY",
+    "word": "formed",
     "list": 8,
     "list_type": "semantic"
   },
   {
-    "word": "SILENT",
+    "word": "linked",
     "list": 8,
     "list_type": "semantic"
   },
   {
-    "word": "BITTER",
+    "word": "forged",
     "list": 8,
     "list_type": "semantic"
   },
   {
-    "word": "CHILLY",
+    "word": "allied",
     "list": 8,
     "list_type": "semantic"
   },
   {
-    "word": "GLOOMY",
+    "word": "parted",
     "list": 8,
     "list_type": "semantic"
   },
   {
-    "word": "UNEASY",
+    "word": "growed",
     "list": 8,
     "list_type": "semantic"
   },
   {
-    "word": "GRUMPY",
+    "word": "paired",
     "list": 8,
     "list_type": "semantic"
   },
   {
-    "word": "UNKIND",
+    "word": "molded",
     "list": 8,
     "list_type": "semantic"
   },
   {
-    "word": "MOPING",
+    "word": "welded",
     "list": 8,
     "list_type": "semantic"
   },
   {
-    "word": "UNCOOL",
+    "word": "looped",
     "list": 8,
     "list_type": "semantic"
   },
   {
-    "word": "WAITED",
+    "word": "merged",
     "list": 8,
     "list_type": "semantic"
   },
   {
-    "word": "CRABBY",
+    "word": "pooled",
     "list": 8,
     "list_type": "semantic"
   },
   {
-    "word": "PINING",
+    "word": "lumped",
     "list": 8,
     "list_type": "semantic"
   },
   {
-    "word": "SICKLY",
+    "word": "remade",
     "list": 8,
     "list_type": "semantic"
   },
   {
-    "word": "LONGED",
+    "word": "massed",
     "list": 8,
     "list_type": "semantic"
   },
   {
-    "word": "SULLEN",
-    "list": 8,
-    "list_type": "semantic"
-  },
-  {
-    "word": "MOROSE",
-    "list": 8,
-    "list_type": "semantic"
-  },
-  {
-    "word": "GROUCH",
-    "list": 8,
-    "list_type": "semantic"
-  },
-  {
-    "word": "FELLOW",
+    "word": "misery",
     "list": 9,
     "list_type": "semantic"
   },
   {
-    "word": "MEMBER",
+    "word": "sorrow",
     "list": 9,
     "list_type": "semantic"
   },
   {
-    "word": "PLAYER",
+    "word": "hatred",
     "list": 9,
     "list_type": "semantic"
   },
   {
-    "word": "LEADER",
+    "word": "hating",
     "list": 9,
     "list_type": "semantic"
   },
   {
-    "word": "EXPERT",
+    "word": "grudge",
     "list": 9,
     "list_type": "semantic"
   },
   {
-    "word": "SENIOR",
+    "word": "menace",
     "list": 9,
     "list_type": "semantic"
   },
   {
-    "word": "PARENT",
+    "word": "frenzy",
     "list": 9,
     "list_type": "semantic"
   },
   {
-    "word": "WORKER",
+    "word": "deceit",
     "list": 9,
     "list_type": "semantic"
   },
   {
-    "word": "DEPUTY",
+    "word": "strife",
     "list": 9,
     "list_type": "semantic"
   },
   {
-    "word": "MENTOR",
+    "word": "racism",
     "list": 9,
     "list_type": "semantic"
   },
   {
-    "word": "PATRON",
+    "word": "malice",
     "list": 9,
     "list_type": "semantic"
   },
   {
-    "word": "BACKER",
+    "word": "idiocy",
     "list": 9,
     "list_type": "semantic"
   },
   {
-    "word": "JOINER",
+    "word": "apathy",
     "list": 9,
     "list_type": "semantic"
   },
   {
-    "word": "GUESTS",
+    "word": "fervor",
     "list": 9,
     "list_type": "semantic"
   },
   {
-    "word": "HUMANS",
+    "word": "enmity",
     "list": 9,
     "list_type": "semantic"
   },
   {
-    "word": "ADULTS",
+    "word": "hubris",
     "list": 9,
     "list_type": "semantic"
   },
   {
-    "word": "GROUPS",
-    "list": 9,
-    "list_type": "semantic"
-  },
-  {
-    "word": "OWNERS",
-    "list": 9,
-    "list_type": "semantic"
-  },
-  {
-    "word": "RENTER",
-    "list": 9,
-    "list_type": "semantic"
-  },
-  {
-    "word": "POCKET",
+    "word": "extend",
     "list": 10,
     "list_type": "semantic"
   },
   {
-    "word": "JACKET",
+    "word": "divide",
     "list": 10,
     "list_type": "semantic"
   },
   {
-    "word": "OUTFIT",
+    "word": "extent",
     "list": 10,
     "list_type": "semantic"
   },
   {
-    "word": "GLOVES",
+    "word": "reduce",
     "list": 10,
     "list_type": "semantic"
   },
   {
-    "word": "COLLAR",
+    "word": "excess",
     "list": 10,
     "list_type": "semantic"
   },
   {
-    "word": "SHIRTS",
+    "word": "absorb",
     "list": 10,
     "list_type": "semantic"
   },
   {
-    "word": "HELMET",
+    "word": "soften",
     "list": 10,
     "list_type": "semantic"
   },
   {
-    "word": "SLEEVE",
+    "word": "induce",
     "list": 10,
     "list_type": "semantic"
   },
   {
-    "word": "BLOUSE",
+    "word": "exceed",
     "list": 10,
     "list_type": "semantic"
   },
   {
-    "word": "ZIPPER",
+    "word": "lessen",
     "list": 10,
     "list_type": "semantic"
   },
   {
-    "word": "DUFFEL",
+    "word": "offset",
     "list": 10,
     "list_type": "semantic"
   },
   {
-    "word": "TOUPEE",
+    "word": "dilute",
     "list": 10,
     "list_type": "semantic"
   },
   {
-    "word": "BLAZER",
+    "word": "negate",
     "list": 10,
     "list_type": "semantic"
   },
   {
-    "word": "BEANIE",
+    "word": "dampen",
     "list": 10,
     "list_type": "semantic"
   },
   {
-    "word": "PONCHO",
+    "word": "deepen",
     "list": 10,
     "list_type": "semantic"
   },
   {
-    "word": "JERKIN",
+    "word": "boosts",
     "list": 10,
     "list_type": "semantic"
   },
   {
-    "word": "DUFFLE",
-    "list": 10,
-    "list_type": "semantic"
-  },
-  {
-    "word": "FEDORA",
-    "list": 10,
-    "list_type": "semantic"
-  },
-  {
-    "word": "CRYING",
+    "word": "pigeon",
     "list": 11,
     "list_type": "semantic"
   },
   {
-    "word": "SCREAM",
+    "word": "kitten",
     "list": 11,
     "list_type": "semantic"
   },
   {
-    "word": "HOLLER",
+    "word": "doggie",
     "list": 11,
     "list_type": "semantic"
   },
   {
-    "word": "GROANS",
+    "word": "parrot",
     "list": 11,
     "list_type": "semantic"
   },
   {
-    "word": "RATTLE",
+    "word": "rodent",
     "list": 11,
     "list_type": "semantic"
   },
   {
-    "word": "SHOUTS",
+    "word": "canine",
     "list": 11,
     "list_type": "semantic"
   },
   {
-    "word": "LOUDLY",
+    "word": "hounds",
     "list": 11,
     "list_type": "semantic"
   },
   {
-    "word": "RUMBLE",
+    "word": "badger",
     "list": 11,
     "list_type": "semantic"
   },
   {
-    "word": "SQUEAL",
+    "word": "ferret",
     "list": 11,
     "list_type": "semantic"
   },
   {
-    "word": "GIGGLE",
+    "word": "cocker",
     "list": 11,
     "list_type": "semantic"
   },
   {
-    "word": "GROWLS",
+    "word": "feline",
     "list": 11,
     "list_type": "semantic"
   },
   {
-    "word": "SQUEAK",
+    "word": "kibble",
     "list": 11,
     "list_type": "semantic"
   },
   {
-    "word": "SQUAWK",
+    "word": "beagle",
     "list": 11,
     "list_type": "semantic"
   },
   {
-    "word": "WHOOSH",
+    "word": "dander",
     "list": 11,
     "list_type": "semantic"
   },
   {
-    "word": "MUMBLE",
+    "word": "magpie",
     "list": 11,
     "list_type": "semantic"
   },
   {
-    "word": "SHRIEK",
+    "word": "basset",
     "list": 11,
     "list_type": "semantic"
   },
   {
-    "word": "HISSES",
-    "list": 11,
-    "list_type": "semantic"
-  },
-  {
-    "word": "HOARSE",
-    "list": 11,
-    "list_type": "semantic"
-  },
-  {
-    "word": "BELLOW",
-    "list": 11,
-    "list_type": "semantic"
-  },
-  {
-    "word": "SHRILL",
-    "list": 11,
-    "list_type": "semantic"
-  },
-  {
-    "word": "MUTTER",
-    "list": 11,
-    "list_type": "semantic"
-  },
-  {
-    "word": "CACKLE",
-    "list": 11,
-    "list_type": "semantic"
-  },
-  {
-    "word": "FINISH",
+    "word": "onions",
     "list": 12,
     "list_type": "semantic"
   },
   {
-    "word": "SETTLE",
+    "word": "grapes",
     "list": 12,
     "list_type": "semantic"
   },
   {
-    "word": "ESCAPE",
+    "word": "fruits",
     "list": 12,
     "list_type": "semantic"
   },
   {
-    "word": "TRAVEL",
+    "word": "olives",
     "list": 12,
     "list_type": "semantic"
   },
   {
-    "word": "ARRIVE",
+    "word": "slices",
     "list": 12,
     "list_type": "semantic"
   },
   {
-    "word": "BEGINS",
+    "word": "juices",
     "list": 12,
     "list_type": "semantic"
   },
   {
-    "word": "ATTEND",
+    "word": "lemons",
     "list": 12,
     "list_type": "semantic"
   },
   {
-    "word": "SAFELY",
+    "word": "spices",
     "list": 12,
     "list_type": "semantic"
   },
   {
-    "word": "RETIRE",
+    "word": "melons",
     "list": 12,
     "list_type": "semantic"
   },
   {
-    "word": "DEPART",
+    "word": "groves",
     "list": 12,
     "list_type": "semantic"
   },
   {
-    "word": "EMERGE",
+    "word": "prunes",
     "list": 12,
     "list_type": "semantic"
   },
   {
-    "word": "EMBARK",
+    "word": "cloves",
     "list": 12,
     "list_type": "semantic"
   },
   {
-    "word": "REJOIN",
+    "word": "capers",
     "list": 12,
     "list_type": "semantic"
   },
   {
-    "word": "RESIDE",
+    "word": "fennel",
     "list": 12,
     "list_type": "semantic"
   },
   {
-    "word": "ASCEND",
+    "word": "chives",
     "list": 12,
     "list_type": "semantic"
   },
   {
-    "word": "TRUDGE",
+    "word": "taters",
     "list": 12,
     "list_type": "semantic"
   },
   {
-    "word": "MELLOW",
+    "word": "carved",
     "list": 13,
     "list_type": "semantic"
   },
   {
-    "word": "HEARTY",
+    "word": "warped",
     "list": 13,
     "list_type": "semantic"
   },
   {
-    "word": "DREAMY",
+    "word": "glazed",
     "list": 13,
     "list_type": "semantic"
   },
   {
-    "word": "PEACHY",
+    "word": "rusted",
     "list": 13,
     "list_type": "semantic"
   },
   {
-    "word": "BUBBLY",
+    "word": "singed",
     "list": 13,
     "list_type": "semantic"
   },
   {
-    "word": "SEDATE",
+    "word": "gilded",
     "list": 13,
     "list_type": "semantic"
   },
   {
-    "word": "SERENE",
+    "word": "jagged",
     "list": 13,
     "list_type": "semantic"
   },
   {
-    "word": "CHEERY",
+    "word": "etched",
     "list": 13,
     "list_type": "semantic"
   },
   {
-    "word": "UPBEAT",
+    "word": "coated",
     "list": 13,
     "list_type": "semantic"
   },
   {
-    "word": "BOUNCY",
+    "word": "draped",
     "list": 13,
     "list_type": "semantic"
   },
   {
-    "word": "PUNCHY",
+    "word": "tinted",
     "list": 13,
     "list_type": "semantic"
   },
   {
-    "word": "BREEZY",
+    "word": "leaded",
     "list": 13,
     "list_type": "semantic"
   },
   {
-    "word": "SMOOTH",
+    "word": "glowed",
     "list": 13,
     "list_type": "semantic"
   },
   {
-    "word": "LOVELY",
+    "word": "angled",
     "list": 13,
     "list_type": "semantic"
   },
   {
-    "word": "DEMURE",
+    "word": "soaked",
     "list": 13,
     "list_type": "semantic"
   },
   {
-    "word": "PLACID",
+    "word": "pitted",
     "list": 13,
     "list_type": "semantic"
   },
   {
-    "word": "DOCILE",
-    "list": 13,
-    "list_type": "semantic"
-  },
-  {
-    "word": "PAPERS",
+    "word": "chilly",
     "list": 14,
     "list_type": "semantic"
   },
   {
-    "word": "PHOTOS",
+    "word": "warmer",
     "list": 14,
     "list_type": "semantic"
   },
   {
-    "word": "PLATES",
+    "word": "colder",
     "list": 14,
     "list_type": "semantic"
   },
   {
-    "word": "PRINTS",
+    "word": "gloomy",
     "list": 14,
     "list_type": "semantic"
   },
   {
-    "word": "SHEETS",
+    "word": "cloudy",
     "list": 14,
     "list_type": "semantic"
   },
   {
-    "word": "COPIES",
+    "word": "dreary",
     "list": 14,
     "list_type": "semantic"
   },
   {
-    "word": "IMAGES",
+    "word": "frosty",
     "list": 14,
     "list_type": "semantic"
   },
   {
-    "word": "VIDEOS",
+    "word": "frigid",
     "list": 14,
     "list_type": "semantic"
   },
   {
-    "word": "STAMPS",
+    "word": "groggy",
     "list": 14,
     "list_type": "semantic"
   },
   {
-    "word": "SLIDES",
+    "word": "dismal",
     "list": 14,
     "list_type": "semantic"
   },
   {
-    "word": "PAINTS",
+    "word": "steamy",
     "list": 14,
     "list_type": "semantic"
   },
   {
-    "word": "SHAPES",
+    "word": "drafty",
     "list": 14,
     "list_type": "semantic"
   },
   {
-    "word": "STRIPS",
+    "word": "sullen",
     "list": 14,
     "list_type": "semantic"
   },
   {
-    "word": "PROOFS",
+    "word": "torrid",
     "list": 14,
     "list_type": "semantic"
   },
   {
-    "word": "STUFFS",
+    "word": "wintry",
     "list": 14,
     "list_type": "semantic"
   },
   {
-    "word": "STILLS",
+    "word": "swampy",
     "list": 14,
-    "list_type": "semantic"
-  },
-  {
-    "word": "SKINNY",
-    "list": 15,
-    "list_type": "semantic"
-  },
-  {
-    "word": "CHUBBY",
-    "list": 15,
-    "list_type": "semantic"
-  },
-  {
-    "word": "FLUFFY",
-    "list": 15,
-    "list_type": "semantic"
-  },
-  {
-    "word": "CHUNKY",
-    "list": 15,
-    "list_type": "semantic"
-  },
-  {
-    "word": "PETITE",
-    "list": 15,
-    "list_type": "semantic"
-  },
-  {
-    "word": "DAINTY",
-    "list": 15,
-    "list_type": "semantic"
-  },
-  {
-    "word": "CRUSTY",
-    "list": 15,
-    "list_type": "semantic"
-  },
-  {
-    "word": "SHAGGY",
-    "list": 15,
-    "list_type": "semantic"
-  },
-  {
-    "word": "SLINKY",
-    "list": 15,
-    "list_type": "semantic"
-  },
-  {
-    "word": "TANNED",
-    "list": 15,
-    "list_type": "semantic"
-  },
-  {
-    "word": "STUBBY",
-    "list": 15,
-    "list_type": "semantic"
-  },
-  {
-    "word": "FRILLY",
-    "list": 15,
-    "list_type": "semantic"
-  },
-  {
-    "word": "GANGLY",
-    "list": 15,
-    "list_type": "semantic"
-  },
-  {
-    "word": "SCRUFF",
-    "list": 15,
-    "list_type": "semantic"
-  },
-  {
-    "word": "FRIZZY",
-    "list": 15,
-    "list_type": "semantic"
-  },
-  {
-    "word": "HAIRED",
-    "list": 15,
-    "list_type": "semantic"
-  },
-  {
-    "word": "SINEWY",
-    "list": 15,
-    "list_type": "semantic"
-  },
-  {
-    "word": "MONKEY",
-    "list": 16,
-    "list_type": "semantic"
-  },
-  {
-    "word": "RABBIT",
-    "list": 16,
-    "list_type": "semantic"
-  },
-  {
-    "word": "PIGEON",
-    "list": 16,
-    "list_type": "semantic"
-  },
-  {
-    "word": "DONKEY",
-    "list": 16,
-    "list_type": "semantic"
-  },
-  {
-    "word": "KITTEN",
-    "list": 16,
-    "list_type": "semantic"
-  },
-  {
-    "word": "BEAVER",
-    "list": 16,
-    "list_type": "semantic"
-  },
-  {
-    "word": "DOGGIE",
-    "list": 16,
-    "list_type": "semantic"
-  },
-  {
-    "word": "COYOTE",
-    "list": 16,
-    "list_type": "semantic"
-  },
-  {
-    "word": "POODLE",
-    "list": 16,
-    "list_type": "semantic"
-  },
-  {
-    "word": "RODENT",
-    "list": 16,
-    "list_type": "semantic"
-  },
-  {
-    "word": "BADGER",
-    "list": 16,
-    "list_type": "semantic"
-  },
-  {
-    "word": "FERRET",
-    "list": 16,
-    "list_type": "semantic"
-  },
-  {
-    "word": "KIBBLE",
-    "list": 16,
-    "list_type": "semantic"
-  },
-  {
-    "word": "BEAGLE",
-    "list": 16,
-    "list_type": "semantic"
-  },
-  {
-    "word": "PETTED",
-    "list": 16,
-    "list_type": "semantic"
-  },
-  {
-    "word": "MAGPIE",
-    "list": 16,
-    "list_type": "semantic"
-  },
-  {
-    "word": "BODIES",
-    "list": 17,
-    "list_type": "semantic"
-  },
-  {
-    "word": "POWERS",
-    "list": 17,
-    "list_type": "semantic"
-  },
-  {
-    "word": "ANGELS",
-    "list": 17,
-    "list_type": "semantic"
-  },
-  {
-    "word": "BEINGS",
-    "list": 17,
-    "list_type": "semantic"
-  },
-  {
-    "word": "HEROES",
-    "list": 17,
-    "list_type": "semantic"
-  },
-  {
-    "word": "DEMONS",
-    "list": 17,
-    "list_type": "semantic"
-  },
-  {
-    "word": "GHOSTS",
-    "list": 17,
-    "list_type": "semantic"
-  },
-  {
-    "word": "ALIENS",
-    "list": 17,
-    "list_type": "semantic"
-  },
-  {
-    "word": "DEVILS",
-    "list": 17,
-    "list_type": "semantic"
-  },
-  {
-    "word": "BEASTS",
-    "list": 17,
-    "list_type": "semantic"
-  },
-  {
-    "word": "SELVES",
-    "list": 17,
-    "list_type": "semantic"
-  },
-  {
-    "word": "BRUTES",
-    "list": 17,
-    "list_type": "semantic"
-  },
-  {
-    "word": "DOINGS",
-    "list": 17,
-    "list_type": "semantic"
-  },
-  {
-    "word": "FABLED",
-    "list": 17,
-    "list_type": "semantic"
-  },
-  {
-    "word": "MAGICS",
-    "list": 17,
-    "list_type": "semantic"
-  },
-  {
-    "word": "GENIES",
-    "list": 17,
-    "list_type": "semantic"
-  },
-  {
-    "word": "SLOWLY",
-    "list": 18,
-    "list_type": "semantic"
-  },
-  {
-    "word": "SHRINK",
-    "list": 18,
-    "list_type": "semantic"
-  },
-  {
-    "word": "LOOSEN",
-    "list": 18,
-    "list_type": "semantic"
-  },
-  {
-    "word": "VANISH",
-    "list": 18,
-    "list_type": "semantic"
-  },
-  {
-    "word": "ABSORB",
-    "list": 18,
-    "list_type": "semantic"
-  },
-  {
-    "word": "SOFTEN",
-    "list": 18,
-    "list_type": "semantic"
-  },
-  {
-    "word": "WITHER",
-    "list": 18,
-    "list_type": "semantic"
-  },
-  {
-    "word": "SUBDUE",
-    "list": 18,
-    "list_type": "semantic"
-  },
-  {
-    "word": "SQUISH",
-    "list": 18,
-    "list_type": "semantic"
-  },
-  {
-    "word": "LESSEN",
-    "list": 18,
-    "list_type": "semantic"
-  },
-  {
-    "word": "DARKEN",
-    "list": 18,
-    "list_type": "semantic"
-  },
-  {
-    "word": "WORSEN",
-    "list": 18,
-    "list_type": "semantic"
-  },
-  {
-    "word": "SHRANK",
-    "list": 18,
-    "list_type": "semantic"
-  },
-  {
-    "word": "FALTER",
-    "list": 18,
-    "list_type": "semantic"
-  },
-  {
-    "word": "DEEPEN",
-    "list": 18,
-    "list_type": "semantic"
-  },
-  {
-    "word": "WEAKEN",
-    "list": 18,
-    "list_type": "semantic"
-  },
-  {
-    "word": "TRAGIC",
-    "list": 19,
-    "list_type": "semantic"
-  },
-  {
-    "word": "SEVERE",
-    "list": 19,
-    "list_type": "semantic"
-  },
-  {
-    "word": "DEADLY",
-    "list": 19,
-    "list_type": "semantic"
-  },
-  {
-    "word": "BRUTAL",
-    "list": 19,
-    "list_type": "semantic"
-  },
-  {
-    "word": "IRONIC",
-    "list": 19,
-    "list_type": "semantic"
-  },
-  {
-    "word": "SLOPPY",
-    "list": 19,
-    "list_type": "semantic"
-  },
-  {
-    "word": "LETHAL",
-    "list": 19,
-    "list_type": "semantic"
-  },
-  {
-    "word": "FIERCE",
-    "list": 19,
-    "list_type": "semantic"
-  },
-  {
-    "word": "SORDID",
-    "list": 19,
-    "list_type": "semantic"
-  },
-  {
-    "word": "FUTILE",
-    "list": 19,
-    "list_type": "semantic"
-  },
-  {
-    "word": "JOYOUS",
-    "list": 19,
-    "list_type": "semantic"
-  },
-  {
-    "word": "BRAZEN",
-    "list": 19,
-    "list_type": "semantic"
-  },
-  {
-    "word": "DISMAL",
-    "list": 19,
-    "list_type": "semantic"
-  },
-  {
-    "word": "GRISLY",
-    "list": 19,
-    "list_type": "semantic"
-  },
-  {
-    "word": "ODIOUS",
-    "list": 19,
-    "list_type": "semantic"
-  },
-  {
-    "word": "ABJECT",
-    "list": 19,
-    "list_type": "semantic"
-  },
-  {
-    "word": "WICKED",
-    "list": 20,
-    "list_type": "semantic"
-  },
-  {
-    "word": "GREEDY",
-    "list": 20,
-    "list_type": "semantic"
-  },
-  {
-    "word": "SNEAKY",
-    "list": 20,
-    "list_type": "semantic"
-  },
-  {
-    "word": "RASCAL",
-    "list": 20,
-    "list_type": "semantic"
-  },
-  {
-    "word": "SLEAZY",
-    "list": 20,
-    "list_type": "semantic"
-  },
-  {
-    "word": "SHREWD",
-    "list": 20,
-    "list_type": "semantic"
-  },
-  {
-    "word": "FICKLE",
-    "list": 20,
-    "list_type": "semantic"
-  },
-  {
-    "word": "STINGY",
-    "list": 20,
-    "list_type": "semantic"
-  },
-  {
-    "word": "CRAFTY",
-    "list": 20,
-    "list_type": "semantic"
-  },
-  {
-    "word": "GRUBBY",
-    "list": 20,
-    "list_type": "semantic"
-  },
-  {
-    "word": "SHIFTY",
-    "list": 20,
-    "list_type": "semantic"
-  },
-  {
-    "word": "SNOOTY",
-    "list": 20,
-    "list_type": "semantic"
-  },
-  {
-    "word": "SPOILT",
-    "list": 20,
-    "list_type": "semantic"
-  },
-  {
-    "word": "CRAVEN",
-    "list": 20,
-    "list_type": "semantic"
-  },
-  {
-    "word": "GRABBY",
-    "list": 20,
-    "list_type": "semantic"
-  },
-  {
-    "word": "AMORAL",
-    "list": 20,
-    "list_type": "semantic"
-  },
-  {
-    "word": "STICKY",
-    "list": 21,
-    "list_type": "semantic"
-  },
-  {
-    "word": "GREASY",
-    "list": 21,
-    "list_type": "semantic"
-  },
-  {
-    "word": "SMELLY",
-    "list": 21,
-    "list_type": "semantic"
-  },
-  {
-    "word": "STINKY",
-    "list": 21,
-    "list_type": "semantic"
-  },
-  {
-    "word": "CATCHY",
-    "list": 21,
-    "list_type": "semantic"
-  },
-  {
-    "word": "CRISPY",
-    "list": 21,
-    "list_type": "semantic"
-  },
-  {
-    "word": "WOBBLY",
-    "list": 21,
-    "list_type": "semantic"
-  },
-  {
-    "word": "TOASTY",
-    "list": 21,
-    "list_type": "semantic"
-  },
-  {
-    "word": "CLAMMY",
-    "list": 21,
-    "list_type": "semantic"
-  },
-  {
-    "word": "FLESHY",
-    "list": 21,
-    "list_type": "semantic"
-  },
-  {
-    "word": "WIGGLY",
-    "list": 21,
-    "list_type": "semantic"
-  },
-  {
-    "word": "GRITTY",
-    "list": 21,
-    "list_type": "semantic"
-  },
-  {
-    "word": "THORNY",
-    "list": 21,
-    "list_type": "semantic"
-  },
-  {
-    "word": "TWISTY",
-    "list": 21,
-    "list_type": "semantic"
-  },
-  {
-    "word": "FROTHY",
-    "list": 21,
-    "list_type": "semantic"
-  },
-  {
-    "word": "BLANKY",
-    "list": 21,
-    "list_type": "semantic"
-  },
-  {
-    "word": "CLUNKY",
-    "list": 21,
-    "list_type": "semantic"
-  },
-  {
-    "word": "SPONGY",
-    "list": 21,
-    "list_type": "semantic"
-  },
-  {
-    "word": "SWIRLY",
-    "list": 21,
-    "list_type": "semantic"
-  },
-  {
-    "word": "FLOATY",
-    "list": 21,
-    "list_type": "semantic"
-  },
-  {
-    "word": "PLACES",
-    "list": 22,
-    "list_type": "semantic"
-  },
-  {
-    "word": "MIDDLE",
-    "list": 22,
-    "list_type": "semantic"
-  },
-  {
-    "word": "ACROSS",
-    "list": 22,
-    "list_type": "semantic"
-  },
-  {
-    "word": "ENTIRE",
-    "list": 22,
-    "list_type": "semantic"
-  },
-  {
-    "word": "WITHIN",
-    "list": 22,
-    "list_type": "semantic"
-  },
-  {
-    "word": "CENTER",
-    "list": 22,
-    "list_type": "semantic"
-  },
-  {
-    "word": "MARKET",
-    "list": 22,
-    "list_type": "semantic"
-  },
-  {
-    "word": "COUNTY",
-    "list": 22,
-    "list_type": "semantic"
-  },
-  {
-    "word": "ISLAND",
-    "list": 22,
-    "list_type": "semantic"
-  },
-  {
-    "word": "NATION",
-    "list": 22,
-    "list_type": "semantic"
-  },
-  {
-    "word": "VALLEY",
-    "list": 22,
-    "list_type": "semantic"
-  },
-  {
-    "word": "CITIES",
-    "list": 22,
-    "list_type": "semantic"
-  },
-  {
-    "word": "NATIVE",
-    "list": 22,
-    "list_type": "semantic"
-  },
-  {
-    "word": "REGION",
-    "list": 22,
-    "list_type": "semantic"
-  },
-  {
-    "word": "SECTOR",
-    "list": 22,
-    "list_type": "semantic"
-  },
-  {
-    "word": "INLAND",
-    "list": 22,
-    "list_type": "semantic"
-  },
-  {
-    "word": "COASTS",
-    "list": 22,
-    "list_type": "semantic"
-  },
-  {
-    "word": "FIGHTS",
-    "list": 23,
-    "list_type": "semantic"
-  },
-  {
-    "word": "SCARES",
-    "list": 23,
-    "list_type": "semantic"
-  },
-  {
-    "word": "CRACKS",
-    "list": 23,
-    "list_type": "semantic"
-  },
-  {
-    "word": "SHAKES",
-    "list": 23,
-    "list_type": "semantic"
-  },
-  {
-    "word": "KNOCKS",
-    "list": 23,
-    "list_type": "semantic"
-  },
-  {
-    "word": "SWINGS",
-    "list": 23,
-    "list_type": "semantic"
-  },
-  {
-    "word": "SPIKES",
-    "list": 23,
-    "list_type": "semantic"
-  },
-  {
-    "word": "CHASES",
-    "list": 23,
-    "list_type": "semantic"
-  },
-  {
-    "word": "BLASTS",
-    "list": 23,
-    "list_type": "semantic"
-  },
-  {
-    "word": "TOSSES",
-    "list": 23,
-    "list_type": "semantic"
-  },
-  {
-    "word": "CHOKES",
-    "list": 23,
-    "list_type": "semantic"
-  },
-  {
-    "word": "SHOVES",
-    "list": 23,
-    "list_type": "semantic"
-  },
-  {
-    "word": "WHACKS",
-    "list": 23,
-    "list_type": "semantic"
-  },
-  {
-    "word": "GRINDS",
-    "list": 23,
-    "list_type": "semantic"
-  },
-  {
-    "word": "FLINGS",
-    "list": 23,
-    "list_type": "semantic"
-  },
-  {
-    "word": "CHUCKS",
-    "list": 23,
-    "list_type": "semantic"
-  },
-  {
-    "word": "BUTTER",
-    "list": 24,
-    "list_type": "semantic"
-  },
-  {
-    "word": "RECIPE",
-    "list": 24,
-    "list_type": "semantic"
-  },
-  {
-    "word": "MUFFIN",
-    "list": 24,
-    "list_type": "semantic"
-  },
-  {
-    "word": "BAKING",
-    "list": 24,
-    "list_type": "semantic"
-  },
-  {
-    "word": "BAKERY",
-    "list": 24,
-    "list_type": "semantic"
-  },
-  {
-    "word": "NOODLE",
-    "list": 24,
-    "list_type": "semantic"
-  },
-  {
-    "word": "PASTRY",
-    "list": 24,
-    "list_type": "semantic"
-  },
-  {
-    "word": "BAGELS",
-    "list": 24,
-    "list_type": "semantic"
-  },
-  {
-    "word": "SUNDAE",
-    "list": 24,
-    "list_type": "semantic"
-  },
-  {
-    "word": "SCONES",
-    "list": 24,
-    "list_type": "semantic"
-  },
-  {
-    "word": "QUICHE",
-    "list": 24,
-    "list_type": "semantic"
-  },
-  {
-    "word": "TOFFEE",
-    "list": 24,
-    "list_type": "semantic"
-  },
-  {
-    "word": "BISQUE",
-    "list": 24,
-    "list_type": "semantic"
-  },
-  {
-    "word": "CREPES",
-    "list": 24,
-    "list_type": "semantic"
-  },
-  {
-    "word": "BONBON",
-    "list": 24,
-    "list_type": "semantic"
-  },
-  {
-    "word": "BRULEE",
-    "list": 24,
-    "list_type": "semantic"
-  },
-  {
-    "word": "NOUGAT",
-    "list": 24,
-    "list_type": "semantic"
-  },
-  {
-    "word": "DANGER",
-    "list": 25,
-    "list_type": "semantic"
-  },
-  {
-    "word": "THREAT",
-    "list": 25,
-    "list_type": "semantic"
-  },
-  {
-    "word": "CRISIS",
-    "list": 25,
-    "list_type": "semantic"
-  },
-  {
-    "word": "MISERY",
-    "list": 25,
-    "list_type": "semantic"
-  },
-  {
-    "word": "PLAGUE",
-    "list": 25,
-    "list_type": "semantic"
-  },
-  {
-    "word": "MENACE",
-    "list": 25,
-    "list_type": "semantic"
-  },
-  {
-    "word": "MAYHEM",
-    "list": 25,
-    "list_type": "semantic"
-  },
-  {
-    "word": "FRENZY",
-    "list": 25,
-    "list_type": "semantic"
-  },
-  {
-    "word": "MUTINY",
-    "list": 25,
-    "list_type": "semantic"
-  },
-  {
-    "word": "STRIFE",
-    "list": 25,
-    "list_type": "semantic"
-  },
-  {
-    "word": "REVOLT",
-    "list": 25,
-    "list_type": "semantic"
-  },
-  {
-    "word": "UNREST",
-    "list": 25,
-    "list_type": "semantic"
-  },
-  {
-    "word": "UPROAR",
-    "list": 25,
-    "list_type": "semantic"
-  },
-  {
-    "word": "EXODUS",
-    "list": 25,
-    "list_type": "semantic"
-  },
-  {
-    "word": "CRISES",
-    "list": 25,
-    "list_type": "semantic"
-  },
-  {
-    "word": "BEDLAM",
-    "list": 25,
-    "list_type": "semantic"
-  },
-  {
-    "word": "APATHY",
-    "list": 25,
-    "list_type": "semantic"
-  },
-  {
-    "word": "OUTCRY",
-    "list": 25,
-    "list_type": "semantic"
-  },
-  {
-    "word": "MUSCLE",
-    "list": 26,
-    "list_type": "semantic"
-  },
-  {
-    "word": "TISSUE",
-    "list": 26,
-    "list_type": "semantic"
-  },
-  {
-    "word": "KIDNEY",
-    "list": 26,
-    "list_type": "semantic"
-  },
-  {
-    "word": "ARTERY",
-    "list": 26,
-    "list_type": "semantic"
-  },
-  {
-    "word": "SPINAL",
-    "list": 26,
-    "list_type": "semantic"
-  },
-  {
-    "word": "CAVITY",
-    "list": 26,
-    "list_type": "semantic"
-  },
-  {
-    "word": "NEURAL",
-    "list": 26,
-    "list_type": "semantic"
-  },
-  {
-    "word": "PELVIC",
-    "list": 26,
-    "list_type": "semantic"
-  },
-  {
-    "word": "DISTAL",
-    "list": 26,
-    "list_type": "semantic"
-  },
-  {
-    "word": "RADIAL",
-    "list": 26,
-    "list_type": "semantic"
-  },
-  {
-    "word": "AORTIC",
-    "list": 26,
-    "list_type": "semantic"
-  },
-  {
-    "word": "MEDIAL",
-    "list": 26,
-    "list_type": "semantic"
-  },
-  {
-    "word": "SEPTUM",
-    "list": 26,
-    "list_type": "semantic"
-  },
-  {
-    "word": "CYSTIC",
-    "list": 26,
-    "list_type": "semantic"
-  },
-  {
-    "word": "VENOUS",
-    "list": 26,
-    "list_type": "semantic"
-  },
-  {
-    "word": "PINEAL",
-    "list": 26,
     "list_type": "semantic"
   }
 ]

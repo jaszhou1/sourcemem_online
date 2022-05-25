@@ -1,1637 +1,1122 @@
 orthographic_lists = [
   {
-    "word": "PASSED",
+    "word": "fooled",
     "list": 1,
     "list_type": "orthographic"
   },
   {
-    "word": "PUSHED",
+    "word": "folded",
     "list": 1,
     "list_type": "orthographic"
   },
   {
-    "word": "PACKED",
+    "word": "fouled",
     "list": 1,
     "list_type": "orthographic"
   },
   {
-    "word": "PASSES",
+    "word": "fueled",
     "list": 1,
     "list_type": "orthographic"
   },
   {
-    "word": "PARKED",
+    "word": "flowed",
     "list": 1,
     "list_type": "orthographic"
   },
   {
-    "word": "PARTED",
+    "word": "fabled",
     "list": 1,
     "list_type": "orthographic"
   },
   {
-    "word": "PADDED",
+    "word": "foiled",
     "list": 1,
     "list_type": "orthographic"
   },
   {
-    "word": "PAWNED",
+    "word": "flayed",
     "list": 1,
     "list_type": "orthographic"
   },
   {
-    "word": "PAIRED",
+    "word": "fogged",
     "list": 1,
     "list_type": "orthographic"
   },
   {
-    "word": "PASTED",
+    "word": "fanned",
     "list": 1,
     "list_type": "orthographic"
   },
   {
-    "word": "PATTED",
+    "word": "flared",
     "list": 1,
     "list_type": "orthographic"
   },
   {
-    "word": "PANNED",
+    "word": "fenced",
     "list": 1,
     "list_type": "orthographic"
   },
   {
-    "word": "PAUSES",
+    "word": "flaked",
     "list": 1,
     "list_type": "orthographic"
   },
   {
-    "word": "PASTEL",
+    "word": "forked",
     "list": 1,
     "list_type": "orthographic"
   },
   {
-    "word": "PAUSED",
+    "word": "felled",
     "list": 1,
     "list_type": "orthographic"
   },
   {
-    "word": "PAINED",
+    "word": "farmed",
     "list": 1,
     "list_type": "orthographic"
   },
   {
-    "word": "PHASED",
-    "list": 1,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "SHOWED",
+    "word": "bailed",
     "list": 2,
     "list_type": "orthographic"
   },
   {
-    "word": "SHOWER",
+    "word": "boiled",
     "list": 2,
     "list_type": "orthographic"
   },
   {
-    "word": "SMOKED",
+    "word": "bagged",
     "list": 2,
     "list_type": "orthographic"
   },
   {
-    "word": "SCORED",
+    "word": "bathed",
     "list": 2,
     "list_type": "orthographic"
   },
   {
-    "word": "SHAVED",
+    "word": "barred",
     "list": 2,
     "list_type": "orthographic"
   },
   {
-    "word": "STONED",
+    "word": "barbed",
     "list": 2,
     "list_type": "orthographic"
   },
   {
-    "word": "SHOVED",
+    "word": "bashed",
     "list": 2,
     "list_type": "orthographic"
   },
   {
-    "word": "SHAPED",
+    "word": "billed",
     "list": 2,
     "list_type": "orthographic"
   },
   {
-    "word": "STORED",
+    "word": "barged",
     "list": 2,
     "list_type": "orthographic"
   },
   {
-    "word": "SLOWED",
+    "word": "batted",
     "list": 2,
     "list_type": "orthographic"
   },
   {
-    "word": "SNOWED",
+    "word": "bowled",
     "list": 2,
     "list_type": "orthographic"
   },
   {
-    "word": "SHINED",
+    "word": "balled",
     "list": 2,
     "list_type": "orthographic"
   },
   {
-    "word": "SHAMED",
+    "word": "banked",
     "list": 2,
     "list_type": "orthographic"
   },
   {
-    "word": "STOWED",
+    "word": "baited",
     "list": 2,
     "list_type": "orthographic"
   },
   {
-    "word": "STOKED",
+    "word": "barked",
     "list": 2,
     "list_type": "orthographic"
   },
   {
-    "word": "STEWED",
+    "word": "bawled",
     "list": 2,
     "list_type": "orthographic"
   },
   {
-    "word": "SCOPED",
-    "list": 2,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "SNORED",
-    "list": 2,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "SPEWED",
-    "list": 2,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "SKEWED",
-    "list": 2,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "CORNER",
+    "word": "retire",
     "list": 3,
     "list_type": "orthographic"
   },
   {
-    "word": "COOLER",
+    "word": "recipe",
     "list": 3,
     "list_type": "orthographic"
   },
   {
-    "word": "COPPER",
+    "word": "relate",
     "list": 3,
     "list_type": "orthographic"
   },
   {
-    "word": "COLDER",
+    "word": "recite",
     "list": 3,
     "list_type": "orthographic"
   },
   {
-    "word": "CONNED",
+    "word": "revive",
     "list": 3,
     "list_type": "orthographic"
   },
   {
-    "word": "CONFER",
+    "word": "relive",
     "list": 3,
     "list_type": "orthographic"
   },
   {
-    "word": "CORNED",
+    "word": "regime",
     "list": 3,
     "list_type": "orthographic"
   },
   {
-    "word": "CORTEX",
+    "word": "reside",
     "list": 3,
     "list_type": "orthographic"
   },
   {
-    "word": "CORSET",
+    "word": "revise",
     "list": 3,
     "list_type": "orthographic"
   },
   {
-    "word": "COPIER",
+    "word": "refute",
     "list": 3,
     "list_type": "orthographic"
   },
   {
-    "word": "COINED",
+    "word": "rewire",
     "list": 3,
     "list_type": "orthographic"
   },
   {
-    "word": "COOKER",
+    "word": "refine",
     "list": 3,
     "list_type": "orthographic"
   },
   {
-    "word": "COPTER",
+    "word": "rebate",
     "list": 3,
     "list_type": "orthographic"
   },
   {
-    "word": "CORNEA",
+    "word": "recuse",
     "list": 3,
     "list_type": "orthographic"
   },
   {
-    "word": "CODGER",
+    "word": "repute",
     "list": 3,
     "list_type": "orthographic"
   },
   {
-    "word": "COTTER",
+    "word": "rehire",
     "list": 3,
     "list_type": "orthographic"
   },
   {
-    "word": "BURNED",
+    "word": "cooked",
     "list": 4,
     "list_type": "orthographic"
   },
   {
-    "word": "BUSTED",
+    "word": "choked",
     "list": 4,
     "list_type": "orthographic"
   },
   {
-    "word": "BUMPED",
+    "word": "copied",
     "list": 4,
     "list_type": "orthographic"
   },
   {
-    "word": "BUGGED",
+    "word": "cooped",
     "list": 4,
     "list_type": "orthographic"
   },
   {
-    "word": "BUMMED",
+    "word": "conned",
     "list": 4,
     "list_type": "orthographic"
   },
   {
-    "word": "BURNER",
+    "word": "cooled",
     "list": 4,
     "list_type": "orthographic"
   },
   {
-    "word": "BARRED",
+    "word": "corned",
     "list": 4,
     "list_type": "orthographic"
   },
   {
-    "word": "BARBED",
+    "word": "combed",
     "list": 4,
     "list_type": "orthographic"
   },
   {
-    "word": "BUZZED",
+    "word": "copped",
     "list": 4,
     "list_type": "orthographic"
   },
   {
-    "word": "BURIES",
+    "word": "cocked",
     "list": 4,
     "list_type": "orthographic"
   },
   {
-    "word": "BUSHED",
+    "word": "cloned",
     "list": 4,
     "list_type": "orthographic"
   },
   {
-    "word": "BARGED",
+    "word": "conked",
     "list": 4,
     "list_type": "orthographic"
   },
   {
-    "word": "BUTTED",
+    "word": "coined",
     "list": 4,
     "list_type": "orthographic"
   },
   {
-    "word": "BURPED",
+    "word": "cooker",
     "list": 4,
     "list_type": "orthographic"
   },
   {
-    "word": "BARKED",
+    "word": "coiled",
     "list": 4,
     "list_type": "orthographic"
   },
   {
-    "word": "BUFFED",
+    "word": "corked",
     "list": 4,
     "list_type": "orthographic"
   },
   {
-    "word": "BARFED",
-    "list": 4,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "BUCKED",
-    "list": 4,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "LOCKED",
+    "word": "smiled",
     "list": 5,
     "list_type": "orthographic"
   },
   {
-    "word": "LOADED",
+    "word": "sailed",
     "list": 5,
     "list_type": "orthographic"
   },
   {
-    "word": "LOANED",
+    "word": "suited",
     "list": 5,
     "list_type": "orthographic"
   },
   {
-    "word": "LODGED",
+    "word": "seized",
     "list": 5,
     "list_type": "orthographic"
   },
   {
-    "word": "LOGGED",
+    "word": "sliced",
     "list": 5,
     "list_type": "orthographic"
   },
   {
-    "word": "LEANED",
+    "word": "swiped",
     "list": 5,
     "list_type": "orthographic"
   },
   {
-    "word": "LEAKED",
+    "word": "spiked",
     "list": 5,
     "list_type": "orthographic"
   },
   {
-    "word": "LEASED",
+    "word": "shined",
     "list": 5,
     "list_type": "orthographic"
   },
   {
-    "word": "LOAVES",
+    "word": "soiled",
     "list": 5,
     "list_type": "orthographic"
   },
   {
-    "word": "LEAPED",
+    "word": "socked",
     "list": 5,
     "list_type": "orthographic"
   },
   {
-    "word": "LOOPED",
+    "word": "soared",
     "list": 5,
     "list_type": "orthographic"
   },
   {
-    "word": "LOOTED",
+    "word": "scaled",
     "list": 5,
     "list_type": "orthographic"
   },
   {
-    "word": "LOAFER",
+    "word": "soused",
     "list": 5,
     "list_type": "orthographic"
   },
   {
-    "word": "LOADER",
+    "word": "spiced",
     "list": 5,
     "list_type": "orthographic"
   },
   {
-    "word": "LEADED",
+    "word": "soured",
     "list": 5,
     "list_type": "orthographic"
   },
   {
-    "word": "LOPPED",
+    "word": "sobbed",
     "list": 5,
     "list_type": "orthographic"
   },
   {
-    "word": "LOOSED",
-    "list": 5,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "FILLED",
+    "word": "blamed",
     "list": 6,
     "list_type": "orthographic"
   },
   {
-    "word": "FORCED",
+    "word": "bearer",
     "list": 6,
     "list_type": "orthographic"
   },
   {
-    "word": "FOOLED",
+    "word": "beamed",
     "list": 6,
     "list_type": "orthographic"
   },
   {
-    "word": "FORMED",
+    "word": "biased",
     "list": 6,
     "list_type": "orthographic"
   },
   {
-    "word": "FORGED",
+    "word": "beater",
     "list": 6,
     "list_type": "orthographic"
   },
   {
-    "word": "FOLDED",
+    "word": "beeped",
     "list": 6,
     "list_type": "orthographic"
   },
   {
-    "word": "FOULED",
+    "word": "belted",
     "list": 6,
     "list_type": "orthographic"
   },
   {
-    "word": "FUELED",
+    "word": "bested",
     "list": 6,
     "list_type": "orthographic"
   },
   {
-    "word": "FLOWED",
+    "word": "bedded",
     "list": 6,
     "list_type": "orthographic"
   },
   {
-    "word": "FOILED",
+    "word": "beaker",
     "list": 6,
     "list_type": "orthographic"
   },
   {
-    "word": "FLAYED",
+    "word": "beefed",
     "list": 6,
     "list_type": "orthographic"
   },
   {
-    "word": "FOGGED",
+    "word": "blazed",
     "list": 6,
     "list_type": "orthographic"
   },
   {
-    "word": "FANNED",
+    "word": "braced",
     "list": 6,
     "list_type": "orthographic"
   },
   {
-    "word": "FLARED",
+    "word": "braved",
     "list": 6,
     "list_type": "orthographic"
   },
   {
-    "word": "FENCED",
+    "word": "beaded",
     "list": 6,
     "list_type": "orthographic"
   },
   {
-    "word": "FLAKED",
+    "word": "bended",
     "list": 6,
     "list_type": "orthographic"
   },
   {
-    "word": "FORKED",
-    "list": 6,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "FLEXED",
-    "list": 6,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "FELLED",
-    "list": 6,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "FARMED",
-    "list": 6,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "GRADES",
+    "word": "rented",
     "list": 7,
     "list_type": "orthographic"
   },
   {
-    "word": "GRAPES",
+    "word": "rolled",
     "list": 7,
     "list_type": "orthographic"
   },
   {
-    "word": "GRACES",
+    "word": "rested",
     "list": 7,
     "list_type": "orthographic"
   },
   {
-    "word": "GRAVEL",
+    "word": "rocked",
     "list": 7,
     "list_type": "orthographic"
   },
   {
-    "word": "GRAINS",
+    "word": "roster",
     "list": 7,
     "list_type": "orthographic"
   },
   {
-    "word": "GRAZED",
+    "word": "routes",
     "list": 7,
     "list_type": "orthographic"
   },
   {
-    "word": "GRADER",
+    "word": "ratted",
     "list": 7,
     "list_type": "orthographic"
   },
   {
-    "word": "GROVES",
+    "word": "rooted",
     "list": 7,
     "list_type": "orthographic"
   },
   {
-    "word": "GRADED",
+    "word": "routed",
     "list": 7,
     "list_type": "orthographic"
   },
   {
-    "word": "GLADES",
+    "word": "rotted",
     "list": 7,
     "list_type": "orthographic"
   },
   {
-    "word": "GRACED",
+    "word": "roamed",
     "list": 7,
     "list_type": "orthographic"
   },
   {
-    "word": "GRATIS",
+    "word": "roared",
     "list": 7,
     "list_type": "orthographic"
   },
   {
-    "word": "GRAPHS",
+    "word": "roomed",
     "list": 7,
     "list_type": "orthographic"
   },
   {
-    "word": "GRATES",
+    "word": "roused",
     "list": 7,
     "list_type": "orthographic"
   },
   {
-    "word": "GRIPES",
+    "word": "rooked",
     "list": 7,
     "list_type": "orthographic"
   },
   {
-    "word": "GRAFTS",
+    "word": "router",
     "list": 7,
     "list_type": "orthographic"
   },
   {
-    "word": "MISSED",
+    "word": "pegged",
     "list": 8,
     "list_type": "orthographic"
   },
   {
-    "word": "MASTER",
+    "word": "peeled",
     "list": 8,
     "list_type": "orthographic"
   },
   {
-    "word": "MESSED",
+    "word": "peaked",
     "list": 8,
     "list_type": "orthographic"
   },
   {
-    "word": "MARKED",
+    "word": "peeked",
     "list": 8,
     "list_type": "orthographic"
   },
   {
-    "word": "MASHED",
+    "word": "peewee",
     "list": 8,
     "list_type": "orthographic"
   },
   {
-    "word": "MASSES",
+    "word": "premed",
     "list": 8,
     "list_type": "orthographic"
   },
   {
-    "word": "MAILED",
+    "word": "penned",
     "list": 8,
     "list_type": "orthographic"
   },
   {
-    "word": "MASKED",
+    "word": "pieced",
     "list": 8,
     "list_type": "orthographic"
   },
   {
-    "word": "MAPPED",
+    "word": "peeper",
     "list": 8,
     "list_type": "orthographic"
   },
   {
-    "word": "MISLED",
+    "word": "peeved",
     "list": 8,
     "list_type": "orthographic"
   },
   {
-    "word": "MANNED",
+    "word": "pecked",
     "list": 8,
     "list_type": "orthographic"
   },
   {
-    "word": "MAIMED",
+    "word": "peeler",
     "list": 8,
     "list_type": "orthographic"
   },
   {
-    "word": "MAULED",
+    "word": "preyed",
     "list": 8,
     "list_type": "orthographic"
   },
   {
-    "word": "MUSSED",
+    "word": "peered",
     "list": 8,
     "list_type": "orthographic"
   },
   {
-    "word": "MALTED",
+    "word": "petted",
     "list": 8,
     "list_type": "orthographic"
   },
   {
-    "word": "MASSED",
+    "word": "peeped",
     "list": 8,
     "list_type": "orthographic"
   },
   {
-    "word": "BRAINS",
+    "word": "harmed",
     "list": 9,
     "list_type": "orthographic"
   },
   {
-    "word": "BRAKES",
+    "word": "hopped",
     "list": 9,
     "list_type": "orthographic"
   },
   {
-    "word": "BLADES",
+    "word": "housed",
     "list": 9,
     "list_type": "orthographic"
   },
   {
-    "word": "BRACES",
+    "word": "hordes",
     "list": 9,
     "list_type": "orthographic"
   },
   {
-    "word": "BLAMES",
+    "word": "hornet",
     "list": 9,
     "list_type": "orthographic"
   },
   {
-    "word": "BLAZES",
+    "word": "horsey",
     "list": 9,
     "list_type": "orthographic"
   },
   {
-    "word": "BRIBES",
+    "word": "hurled",
     "list": 9,
     "list_type": "orthographic"
   },
   {
-    "word": "BRAVER",
+    "word": "hosted",
     "list": 9,
     "list_type": "orthographic"
   },
   {
-    "word": "BRIDES",
+    "word": "horned",
     "list": 9,
     "list_type": "orthographic"
   },
   {
-    "word": "BRANDS",
+    "word": "hocked",
     "list": 9,
     "list_type": "orthographic"
   },
   {
-    "word": "BLARES",
+    "word": "hotbed",
     "list": 9,
     "list_type": "orthographic"
   },
   {
-    "word": "BRAIDS",
+    "word": "herded",
     "list": 9,
     "list_type": "orthographic"
   },
   {
-    "word": "BRAVES",
+    "word": "hooded",
     "list": 9,
     "list_type": "orthographic"
   },
   {
-    "word": "BRACED",
+    "word": "honked",
     "list": 9,
     "list_type": "orthographic"
   },
   {
-    "word": "BRAVED",
+    "word": "howled",
     "list": 9,
     "list_type": "orthographic"
   },
   {
-    "word": "BARGES",
+    "word": "hurted",
     "list": 9,
     "list_type": "orthographic"
   },
   {
-    "word": "SEEMED",
+    "word": "scares",
     "list": 10,
     "list_type": "orthographic"
   },
   {
-    "word": "SERVED",
+    "word": "shares",
     "list": 10,
     "list_type": "orthographic"
   },
   {
-    "word": "SEALED",
+    "word": "sharks",
     "list": 10,
     "list_type": "orthographic"
   },
   {
-    "word": "SEATED",
+    "word": "shades",
     "list": 10,
     "list_type": "orthographic"
   },
   {
-    "word": "SMILED",
+    "word": "shores",
     "list": 10,
     "list_type": "orthographic"
   },
   {
-    "word": "SAILED",
+    "word": "smarts",
     "list": 10,
     "list_type": "orthographic"
   },
   {
-    "word": "SUITED",
+    "word": "stares",
     "list": 10,
     "list_type": "orthographic"
   },
   {
-    "word": "SENSED",
+    "word": "shafts",
     "list": 10,
     "list_type": "orthographic"
   },
   {
-    "word": "SEIZED",
+    "word": "shears",
     "list": 10,
     "list_type": "orthographic"
   },
   {
-    "word": "SLICED",
+    "word": "shacks",
     "list": 10,
     "list_type": "orthographic"
   },
   {
-    "word": "SWIPED",
+    "word": "shaves",
     "list": 10,
     "list_type": "orthographic"
   },
   {
-    "word": "SPIKED",
+    "word": "spares",
     "list": 10,
     "list_type": "orthographic"
   },
   {
-    "word": "SHINES",
+    "word": "swarms",
     "list": 10,
     "list_type": "orthographic"
   },
   {
-    "word": "SOILED",
+    "word": "shanks",
     "list": 10,
     "list_type": "orthographic"
   },
   {
-    "word": "SPICED",
+    "word": "shards",
     "list": 10,
     "list_type": "orthographic"
   },
   {
-    "word": "SEIZES",
+    "word": "snarls",
     "list": 10,
     "list_type": "orthographic"
   },
   {
-    "word": "ROWING",
+    "word": "louder",
     "list": 11,
     "list_type": "orthographic"
   },
   {
-    "word": "ROVING",
+    "word": "larger",
     "list": 11,
     "list_type": "orthographic"
   },
   {
-    "word": "ROPING",
+    "word": "lodged",
     "list": 11,
     "list_type": "orthographic"
   },
   {
-    "word": "ROBINS",
+    "word": "logged",
     "list": 11,
     "list_type": "orthographic"
   },
   {
-    "word": "ROTTEN",
+    "word": "linger",
     "list": 11,
     "list_type": "orthographic"
   },
   {
-    "word": "ROBBED",
+    "word": "longed",
     "list": 11,
     "list_type": "orthographic"
   },
   {
-    "word": "ROLLED",
+    "word": "looker",
     "list": 11,
     "list_type": "orthographic"
   },
   {
-    "word": "ROCKED",
+    "word": "ledger",
     "list": 11,
     "list_type": "orthographic"
   },
   {
-    "word": "ROSTER",
+    "word": "loafer",
     "list": 11,
     "list_type": "orthographic"
   },
   {
-    "word": "ROUTES",
+    "word": "loader",
     "list": 11,
     "list_type": "orthographic"
   },
   {
-    "word": "ROOTED",
+    "word": "lodges",
     "list": 11,
     "list_type": "orthographic"
   },
   {
-    "word": "ROUTED",
+    "word": "loaner",
     "list": 11,
     "list_type": "orthographic"
   },
   {
-    "word": "ROAMED",
+    "word": "loiter",
     "list": 11,
     "list_type": "orthographic"
   },
   {
-    "word": "ROARED",
+    "word": "looter",
     "list": 11,
     "list_type": "orthographic"
   },
   {
-    "word": "ROOMED",
+    "word": "lodger",
     "list": 11,
     "list_type": "orthographic"
   },
   {
-    "word": "ROUSED",
+    "word": "lunger",
     "list": 11,
     "list_type": "orthographic"
   },
   {
-    "word": "ROUTER",
-    "list": 11,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "STARTS",
+    "word": "waiter",
     "list": 12,
     "list_type": "orthographic"
   },
   {
-    "word": "STATES",
+    "word": "waters",
     "list": 12,
     "list_type": "orthographic"
   },
   {
-    "word": "STANDS",
+    "word": "writes",
     "list": 12,
     "list_type": "orthographic"
   },
   {
-    "word": "STAIRS",
+    "word": "wander",
     "list": 12,
     "list_type": "orthographic"
   },
   {
-    "word": "STATUS",
+    "word": "walker",
     "list": 12,
     "list_type": "orthographic"
   },
   {
-    "word": "STAKES",
+    "word": "warmer",
     "list": 12,
     "list_type": "orthographic"
   },
   {
-    "word": "STAINS",
+    "word": "washer",
     "list": 12,
     "list_type": "orthographic"
   },
   {
-    "word": "STAGES",
+    "word": "wither",
     "list": 12,
     "list_type": "orthographic"
   },
   {
-    "word": "SCALES",
+    "word": "waiver",
     "list": 12,
     "list_type": "orthographic"
   },
   {
-    "word": "STARES",
+    "word": "wastes",
     "list": 12,
     "list_type": "orthographic"
   },
   {
-    "word": "STACKS",
+    "word": "wetter",
     "list": 12,
     "list_type": "orthographic"
   },
   {
-    "word": "STALLS",
+    "word": "wicker",
     "list": 12,
     "list_type": "orthographic"
   },
   {
-    "word": "STALKS",
+    "word": "wearer",
     "list": 12,
     "list_type": "orthographic"
   },
   {
-    "word": "SCALPS",
+    "word": "wipers",
     "list": 12,
     "list_type": "orthographic"
   },
   {
-    "word": "SHANKS",
+    "word": "whaler",
     "list": 12,
     "list_type": "orthographic"
   },
   {
-    "word": "STASIS",
+    "word": "whiner",
     "list": 12,
     "list_type": "orthographic"
   },
   {
-    "word": "HORSES",
+    "word": "trials",
     "list": 13,
     "list_type": "orthographic"
   },
   {
-    "word": "HOOKED",
+    "word": "treaty",
     "list": 13,
     "list_type": "orthographic"
   },
   {
-    "word": "HARMED",
+    "word": "trunks",
     "list": 13,
     "list_type": "orthographic"
   },
   {
-    "word": "HOPPED",
+    "word": "trails",
     "list": 13,
     "list_type": "orthographic"
   },
   {
-    "word": "HOUSED",
+    "word": "truths",
     "list": 13,
     "list_type": "orthographic"
   },
   {
-    "word": "HORDES",
+    "word": "tribes",
     "list": 13,
     "list_type": "orthographic"
   },
   {
-    "word": "HORNET",
+    "word": "trades",
     "list": 13,
     "list_type": "orthographic"
   },
   {
-    "word": "HORSEY",
+    "word": "tramps",
     "list": 13,
     "list_type": "orthographic"
   },
   {
-    "word": "HURLED",
+    "word": "triads",
     "list": 13,
     "list_type": "orthographic"
   },
   {
-    "word": "HOSTED",
+    "word": "treads",
     "list": 13,
     "list_type": "orthographic"
   },
   {
-    "word": "HORNED",
+    "word": "toasts",
     "list": 13,
     "list_type": "orthographic"
   },
   {
-    "word": "HOCKED",
+    "word": "trolls",
     "list": 13,
     "list_type": "orthographic"
   },
   {
-    "word": "HOTBED",
+    "word": "totals",
     "list": 13,
     "list_type": "orthographic"
   },
   {
-    "word": "HERDED",
+    "word": "twerps",
     "list": 13,
     "list_type": "orthographic"
   },
   {
-    "word": "HOODED",
+    "word": "teases",
     "list": 13,
     "list_type": "orthographic"
   },
   {
-    "word": "HONKED",
+    "word": "tenths",
     "list": 13,
     "list_type": "orthographic"
   },
   {
-    "word": "HOWLED",
-    "list": 13,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "HURTED",
-    "list": 13,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "RESUME",
+    "word": "depend",
     "list": 14,
     "list_type": "orthographic"
   },
   {
-    "word": "REDUCE",
+    "word": "deputy",
     "list": 14,
     "list_type": "orthographic"
   },
   {
-    "word": "REFUGE",
+    "word": "deaths",
     "list": 14,
     "list_type": "orthographic"
   },
   {
-    "word": "REMAKE",
+    "word": "dental",
     "list": 14,
     "list_type": "orthographic"
   },
   {
-    "word": "REVOKE",
+    "word": "depths",
     "list": 14,
     "list_type": "orthographic"
   },
   {
-    "word": "RETAKE",
+    "word": "deploy",
     "list": 14,
     "list_type": "orthographic"
   },
   {
-    "word": "REPOSE",
+    "word": "depart",
     "list": 14,
     "list_type": "orthographic"
   },
   {
-    "word": "REDONE",
+    "word": "debris",
     "list": 14,
     "list_type": "orthographic"
   },
   {
-    "word": "REWIRE",
+    "word": "denies",
     "list": 14,
     "list_type": "orthographic"
   },
   {
-    "word": "REFINE",
+    "word": "delays",
     "list": 14,
     "list_type": "orthographic"
   },
   {
-    "word": "REBATE",
+    "word": "detest",
     "list": 14,
     "list_type": "orthographic"
   },
   {
-    "word": "REBUKE",
+    "word": "deport",
     "list": 14,
     "list_type": "orthographic"
   },
   {
-    "word": "RECUSE",
+    "word": "depict",
     "list": 14,
     "list_type": "orthographic"
   },
   {
-    "word": "RENAME",
+    "word": "decoys",
     "list": 14,
     "list_type": "orthographic"
   },
   {
-    "word": "REPUTE",
+    "word": "depots",
     "list": 14,
     "list_type": "orthographic"
   },
   {
-    "word": "RESALE",
+    "word": "debtor",
     "list": 14,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "REDEYE",
-    "list": 14,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "REHIRE",
-    "list": 14,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "REMADE",
-    "list": 14,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "CAREER",
-    "list": 15,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "CAUSED",
-    "list": 15,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "CARPET",
-    "list": 15,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "CURSED",
-    "list": 15,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "CANNED",
-    "list": 15,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "CARVED",
-    "list": 15,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "CRAZED",
-    "list": 15,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "CASHED",
-    "list": 15,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "CALMED",
-    "list": 15,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "CAPPED",
-    "list": 15,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "CAMPED",
-    "list": 15,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "CURLED",
-    "list": 15,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "CARTEL",
-    "list": 15,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "CURVED",
-    "list": 15,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "CABLED",
-    "list": 15,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "CRAVED",
-    "list": 15,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "CARDED",
-    "list": 15,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "TRIPLE",
-    "list": 16,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "TRAINS",
-    "list": 16,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "TRACES",
-    "list": 16,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "TRIALS",
-    "list": 16,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "TRAILS",
-    "list": 16,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "TRANCE",
-    "list": 16,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "TRIFLE",
-    "list": 16,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "TRIBAL",
-    "list": 16,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "TRIAGE",
-    "list": 16,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "TRADER",
-    "list": 16,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "TRAUMA",
-    "list": 16,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "TRASHY",
-    "list": 16,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "TRAITS",
-    "list": 16,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "TRACER",
-    "list": 16,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "TRIVIA",
-    "list": 16,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "TRIPOD",
-    "list": 16,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "TRIADS",
-    "list": 16,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "UNLESS",
-    "list": 17,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "UNITED",
-    "list": 17,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "UNLIKE",
-    "list": 17,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "UNABLE",
-    "list": 17,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "UNLOCK",
-    "list": 17,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "UNLOAD",
-    "list": 17,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "UNSEEN",
-    "list": 17,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "UNHOLY",
-    "list": 17,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "UNFOLD",
-    "list": 17,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "UNWIND",
-    "list": 17,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "UNSURE",
-    "list": 17,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "UNTIED",
-    "list": 17,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "UNWISE",
-    "list": 17,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "UNIONS",
-    "list": 17,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "UNUSED",
-    "list": 17,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "UNTIDY",
-    "list": 17,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "UNWELL",
-    "list": 17,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "DINING",
-    "list": 18,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "DIVIDE",
-    "list": 18,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "DIVING",
-    "list": 18,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "DIAPER",
-    "list": 18,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "DIGEST",
-    "list": 18,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "DIFFER",
-    "list": 18,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "DIVERT",
-    "list": 18,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "DISARM",
-    "list": 18,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "DIGITS",
-    "list": 18,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "DIESEL",
-    "list": 18,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "DIGGER",
-    "list": 18,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "DIALED",
-    "list": 18,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "DIVERS",
-    "list": 18,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "DIMWIT",
-    "list": 18,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "DINGHY",
-    "list": 18,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "DISMAY",
-    "list": 18,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "DILUTE",
-    "list": 18,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "DIMMER",
-    "list": 18,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "ARREST",
-    "list": 19,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "ARTIST",
-    "list": 19,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "ARGUED",
-    "list": 19,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "ARMIES",
-    "list": 19,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "ARROWS",
-    "list": 19,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "ARCADE",
-    "list": 19,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "ARMOUR",
-    "list": 19,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "AROUSE",
-    "list": 19,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "ARMORY",
-    "list": 19,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "ARISES",
-    "list": 19,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "ARMPIT",
-    "list": 19,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "ARMING",
-    "list": 19,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "ARMADA",
-    "list": 19,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "ARCHES",
-    "list": 19,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "ARDENT",
-    "list": 19,
-    "list_type": "orthographic"
-  },
-  {
-    "word": "ARCHER",
-    "list": 19,
     "list_type": "orthographic"
   }
 ]
