@@ -24,6 +24,16 @@ MODEL.COL <- list(
   "Temporal Gradient" = color_wheel[4],
   "Spatiotemporal Gradient" = color_wheel[5]
 )
+
+line_types <- c('twodash', 'longdash', 'dotdash', 'dotted', 'dashed')
+MODEL.LTY <- list(
+  "Pure Guess"= line_types[1],
+  "Pure Intrusion"= line_types[2],
+  "Intrusion + Guess"= line_types[3],
+  "Temporal" = line_types[4],
+  "Spatiotemporal" = line_types[5] 
+)
+
 AXIS.CEX <- 2
 AXIS.LABEL.CEX <- 2.2
 NUM.BINS <- 50
@@ -81,7 +91,7 @@ plot_recentered <- function(model_list, this_recentered_predictions, filename){
   
   for(model.type in MODEL.TYPES[model_list]) {
     model.data <- this_recentered_predictions[this_recentered_predictions$model == model.type, ]
-    points(model.data$value, model.data$prob, type="l", lty=2, lwd = 3, col=MODEL.COL[[model.type]])
+    points(model.data$value, model.data$prob, type="l", lty= MODEL.LTY[[model.type]], lwd = 4, col=MODEL.COL[[model.type]])
   }
   
   axis(side=1, at=c(-pi, 0, pi), labels=c(expression(-pi), "0", expression(pi)), cex.axis= AXIS.CEX)
@@ -91,10 +101,12 @@ plot_recentered <- function(model_list, this_recentered_predictions, filename){
   
   ## Add in legend
   legend("topright", legend= MODEL.TYPES[model_list],
-         col=color_wheel[model_list], lty=2, lwd = 2, bty = "n",cex=AXIS.CEX, title="Models")
+         col=color_wheel[model_list], lty=MODEL.LTY[[model.type]], lwd = 2, bty = "n",cex=AXIS.CEX, title="Models")
   
   # Close the plotting device
-  dev.off()
+  if(filename != "") {
+    dev.off()
+  }
 }
 
 ## Transform asymmetric intrusion histograms
@@ -157,7 +169,7 @@ plot_asymm_recenter <- function(model_list, this_asymm_predictions, filename){
       
       for(model.type in MODEL.TYPES[model_list]) {
         model.data <- this_panel_model[this_panel_model$model == model.type, ]
-        points(model.data$value, model.data$prob, type="l", lty=2, lwd = 3, col=MODEL.COL[[model.type]])
+        points(model.data$value, model.data$prob, type="l", lty=MODEL.LTY[[model.type]], lwd = 4, col=MODEL.COL[[model.type]])
       }
       ## Plot the participant number and data type
       mtext(paste0("Lag", panel_labs[panel_idx]), side=3, cex= 1.5, line=-2, adj=0.1)
@@ -178,7 +190,7 @@ plot_asymm_recenter <- function(model_list, this_asymm_predictions, filename){
     }
   }
   # Outer Margin axis labels
-
+  
   mtext(paste("Density"), side=2, cex=AXIS.CEX, cex.lab = AXIS.LABEL.CEX, outer=T, line=2)
   mtext(paste("Response Error (rad)"), side=1, cex=AXIS.CEX, cex.lab = AXIS.LABEL.CEX, outer=T, line=4)
   ## Add in legend - dont need in multi panel

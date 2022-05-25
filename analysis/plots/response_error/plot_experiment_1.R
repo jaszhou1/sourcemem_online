@@ -59,6 +59,15 @@ MODEL.COL <- list(
   "Spatiotemporal" = color_wheel[5]
 )
 
+line_types <- c('twodash', 'longdash', 'dotdash', 'dotted', 'dashed')
+MODEL.LTY <- list(
+  "Pure Guess"= line_types[1],
+  "Pure Intrusion"= line_types[2],
+  "Intrusion + Guess"= line_types[3],
+  "Temporal" = line_types[4],
+  "Spatiotemporal" = line_types[5] 
+)
+
 ## Compute variables required for chart layout.
 
 AXIS.CEX <- 2
@@ -97,7 +106,7 @@ plot_response_error <- function(model_list, data, filename){
   
   for(model.type in MODEL.TYPES[model_list]) {
     model.data <- response_error_predictions[response_error_predictions$model == model.type, ]
-    points(model.data$value, model.data$prob, type="l", lty=2, lwd = 3, col=MODEL.COL[[model.type]])
+    points(model.data$value, model.data$prob, type="l", lty= MODEL.LTY[[model.type]], lwd = 4, col=MODEL.COL[[model.type]])
   }
   
   axis(side=1, at=c(-pi, 0, pi), labels=c(expression(-pi), "0", expression(pi)), cex.axis= AXIS.CEX)
@@ -106,8 +115,8 @@ plot_response_error <- function(model_list, data, filename){
   mtext(paste("Density"), side=2, cex=AXIS.CEX, cex.lab = AXIS.LABEL.CEX, line=2.5)
   
   ## Add in legend
-  # legend("topright", legend= MODEL.TYPES[model_list],
-  #        col=color_wheel[model_list], lty=2, lwd = 2, bty = "n",cex=AXIS.CEX, title="Models")
+  legend("topright", legend= MODEL.TYPES[model_list],
+         col=color_wheel[model_list], lty=line_types[model_list], lwd = 4, bty = "n",cex=AXIS.CEX, title="Models")
   
   # Close the plotting device
   dev.off()
