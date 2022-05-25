@@ -14,9 +14,9 @@ AIC_weight <- function(AIC, filename){
   
   # Interleave raw AIC values with AIC weights
   # AIC <- cbind(AIC, AIC_weight)
-  # idx <- rep(1:ncol, each = 2) + (0:1) * ncol <- a cool solution!
+  # idx <- rep(1:ncol, each = 2) + (0:1) * ncol 
   # AIC <- AIC[idx]
-  
+  # 
   # Stack raw AIC and AIC weights
   AIC <- rbind(AIC, AIC_weight)
   
@@ -30,4 +30,4 @@ setwd("~/git/sourcemem_online/analysis/models/R/experiment_2/output")
 exp2 <- read.csv('Exp2_AIC_trimmed.csv')
 
 setwd("~/git/sourcemem_online/analysis/models/MATLAB/experiment_2")
-exp2_diff <- read.csv("~/git/sourcemem_online/analysis/models/MATLAB/experiment_2/AIC.csv")
+exp2_diff <- read.csv("~/git/sourcemem_online/analysis/models/MATLAB/experiment_2/AIC.csv", fileEncoding="UTF-8-BOM")
