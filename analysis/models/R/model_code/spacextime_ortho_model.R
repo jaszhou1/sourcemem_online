@@ -160,6 +160,7 @@ simulate_ortho_model <- function(participant, data, pest){
   zeta <- pest[[8]]
   rho <- pest[[9]]
   chi <- pest[[10]]
+  iota <- params[11]
   
   shepard_similarity <- function(x, k){
     x <- exp(-k * x)

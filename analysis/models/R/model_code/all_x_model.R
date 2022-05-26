@@ -168,6 +168,7 @@ simulate_all_x_model <- function(participant, data, pest){
   rho <- pest[[9]]
   chi <- pest[[10]]
   psi <- pest[[11]]
+  iota <- pest[[12]]
   
   tau <- 1-(rho+chi+psi)
   

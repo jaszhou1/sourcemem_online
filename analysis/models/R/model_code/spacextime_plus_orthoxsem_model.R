@@ -175,6 +175,7 @@ simulate_spacextime_plus_orthoxsem_model <- function(participant, data, pest){
   rho <- pest[[9]]
   chi <- pest[[10]]
   psi <- pest[[11]]
+  iota <- pest[[12]]
   
   tau <- 1-(rho+chi+psi)
   
