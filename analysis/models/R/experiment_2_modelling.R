@@ -267,11 +267,12 @@ fit_space_x_time_all <- function(is_parallel){
                    return(this_fit)
                  }
   colnames(res) <- c('participant','nLL','aic','prec1','prec2','gamma', 'kappa', 'lambda_b', "lambda_f", "beta", "zeta", "rho")
-  res <- as.data.frame(res)
-  write.csv(res, paste(toString(Sys.Date()), '_space_x_time_pest.csv', sep =""))
-  sim_SxT <- simulate_dataset_space_x_time(data, res)
-  save(res, sim_SxT, file = paste(toString(Sys.Date()), '_sspace_x_time_pest.RData', sep =""))
-  return(res)
+  spatiotemporal <- as.data.frame(res)
+  write.csv(spatiotemporal, paste(toString(Sys.Date()), '_exp2_spatiotemporal_pest.csv', sep =""))
+  #sim_SxT <- simulate_dataset_space_x_time(data, spatiotemporal)
+  #save(res, sim_SxT, file = paste(toString(Sys.Date()), '_space_x_time_pest.RData', sep =""))
+  save(spatiotemporal, file = paste(toString(Sys.Date()), '_exp2_spatiotemporal.RData', sep =""))
+  return(spatiotemporal)
 }
 
 fit_ortho_all <- function(){
@@ -287,11 +288,12 @@ fit_ortho_all <- function(){
                  }
   colnames(res) <- c('participant','nLL','aic','prec1','prec2','gamma', 'kappa', 
                      'lambda_b', 'lambda_f', 'beta', 'zeta', 'rho', 'chi', 'iota')
-  res <- as.data.frame(res)
-  write.csv(res, paste(toString(Sys.Date()), '_ortho_pest.csv', sep =""))
-  sim_ortho <- simulate_dataset_ortho(data, res)
-  save(res, sim_ortho, file = paste(toString(Sys.Date()), '_ortho.RData', sep =""))
-  return(res)
+  ortho <- as.data.frame(res)
+  write.csv(ortho, paste(toString(Sys.Date()), '_exp2_ortho_pest.csv', sep =""))
+  #sim_ortho <- simulate_dataset_ortho(data, ortho)
+  #save(ortho, sim_ortho, file = paste(toString(Sys.Date()), '_ortho.RData', sep =""))
+  save(ortho, file = paste(toString(Sys.Date()), '_exp2_ortho.RData', sep =""))
+  return(ortho)
 }
 
 fit_semantic_all <- function(){
@@ -307,11 +309,12 @@ fit_semantic_all <- function(){
                  }
   colnames(res) <- c('participant','nLL','aic','prec1','prec2','gamma', 'kappa', 
                      'lambda_b', 'lambda_f', 'beta', 'zeta', 'rho', 'chi')
-  res <- as.data.frame(res)
-  write.csv(res, paste(toString(Sys.Date()), '_semantic_pest.csv', sep =""))
-  sim_semantic <- simulate_dataset_semantic(data, res)
-  save(res, sim_semantic, file = paste(toString(Sys.Date()), '_semantic.RData', sep =""))
-  return(res)
+  sem <- as.data.frame(res)
+  write.csv(sem, paste(toString(Sys.Date()), '_exp2_semantic_pest.csv', sep =""))
+  #sim_semantic <- simulate_dataset_semantic(data, se,)
+  #save(sem, sim_semantic, file = paste(toString(Sys.Date()), '_semantic.RData', sep =""))
+  save(sem, file = paste(toString(Sys.Date()), '_exp2_semantic.RData', sep =""))
+  return(sem)
 }
 
 # fit_space_x_time_plus_ortho_plus_sem_all <- function(){
@@ -347,11 +350,12 @@ fit_space_x_time_plus_ortho_x_sem_all <- function(){
                  }
   colnames(res) <- c('participant','nLL','aic','prec1','prec2','gamma', 'kappa', 
                      'lambda_b', 'lambda_f', 'beta', 'zeta', 'rho', 'chi', 'psi', 'iota')
-  res <- as.data.frame(res)
-  write.csv(res, paste(toString(Sys.Date()), '_SxTpOxSe_pest.csv', sep =""))
-  sim_SxTpOxSe <- simulate_dataset_space_x_time_plus_ortho_x_sem(data, res)
-  save(res, sim_SxTpOxSe, file = paste(toString(Sys.Date()), '_SxTpOxSe.RData', sep =""))
-  return(res)
+  add <- as.data.frame(res)
+  write.csv(add, paste(toString(Sys.Date()), '_exp2_add_pest.csv', sep =""))
+  #sim_SxTpOxSe <- simulate_dataset_space_x_time_plus_ortho_x_sem(data, res)
+  #save(res, sim_SxTpOxSe, file = paste(toString(Sys.Date()), '_SxTpOxSe.RData', sep =""))
+  save(add, file = paste(toString(Sys.Date()), '_exp2_add.RData', sep =""))
+  return(add)
 }
 
 fit_all_x_all <- function(){
@@ -367,11 +371,12 @@ fit_all_x_all <- function(){
                  }
   colnames(res) <- c('participant','nLL','aic','prec1','prec2','gamma', 'kappa', 
                      'lambda_b', 'lambda_f', 'beta', 'zeta', 'rho', 'chi', 'psi', 'iota')
-  res <- as.data.frame(res)
-  write.csv(res, paste(toString(Sys.Date()), '_all_x_pest.csv', sep =""))
-  sim_all_x <- simulate_dataset_all_x(data, res)
-  save(res, sim_all_x, file = paste(toString(Sys.Date()), '_all_x.RData', sep =""))
-  return(res)
+  multi <- as.data.frame(res)
+  write.csv(multi, paste(toString(Sys.Date()), '_exp2_multi_pest.csv', sep =""))
+  #sim_all_x <- simulate_dataset_all_x(data, res)
+  #save(res, sim_all_x, file = paste(toString(Sys.Date()), '_all_x.RData', sep =""))
+  save(multi, file = paste(toString(Sys.Date()), '_exp2_multi.RData', sep =""))
+  return(multi)
 }
 ## Top-level function to fit all models and save the parameter estimates and simulated datasets
 fit_all_models <- function(){
