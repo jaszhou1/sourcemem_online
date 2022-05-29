@@ -1,0 +1,56 @@
+library(data.table)
+
+# Specify some numbers
+kappa <- 0.5
+lambda_b <- 1
+lambda_f <- 1
+
+kappa2 <- 0.75
+lambda_b2 <- 1
+lambda_f2 <- 0.5
+
+# Define a vector of raw temporal similarities
+temporal_similarity <- setNames(data.frame(matrix(ncol = 4, nrow = 19)), c('lag', 'equal', 'tau', 'lambda'))
+# Backwards intrusion slope
+temporal_similarity[1:9,1] <- -9:-1
+temporal_similarity[1:9,2] <- (1-kappa)*exp(-lambda_b*(abs(-9:-1)))
+temporal_similarity[1:9,3] <- (1-kappa2)*exp(-lambda_b*(abs(-9:-1)))
+temporal_similarity[1:9,4] <- (1-kappa)*exp(-lambda_b2*(abs(-9:-1)))
+
+temporal_similarity[10,1] <- 0
+
+# Forwards intrusion slope
+temporal_similarity[11:19,1] <- 1:9
+temporal_similarity[11:19,2] <- kappa*exp(-lambda_f*(abs(1:9)))
+temporal_similarity[11:19,3] <- kappa2*exp(-lambda_f*(abs(1:9)))
+temporal_similarity[11:19,4] <- kappa*exp(-lambda_f2*(abs(1:9)))
+
+# Normalise across serial positions
+temporal_similarity$equal <- temporal_similarity$equal/sum(temporal_similarity[setdiff(1:18, 10),]$equal)
+temporal_similarity$tau <- temporal_similarity$tau/sum(temporal_similarity[setdiff(1:18, 10),]$tau)
+temporal_similarity$lambda <- temporal_similarity$lambda/sum(temporal_similarity[setdiff(1:18, 10),]$lambda)
+
+temporal_similarity <- melt(temporal_similarity, id=c("lag"))
+colnames(temporal_similarity) <- c('lag', 'cond', 'value')
+
+ggplot(data = temporal_similarity, aes(x = lag, y = value, lty = cond, shape = cond, color = cond)) +  
+  geom_point(size = 3.5) + geom_line(lwd = 1.2, alpha = 0.5) + 
+  scale_color_manual(values=c("#009E73",
+                              "#0072B2",
+                              "#D55E00")) + 
+  scale_x_continuous(name = 'Lag of Intruding Item', breaks = c(-9, -5, -1, 1, 5, 9)) +
+  scale_y_continuous(name = 'Intrusion Probability') +
+  theme(
+    axis.text.x = element_text(color="black", size = 18),
+    axis.text.y = element_text(color="black", size = 18),
+    plot.title = element_blank(),
+    axis.title.x = element_text(color="black", size=20),
+    axis.title.y = element_text(color="black", size=20),
+    plot.background = element_rect(fill = "white"),
+    panel.grid.major = element_blank(), 
+    panel.grid.minor = element_blank(),
+    panel.background = element_blank(),
+    legend.key = element_rect(colour = "transparent", fill = "white"),
+    legend.text=element_text(size= 18),
+    axis.line = element_line(colour = "black")
+  )
