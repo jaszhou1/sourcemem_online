@@ -9,7 +9,7 @@ errmg3 = 'Component weights do not sum to 1...';
 errmg4 = 'Negative trial weight';
 %% Global variables
 
-np = 20; % Number of parameters
+np = 19; % Number of parameters
 epsx = 1e-9; % Small values to substitute for zeroes
 cden = 0.05;  % Contaminant density.
 tmax = 5.1; % Maximum response time
@@ -70,7 +70,7 @@ psi = P(17); %Weighting of semantic component within word features (chi)
 % Nondecision Time
 ter = P(18);
 st = P(19);
-iota = P(20);
+%iota = P(20); Try without orthographic exponential
 
 sigma = 1.0;
 
@@ -85,10 +85,10 @@ pest_penalty(1,:) = P;
 % ----------------------------------------------------------------------------
 %   [v1t, v2t,  v1i, v2i, eta_t, eta_i,   at,  ag,  gamma, beta, kappa, l_b,   l_f,   zeta,  rho, chi, psi, Ter, st, iota]
 % ----------------------------------------------------------------------------
-Ub= [ 6,   0,    4,   0,   1,    1,       4.5, 4.5,  1.0,  1.0,  1.0,   5,    5,     2.0,    1,    1, 1,    0.3,  0.2,  2];
-Lb= [ 1,   0,    0,   0,   0,    0,       0.1, 0.5,  0,    0,    0,   0,    0,     0,      0,    0, 0,    0,    0,    0];
-Pub=[ 5,   0,    3.5, 0,   0.9,  0.9,     4.0, 4.0,  0.99, 0.8,  0.9,   4.5,  4.5,   1.5,   0.9,  1, 1,    0.25, 0.15,  1.5];
-Plb=[ 1.1, 0,    0,   0,   0,    0,       0.7, 0.7,  0, 0.01, 0,   0.01, 0.01,  0,   0, 0, 0,    0.01, 0.01, 0];
+Ub= [ 6,   0,    4,   0,   1,    1,       4.5, 4.5,  1.0,  1.0,  1.0,   5,    5,     2.0,    1,    1, 1,    0.3,  0.2];
+Lb= [ 1,   0,    0,   0,   0,    0,       0.1, 0.5,  0,    0,    0,   0,    0,     0,      0,    0, 0,    0,    0];
+Pub=[ 5,   0,    3.5, 0,   0.9,  0.9,     4.0, 4.0,  0.99, 0.8,  0.9,   4.5,  4.5,   1.5,   0.9,  1, 1,    0.25, 0.15];
+Plb=[ 1.1, 0,    0,   0,   0,    0,       0.7, 0.7,  0, 0.01, 0,   0.01, 0.01,  0,   0, 0, 0,    0.01, 0.01];
 
 if any(P - Ub > 0) || any(Lb - P > 0)
     ll = 1e7 + ...
@@ -137,8 +137,9 @@ spatial_distances = Data(:,23:31)/2; %2 is maximum cosine distance
 spatial_similarities = shepard(spatial_distances, zeta);
 
 % Orthographic similarity
-orthographic_distances = 1- Data(:, 33:41);
-orthographic_similarities = shepard(orthographic_distances, iota);
+% orthographic_distances = 1- Data(:, 33:41);
+% orthographic_similarities = shepard(orthographic_distances, iota);
+orthographic_similarities = Data(:, 33:41);
 
 % Semantic similarity
 semantic_similarities = Data(:, 42:50);

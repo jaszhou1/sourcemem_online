@@ -179,32 +179,47 @@ errors_across_serial_position <- function(data){
     serial_position_data[i,2:4] <- serial_position(i, data)
   }
   models <- concatenate_model_average_error()
+  models$model_f <- factor(models$model, levels = c('Pure Guess',
+                                                    'Pure Intrusion',
+                                                    'Intrusion + Guess',
+                                                    'Temporal',
+                                                    'Spatiotemporal'))
   plot <- ggplot(data=serial_position_data, aes(x=position, y = error)) +
-    geom_point(size = 3) +
+    geom_point(size = 5) +
     geom_segment(data = serial_position_data, linetype = "solid", size = 1, alpha = 0.2, 
                  aes(x = position, xend = position, y = lower, yend = upper)) +
     #geom_point(data = models, aes(x = position, color = model)) +
-    geom_smooth(data = models, method = 'loess', se = FALSE, linetype="dashed", aes(x = position, color = model), span = 1.5) +
-    scale_color_manual(values=c('#42B540FF',
-                                '#00468BFF',
+    geom_smooth(data = models, method = 'loess', se = FALSE, aes(x = position, color = model_f, lty = model_f), lwd = 2, span = 2) +
+    scale_linetype_manual(values=c('solid', 
+                                   'longdash', 
+                                   'dotted', 
+                                   'dashed', 
+                                   'dotdash')) + 
+    scale_color_manual(values=c('#00468BFF',
+                                '#009E73',
                                 '#ED0000FF',
-                                '#925E9FFF',
-                                '#0099B4FF')) +
+                                '#0099B4FF',
+                                '#925E9FFF')) +
     scale_x_continuous(name = 'Study List Position', breaks = 1:10) +
-    scale_y_continuous(name = 'Average Absolute Error (rad)', breaks = c(0.9, 1.0, 1.1), limits = c(0.90, 1.1)) +
-    guides(color= guide_legend(title="Model")) +
+    scale_y_continuous(name = 'Average Absolute Error (rad)', breaks = c(0.9, 1.0, 1.1), limits = c(0.90, 1.11)) +
+    guides(color= guide_legend(nrow=2, byrow=TRUE),
+           linetype=guide_legend(nrow=2, byrow=TRUE),
+           size = 'none') +
     theme(
-      axis.text.x = element_text(color="black", size = 12),
-      axis.text.y = element_text(color="black", size = 12),
+      axis.text.x = element_text(color="black", size = 14),
+      axis.text.y = element_text(color="black", size = 14),
       plot.title = element_blank(),
-      axis.title.x = element_text(color="black", size=14),
-      axis.title.y = element_text(color="black", size=14),
+      axis.title.x = element_text(color="black", size=16),
+      axis.title.y = element_text(color="black", size=16),
       plot.background = element_rect(fill = "white"),
       panel.grid.major = element_blank(), 
       panel.grid.minor = element_blank(),
       panel.background = element_blank(),
       legend.key = element_rect(colour = "transparent", fill = "white"),
-      legend.text=element_text(size= 12),
+      legend.text=element_text(size= 14),
+      legend.key.width = unit(10, "line"),
+      legend.position="bottom",
+      legend.title= element_blank(),
       axis.line = element_line(colour = "black")
     )
   return(plot)

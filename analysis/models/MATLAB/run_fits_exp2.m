@@ -384,27 +384,27 @@ header_line = 'participant, model_name, AIC, v1_targ, v2_targ, v1_int, v2_int, e
 param_to_csv(filename, 1:n_participants, flat_intrusion_eta, 'Intrusion + Guess', header_line)
 
 filename = [datestr(now,'yyyy_mm_dd_HH'),'_pest_temporal.csv'];
-header_line = 'participant, model_name, AIC, v1_targ, v2_targ, v1_int, v2_int, eta_targ, eta_int,  a_targ, a_guess, gamma, beta, kappa, lambda_b, lambda_f, zeta, rho, chi, psi, Ter, st, iota';
+header_line = 'participant, model_name, AIC, v1_targ, v2_targ, v1_int, v2_int, eta_targ, eta_int,  a_targ, a_guess, gamma, beta, kappa, lambda_b, lambda_f, zeta, rho, chi, psi, Ter, st';
 param_to_csv(filename, 1:n_participants, temporal, 'Temporal Gradient', header_line)
 
 filename = [datestr(now,'yyyy_mm_dd_HH'),'_pest_spatiotemporal.csv'];
-header_line = 'participant, model_name, AIC, v1_targ, v2_targ, v1_int, v2_int, eta_targ, eta_int,  a_targ, a_guess, gamma, beta, kappa, lambda_b, lambda_f, zeta, rho, chi, psi, Ter, st, iota';
+header_line = 'participant, model_name, AIC, v1_targ, v2_targ, v1_int, v2_int, eta_targ, eta_int,  a_targ, a_guess, gamma, beta, kappa, lambda_b, lambda_f, zeta, rho, chi, psi, Ter, st';
 param_to_csv(filename, 1:n_participants, spatiotemporal, 'Spatiotemporal Gradient', header_line)
 
 filename = [datestr(now,'yyyy_mm_dd_HH'),'_pest_ortho.csv'];
-header_line = 'participant, model_name, AIC, v1_targ, v2_targ, v1_int, v2_int, eta_targ, eta_int,  a_targ, a_guess, gamma, beta, kappa, lambda_b, lambda_f, zeta, rho, chi, psi, Ter, st, iota';
+header_line = 'participant, model_name, AIC, v1_targ, v2_targ, v1_int, v2_int, eta_targ, eta_int,  a_targ, a_guess, gamma, beta, kappa, lambda_b, lambda_f, zeta, rho, chi, psi, Ter, st';
 param_to_csv(filename, 1:n_participants, ortho, 'Orthographic', header_line)
 
 filename = [datestr(now,'yyyy_mm_dd_HH'),'_pest_semantic.csv'];
-header_line = 'participant, model_name, AIC, v1_targ, v2_targ, v1_int, v2_int, eta_targ, eta_int,  a_targ, a_guess, gamma, beta, kappa, lambda_b, lambda_f, zeta, rho, chi, psi, Ter, st, iota';
+header_line = 'participant, model_name, AIC, v1_targ, v2_targ, v1_int, v2_int, eta_targ, eta_int,  a_targ, a_guess, gamma, beta, kappa, lambda_b, lambda_f, zeta, rho, chi, psi, Ter, st';
 param_to_csv(filename, 1:n_participants, semantic, 'Semantic', header_line)
 
 filename = [datestr(now,'yyyy_mm_dd_HH'),'_pest_additive.csv'];
-header_line = 'participant, model_name, AIC, v1_targ, v2_targ, v1_int, v2_int, eta_targ, eta_int,  a_targ, a_guess, gamma, beta, kappa, lambda_b, lambda_f, zeta, rho, chi, psi, Ter, st, iota';
+header_line = 'participant, model_name, AIC, v1_targ, v2_targ, v1_int, v2_int, eta_targ, eta_int,  a_targ, a_guess, gamma, beta, kappa, lambda_b, lambda_f, zeta, rho, chi, psi, Ter, st';
 param_to_csv(filename, 1:n_participants, add, 'Additive', header_line)
 
 filename = [datestr(now,'yyyy_mm_dd_HH'),'_pest_multiplicative.csv'];
-header_line = 'participant, model_name, AIC, v1_targ, v2_targ, v1_int, v2_int, eta_targ, eta_int,  a_targ, a_guess, gamma, beta, kappa, lambda_b, lambda_f, zeta, rho, chi, psi, Ter, st, iota';
+header_line = 'participant, model_name, AIC, v1_targ, v2_targ, v1_int, v2_int, eta_targ, eta_int,  a_targ, a_guess, gamma, beta, kappa, lambda_b, lambda_f, zeta, rho, chi, psi, Ter, st';
 param_to_csv(filename, 1:n_participants, multi, 'Multiplicative', header_line)
 
 csvwrite('sim_add.csv', simulated_add)
