@@ -86,9 +86,6 @@ fit_flat_intrusion <- function(participant){
 }
 
 fit_flat_intrusion_all <- function(){
-  if(missing(is_parallel)){
-    is_parallel <- TRUE
-  }
   participants <- unique(data$participant)
   
   cl <- makeForkCluster((detectCores() - 1))
