@@ -6,9 +6,10 @@ load("~/git/sourcemem_online/analysis/models/R/experiment_1/output/2022-01-17_re
 # }
 # 
 # color_wheel <- gg_color_hue(5)
+
 color_wheel <- c('#00468BFF',
+                 '#009E73',
                  '#ED0000FF',
-                 '#42B540FF',
                  '#0099B4FF',
                  '#925E9FFF')
 
@@ -25,7 +26,7 @@ MODEL.COL <- list(
   "Spatiotemporal Gradient" = color_wheel[5]
 )
 
-line_types <- c('twodash', 'longdash', 'dotdash', 'dotted', 'dashed')
+line_types <- c('solid', 'longdash', 'dotted', 'dashed', 'dotdash')
 MODEL.LTY <- list(
   "Pure Guess"= line_types[1],
   "Pure Intrusion"= line_types[2],
@@ -91,7 +92,7 @@ plot_recentered <- function(model_list, this_recentered_predictions, filename){
   
   for(model.type in MODEL.TYPES[model_list]) {
     model.data <- this_recentered_predictions[this_recentered_predictions$model == model.type, ]
-    points(model.data$value, model.data$prob, type="l", lty= MODEL.LTY[[model.type]], lwd = 4, col=MODEL.COL[[model.type]])
+    points(model.data$value, model.data$prob, type="l", lty= MODEL.LTY[[model.type]], lwd = 6, col=MODEL.COL[[model.type]])
   }
   
   axis(side=1, at=c(-pi, 0, pi), labels=c(expression(-pi), "0", expression(pi)), cex.axis= AXIS.CEX)
@@ -101,7 +102,7 @@ plot_recentered <- function(model_list, this_recentered_predictions, filename){
   
   ## Add in legend
   legend("topright", legend= MODEL.TYPES[model_list],
-         col=color_wheel[model_list], lty=MODEL.LTY[[model.type]], lwd = 2, bty = "n",cex=AXIS.CEX, title="Models")
+         col=color_wheel[model_list], lty=line_types[model_list], lwd = 5, bty = "n",cex=AXIS.CEX, title="Models")
   
   # Close the plotting device
   if(filename != "") {

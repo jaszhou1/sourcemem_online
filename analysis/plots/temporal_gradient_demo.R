@@ -6,7 +6,7 @@ lambda_b <- 1
 lambda_f <- 1
 
 kappa2 <- 0.75
-lambda_b2 <- 1
+lambda_b2 <- 2
 lambda_f2 <- 0.5
 
 # Define a vector of raw temporal similarities
@@ -15,7 +15,7 @@ temporal_similarity <- setNames(data.frame(matrix(ncol = 4, nrow = 19)), c('lag'
 temporal_similarity[1:9,1] <- -9:-1
 temporal_similarity[1:9,2] <- (1-kappa)*exp(-lambda_b*(abs(-9:-1)))
 temporal_similarity[1:9,3] <- (1-kappa2)*exp(-lambda_b*(abs(-9:-1)))
-temporal_similarity[1:9,4] <- (1-kappa)*exp(-lambda_b2*(abs(-9:-1)))
+temporal_similarity[1:9,4] <- (1-kappa2)*exp(-lambda_b2*(abs(-9:-1)))
 
 temporal_similarity[10,1] <- 0
 
@@ -23,7 +23,7 @@ temporal_similarity[10,1] <- 0
 temporal_similarity[11:19,1] <- 1:9
 temporal_similarity[11:19,2] <- kappa*exp(-lambda_f*(abs(1:9)))
 temporal_similarity[11:19,3] <- kappa2*exp(-lambda_f*(abs(1:9)))
-temporal_similarity[11:19,4] <- kappa*exp(-lambda_f2*(abs(1:9)))
+temporal_similarity[11:19,4] <- kappa2*exp(-lambda_f2*(abs(1:9)))
 
 # Normalise across serial positions
 temporal_similarity$equal <- temporal_similarity$equal/sum(temporal_similarity[setdiff(1:18, 10),]$equal)

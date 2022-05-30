@@ -18,10 +18,9 @@ data <- read.csv('sourcemem_data_2021.csv')
 setwd("~/git/sourcemem_online/analysis/models/R/model_code")
 
 source('mixture_model.R')
-source('three_component_model.R')
 source('three_component_model_precision.R')
 source('pure_intrusion.R')
-
+source('temporal_gradient_model_flat_guesses.R')
 
 if(min(data$present_trial == 0)){
   data$present_trial <- data$present_trial + 1
@@ -105,25 +104,25 @@ fit_pure_intrusion <- function(participant){
   return(fit)
 }
 
-fit_intrusion <- function(participant){
-  
-  # Assemble data that goes into the matrix
-  in_data <- data[(data$participant == participant),]
-  
-  # Parameter Boundaries
-  lower <- c(0.1, 0.01, 0.01)
-  upper <- c(250, 1, 1)
-  
-  # Optimise
-  this_fit <- DEoptim(intrusion_model, lower, upper, control = DEoptim.control(itermax = 200), in_data)
-  
-  # Calculate aic
-  aic <- get_aic(this_fit$optim$bestval, length(upper))
-  this_fit$optim$aic<-aic
-  fit <- this_fit$optim
-  # Pass out best fitting parameters
-  return(fit)
-}
+# fit_intrusion <- function(participant){
+#   
+#   # Assemble data that goes into the matrix
+#   in_data <- data[(data$participant == participant),]
+#   
+#   # Parameter Boundaries
+#   lower <- c(0.1, 0.01, 0.01)
+#   upper <- c(250, 1, 1)
+#   
+#   # Optimise
+#   this_fit <- DEoptim(intrusion_model, lower, upper, control = DEoptim.control(itermax = 200), in_data)
+#   
+#   # Calculate aic
+#   aic <- get_aic(this_fit$optim$bestval, length(upper))
+#   this_fit$optim$aic<-aic
+#   fit <- this_fit$optim
+#   # Pass out best fitting parameters
+#   return(fit)
+# }
 
 fit_intrusion_precision <- function(participant){
   
@@ -198,32 +197,32 @@ fit_pure_intrusion_all <- function(){
   return(pure_int)
 }
 
-fit_intrusion_all <- function(){
-  # Empty dataframe to store fitted parameters
-  fit <- data.frame(
-    participant = integer(),
-    nLL = numeric(),
-    aic = numeric(),
-    prec = numeric(),
-    gamma = numeric(), 
-    beta = numeric(), 
-    stringsAsFactors = FALSE
-  )
-  
-  participants <- unique(data$participant)
-  
-  for (i in 1:length(participants)){
-    optim <- fit_intrusion(participants[i])
-    pest <- optim$bestmem
-    this_fit <- c(participants[i], optim$bestval, optim$aic, pest[1], pest[2], pest[3])
-    fit[nrow(fit)+1, ] <- this_fit
-  }
-  
-  fit$prec <- as.numeric(fit$prec)
-  fit$gamma <- as.numeric(fit$gamma)
-  fit$beta <- as.numeric(fit$beta)
-  return(fit)
-}
+# fit_intrusion_all <- function(){
+#   # Empty dataframe to store fitted parameters
+#   fit <- data.frame(
+#     participant = integer(),
+#     nLL = numeric(),
+#     aic = numeric(),
+#     prec = numeric(),
+#     gamma = numeric(), 
+#     beta = numeric(), 
+#     stringsAsFactors = FALSE
+#   )
+#   
+#   participants <- unique(data$participant)
+#   
+#   for (i in 1:length(participants)){
+#     optim <- fit_intrusion(participants[i])
+#     pest <- optim$bestmem
+#     this_fit <- c(participants[i], optim$bestval, optim$aic, pest[1], pest[2], pest[3])
+#     fit[nrow(fit)+1, ] <- this_fit
+#   }
+#   
+#   fit$prec <- as.numeric(fit$prec)
+#   fit$gamma <- as.numeric(fit$gamma)
+#   fit$beta <- as.numeric(fit$beta)
+#   return(fit)
+# }
 
 fit_intrusion_prec_all <- function(){
   # Empty dataframe to store fitted parameters
@@ -281,19 +280,19 @@ simulate_pure_intrusion_dataset <- function(data, res){
   return(simulated_data)
 }
 
-simulate_intrusion_dataset <- function(data, res){
-  simulated_data <- data.frame()
-  participants <- unique(data$participant)
-  for (i in participants){
-    this_data <- data[data$participant == i,]
-    this_prec <- res[(res$participant == i),]$prec # Precision of memory distribution
-    this_gamma <- res[(res$participant == i),]$gamma # Proportion of intrusions
-    this_beta <- res[(res$participant == i),]$beta
-    this_simulated_data <- sim_intrusion(i, this_prec, this_gamma, this_beta, this_data)
-    simulated_data <- rbind(simulated_data, this_simulated_data)
-  }
-  return(simulated_data)
-}
+# simulate_intrusion_dataset <- function(data, res){
+#   simulated_data <- data.frame()
+#   participants <- unique(data$participant)
+#   for (i in participants){
+#     this_data <- data[data$participant == i,]
+#     this_prec <- res[(res$participant == i),]$prec # Precision of memory distribution
+#     this_gamma <- res[(res$participant == i),]$gamma # Proportion of intrusions
+#     this_beta <- res[(res$participant == i),]$beta
+#     this_simulated_data <- sim_intrusion(i, this_prec, this_gamma, this_beta, this_data)
+#     simulated_data <- rbind(simulated_data, this_simulated_data)
+#   }
+#   return(simulated_data)
+# }
 
 simulate_intprec_dataset <- function(data, res){
   simulated_data <- data.frame()
@@ -310,6 +309,124 @@ simulate_intprec_dataset <- function(data, res){
   return(simulated_data)
 }
 
+## Temporal Gradient Model
+fit_temporal <- function(participant){
+  
+  # Assemble data that goes into the matrix
+  this_data <- data[(data$participant == participant),]
+  
+  # Parameter Boundaries
+  lower <- c(0.1, 0.1, 0, 0, 0, 0, 0)
+  upper <- c(50, 50, 1, 1, 5, 5, 1)
+  
+  # Set some starting parameters
+  
+  
+  # Optimise
+  this_fit <- DEoptim(temporal_model, lower, upper, control = DEoptim.control(itermax = 200), this_data)
+  
+  # Calculate aic
+  aic <- get_aic(this_fit$optim$bestval, length(upper))
+  this_fit$optim$aic<-aic
+  fit <- this_fit$optim
+  # Pass out best fitting parameters
+  return(fit)
+}
+
+fit_temporal_all <- function(is_parallel){
+  if(missing(is_parallel)){
+    is_parallel <- TRUE
+  }
+  participants <- unique(data$participant)
+  cl <- makeForkCluster((detectCores() - 1))
+  registerDoParallel(cl)
+  res = foreach (i = 1:length(participants),
+                 .combine = rbind) %dopar% {
+                   source('temporal_gradient_model_flat_guesses.R')     
+                   optim <- fit_temporal(participants[i])
+                   pest <- optim$bestmem
+                   this_fit <- c(participants[i], optim$bestval, optim$aic, pest[1:7])
+                   return(this_fit)
+                 }
+  colnames(res) <- c('participant','nLL','aic','prec1','prec2','gamma', 'kappa', 'lambda_b', "lambda_f", "beta")
+  temporal <- as.data.frame(res)
+  write.csv(temporal, paste(toString(Sys.Date()), '_temporal_pest.csv', sep =""))
+  sim_temp <- simulate_temporal_dataset(data, res)
+  save(temporal, sim_temp, file = paste(toString(Sys.Date()), '_temporal_pest.RData', sep =""))
+  return(res)
+}
+
+simulate_temporal_dataset <- function(data, res){
+  simulated_data <- data.frame()
+  participants <- unique(data$participant)
+  for (i in participants){
+    this_data <- data[data$participant == i,]
+    this_pest <- res[(res$participant == i),4:10]
+    this_simulated_data <- simulate_temporal_model(i, this_data, this_pest)
+    simulated_data <- rbind(simulated_data, this_simulated_data)
+  }
+  return(simulated_data)
+}
+
+
+
+fit_space_x_time <- function(participant){
+  
+  # Assemble data that goes into the matrix
+  this_data <- data[(data$participant == participant),]
+  
+  # Parameter Boundaries
+  lower <- c(0.1, 0.1, 0, 0, 0, 0, 0, 0, 0)
+  upper <- c(50, 50, 2, 1, 5, 5, 1, 1, 1)
+  
+  # Optimise
+  this_fit <- DEoptim(spatiotemporal_model, lower, upper, control = DEoptim.control(itermax = 200), this_data)
+  
+  # Calculate aic
+  aic <- get_aic(this_fit$optim$bestval, length(upper))
+  this_fit$optim$aic<-aic
+  fit <- this_fit$optim
+  # Pass out best fitting parameters
+  return(fit)
+}
+
+simulate_dataset_space_x_time <- function(data, res){
+  simulated_data <- data.frame()
+  participants <- unique(data$participant)
+  for (i in participants){
+    this_data <- data[data$participant == i,]
+    this_pest <- res[(res$participant == i),4:12]
+    this_simulated_data <- simulate_spatiotemporal_model(i, this_data, this_pest)
+    simulated_data <- rbind(simulated_data, this_simulated_data)
+  }
+  return(simulated_data)
+}
+
+
+fit_space_x_time_all <- function(is_parallel){
+  if(missing(is_parallel)){
+    is_parallel <- TRUE
+  }
+  participants <- unique(data$participant)
+  
+  cl <- makeForkCluster((detectCores() - 1))
+  registerDoParallel(cl)
+  res = foreach (i = 1:length(participants),
+                 .combine = rbind) %dopar% {
+                   optim <- fit_space_x_time(participants[i])
+                   pest <- optim$bestmem
+                   this_fit <- c(participants[i], optim$bestval, optim$aic, pest[1:9])
+                   return(this_fit)
+                 }
+  colnames(res) <- c('participant','nLL','aic','prec1','prec2','gamma', 'kappa', 'lambda_b', "lambda_f", "beta", "zeta", "rho")
+  spatiotemporal <- as.data.frame(res)
+  write.csv(spatiotemporal, paste(toString(Sys.Date()), '_exp2_spatiotemporal_pest.csv', sep =""))
+  sim_SxT <- simulate_dataset_space_x_time(data, spatiotemporal)
+  #save(res, sim_SxT, file = paste(toString(Sys.Date()), '_space_x_time_pest.RData', sep =""))
+  save(spatiotemporal, sim_SxT, file = paste(toString(Sys.Date()), '_exp2_spatiotemporal.RData', sep =""))
+  return(spatiotemporal)
+}
+
 # Fit models and simulate datasets from each model for plotting
 run_fits <- function(){
   mix <- fit_mixture_all()
@@ -320,13 +437,19 @@ run_fits <- function(){
   write.csv(pure_int, paste(toString(Sys.Date()), 'pure_int_pest.csv', sep =""))
   sim_pure_intrusion <- simulate_pure_intrusion_dataset(data, pure_int)
   
-  int <- fit_intrusion_all()
-  write.csv(int, paste(toString(Sys.Date()), '_int_pest.csv', sep =""))
-  sim_intrusion <- simulate_intrusion_dataset(data, int)
+  # int <- fit_intrusion_all()
+  # write.csv(int, paste(toString(Sys.Date()), '_int_pest.csv', sep =""))
+  # sim_intrusion <- simulate_intrusion_dataset(data, int)
 
   int_prec <- fit_intrusion_prec_all()
-  write.csv(int_prec, paste(toString(Sys.Date()), '_intprec_pest.csv', sep =""))
+  write.csv(int_prec, paste(toString(Sys.Date()), '_flat_intrusion_pest.csv', sep =""))
   sim_intprec <- simulate_intprec_dataset(data, int_prec)
+  
+  temporal <- fit_temporal_all()
+  sim_temporal <- simulate_temporal_dataset(data, temporal)
+  
+  spatiotemporal <- fit_space_x_time_all()
+  sim_spatiotemporal <- simulate_dataset_space_x_time(data, spatiotemporal)
   
   filename <- paste(toString(Sys.Date()), '.RData', sep = "")
   save.image(file = filename)

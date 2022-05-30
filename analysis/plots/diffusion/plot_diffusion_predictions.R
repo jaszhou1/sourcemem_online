@@ -70,10 +70,19 @@ colnames(response_error_predictions) <- c("value", "prob", "model")
 
 # Define some colours
 color_wheel <- c('#00468BFF',
+                 '#009E73',
                  '#ED0000FF',
-                 '#42B540FF',
                  '#0099B4FF',
                  '#925E9FFF')
+
+line_types <- c('solid', 'longdash', 'dotted', 'longdash', 'solid')
+MODEL.LTY <- list(
+  "Pure Guess"= line_types[1],
+  "Pure Intrusion"= line_types[2],
+  "Intrusion + Guess"= line_types[3],
+  "Temporal" = line_types[4],
+  "Spatiotemporal" = line_types[5] 
+)
 
 # Assign models to colours
 MODEL.TYPES <- unique(as.character(response_error_predictions$model))
@@ -124,7 +133,7 @@ plot_response_error <- function(model_list, filename){
   
   for(model.type in MODEL.TYPES[model_list]) {
     model.data <- response_error_predictions[response_error_predictions$model == model.type, ]
-    points(model.data$value, model.data$prob, type="l", lty=2, lwd = 3, col=MODEL.COL[[model.type]])
+    points(model.data$value, model.data$prob, type="l", lty= MODEL.LTY[[model.type]], lwd = 6, col=MODEL.COL[[model.type]])
   }
   
   axis(side=1, at=c(-pi, 0, pi), labels=c(expression(-pi), "0", expression(pi)), cex.axis= AXIS.CEX)
@@ -187,7 +196,7 @@ plot_response_time <- function(model_list, filename){
   
   for(model.type in MODEL.TYPES[model_list]) {
     model.data <- response_time_predictions[response_time_predictions$model == model.type, ]
-    points(model.data$value, model.data$prob, type="l", lty = 2, lwd = 3, col=MODEL.COL[[model.type]])
+    points(model.data$value, model.data$prob, type="l", lty= MODEL.LTY[[model.type]], lwd = 6, col=MODEL.COL[[model.type]])
   }
   
   axis(side=1, at=c(0, 2, 4, 6, 7), labels= c("0", "2", "4", "6", "7"), cex.axis=AXIS.CEX)
@@ -197,7 +206,7 @@ plot_response_time <- function(model_list, filename){
   
   ## Add in legend
   legend("topright", legend= MODEL.TYPES[model_list],
-         col=color_wheel[model_list], lty=2, lwd = 2, bty = "n",cex=AXIS.CEX, title="Models")
+         col=color_wheel[model_list], lty=line_types[model_list], lwd = 5, bty = "n",cex=AXIS.CEX, title="Models")
   
   # Close the plotting device
   dev.off()

@@ -160,7 +160,7 @@ simulate_ortho_model <- function(participant, data, pest){
   zeta <- pest[[8]]
   rho <- pest[[9]]
   chi <- pest[[10]]
-  iota <- pest[11]
+  iota <- pest[[11]]
   
   shepard_similarity <- function(x, k){
     x <- exp(-k * x)
@@ -233,7 +233,7 @@ simulate_ortho_model <- function(participant, data, pest){
     stringsAsFactors = FALSE
   )
   
-  nSims = 1
+  nSims = 5
   this_data <- data
   # Get the angles for each trial
   block_angles <- cbind(this_data[,6], this_data[,14:22])

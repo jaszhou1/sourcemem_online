@@ -97,8 +97,8 @@ for(i in 1:length(models)){
 }
 colnames(asymm_predictions) <- c("value", "prob", "model", "direction", "lag")
 asymm_predictions$direction_f <- factor(asymm_predictions$direction, levels = c('forwards', 'backwards'))
-
-ggplot(data = asymm_predictions, aes(x = value, y = prob, lty = model, color = model)) +  
+asymm_predictions$model_f <- factor(asymm_predictions$model, levels = c('Equal', 'Tau', 'Lambda'))
+ggplot(data = asymm_predictions, aes(x = value, y = prob, lty = model_f, color = model_f)) +  
   geom_line(lwd = 1.2) + facet_wrap(~ direction_f + lag) +
   scale_color_manual(values=c("#009E73",
                               "#0072B2",
@@ -117,8 +117,8 @@ ggplot(data = asymm_predictions, aes(x = value, y = prob, lty = model, color = m
     panel.grid.minor = element_blank(),
     panel.background = element_blank(),
     legend.title = element_blank(),
-    legend.key = element_blank(),
-    legend.text=element_blank(),
+    #legend.key = element_blank(),
+    #legend.text=element_blank(),
     axis.line = element_line(colour = "black"),
     strip.background =element_rect(fill="white"),
     strip.text = element_text(colour = 'white')

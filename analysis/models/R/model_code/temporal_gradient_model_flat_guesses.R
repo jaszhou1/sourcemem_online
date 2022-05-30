@@ -191,7 +191,7 @@ simulate_temporal_model <- function(participant, data, pest){
     stringsAsFactors = FALSE
   )
   
-  nSims = 1
+  nSims = 5
   this_data <- data
   # Get the angles for each trial
   block_angles <- cbind(this_data[,7], this_data[,14:22])
