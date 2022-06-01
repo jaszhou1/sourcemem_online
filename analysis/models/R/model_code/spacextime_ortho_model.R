@@ -30,7 +30,7 @@ ortho_model <- function(params, data){
   zeta <- params[8]
   rho <- params[9]
   chi <- params[10]
-  iota <- params[11]
+  #iota <- params[11]
   
   # Function to compute angular difference
   
@@ -46,7 +46,8 @@ ortho_model <- function(params, data){
   
   # Turn levenshtein distance into similarity
   orthographic_similarity <- data.frame(matrix(nrow = nrow(data), ncol = n_intrusions))
-  orthographic_similarity[,1:9] <- lapply((1- data[,51:59]), shepard_similarity, k = iota)
+  #orthographic_similarity[,1:9] <- lapply((1- data[,51:59]), shepard_similarity, k = iota)
+  orthographic_similarity[,1:9] <- 1- data[,51:59]
   
   # Turn cosine distances between target and intrusions into Shepard similarity
   spatial_similarity <- data.frame(matrix(nrow = nrow(data), ncol = n_intrusions))
@@ -160,7 +161,7 @@ simulate_ortho_model <- function(participant, data, pest){
   zeta <- pest[[8]]
   rho <- pest[[9]]
   chi <- pest[[10]]
-  iota <- pest[[11]]
+  #iota <- pest[[11]]
   
   shepard_similarity <- function(x, k){
     x <- exp(-k * x)
@@ -169,7 +170,8 @@ simulate_ortho_model <- function(participant, data, pest){
   
   # Turn levenshtein distance into similarity
   orthographic_similarity <- data.frame(matrix(nrow = nrow(data), ncol = n_intrusions))
-  orthographic_similarity[,1:9] <- lapply((1- data[,51:59]), shepard_similarity, k = iota)
+  # orthographic_similarity[,1:9] <- lapply((1- data[,51:59]), shepard_similarity, k = iota)
+  orthographic_similarity[,1:9] <- 1- data[,51:59]
   
   # Turn cosine distances between target and intrusions into Shepard similarity
   spatial_similarity <- data.frame(matrix(nrow = nrow(data), ncol = n_intrusions))

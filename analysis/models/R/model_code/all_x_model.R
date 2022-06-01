@@ -32,7 +32,7 @@ all_x_model <- function(params, data){
   rho <- params[9]
   chi <- params[10]
   psi <- params[11]
-  iota <- params[12]
+  # iota <- params[12]
 
   # Function to compute angular difference
   
@@ -52,7 +52,8 @@ all_x_model <- function(params, data){
   
   # Turn levenshtein distance into similarity
   orthographic_similarity <- data.frame(matrix(nrow = nrow(data), ncol = n_intrusions))
-  orthographic_similarity[,1:9] <- lapply((1- data[,51:59]), shepard_similarity, k = iota)
+  # orthographic_similarity[,1:9] <- lapply((1- data[,51:59]), shepard_similarity, k = iota)
+  orthographic_similarity[,1:9] <- 1- data[,51:59]
   
   # Turn cosine distances between target and intrusions into Shepard similarity
   spatial_similarity <- data.frame(matrix(nrow = nrow(data), ncol = n_intrusions))
@@ -168,9 +169,9 @@ simulate_all_x_model <- function(participant, data, pest){
   rho <- pest[[9]]
   chi <- pest[[10]]
   psi <- pest[[11]]
-  iota <- pest[[12]]
+  # iota <- pest[[12]]
   
-  tau <- 1-(rho+chi+psi)
+  # tau <- 1-(rho+chi+psi)
   
   shepard_similarity <- function(x, k){
     x <- exp(-k * x)
@@ -183,7 +184,8 @@ simulate_all_x_model <- function(participant, data, pest){
   
   # Turn levenshtein distance into similarity
   orthographic_similarity <- data.frame(matrix(nrow = nrow(data), ncol = n_intrusions))
-  orthographic_similarity[,1:9] <- lapply((1- data[,51:59]), shepard_similarity, k = iota)
+  # orthographic_similarity[,1:9] <- lapply((1- data[,51:59]), shepard_similarity, k = iota)
+  orthographic_similarity[,1:9] <- 1- data[,51:59]
   
   # Turn cosine distances between target and intrusions into Shepard similarity
   spatial_similarity <- data.frame(matrix(nrow = nrow(data), ncol = n_intrusions))

@@ -206,8 +206,8 @@ fit_ortho <- function(participant){
   this_data <- data[(data$participant == participant),]
   
   # Parameter Boundaries
-  lower <- c(0.1, 0.1, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-  upper <- c(40, 40, 1, 1, 5, 5, 0.8, 1, 1, 1, 1)
+  lower <- c(0.1, 0.1, 0, 0, 0, 0, 0, 0, 0, 0)
+  upper <- c(40, 40, 1, 1, 5, 5, 0.8, 1, 1, 1)
   
   # Optimise
   this_fit <- DEoptim(ortho_model, lower, upper, control = DEoptim.control(itermax = 200), this_data)
@@ -263,8 +263,8 @@ fit_space_x_time_plus_ortho_x_sem <- function(participant){
   this_data <- data[(data$participant == participant),]
   
   # Parameter Boundaries
-  lower <- c(0.1, 0.1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-  upper <- c(40, 40, 1, 1, 5, 5, 0.8, 1, 1, 1, 1, 1)
+  lower <- c(0.1, 0.1, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+  upper <- c(40, 40, 1, 1, 5, 5, 0.8, 1, 1, 1, 1)
   
   # Optimise
   this_fit <- DEoptim(spacextime_plus_orthoxsem_model, lower, upper, control = DEoptim.control(itermax = 200), this_data)
@@ -282,8 +282,8 @@ fit_all_x <- function(participant){
   this_data <- data[(data$participant == participant),]
   
   # Parameter Boundaries
-  lower <- c(0.1, 0.1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-  upper <- c(40, 40, 1, 1, 5, 5, 0.8, 1, 1, 1, 1, 1)
+  lower <- c(0.1, 0.1, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+  upper <- c(40, 40, 1, 1, 5, 5, 0.8, 1, 1, 1, 1)
   
   # Optimise
   this_fit <- DEoptim(all_x_model, lower, upper, control = DEoptim.control(itermax = 200), this_data)
@@ -315,7 +315,7 @@ simulate_dataset_ortho <- function(data, res){
   participants <- unique(data$participant)
   for (i in participants){
     this_data <- data[data$participant == i,]
-    this_pest <- res[(res$participant == i),4:14]
+    this_pest <- res[(res$participant == i),4:13]
     this_simulated_data <- simulate_ortho_model(i, this_data, this_pest)
     simulated_data <- rbind(simulated_data, this_simulated_data)
   }
@@ -351,7 +351,7 @@ simulate_dataset_space_x_time_plus_ortho_x_sem <- function(data, res){
   participants <- unique(data$participant)
   for (i in participants){
     this_data <- data[data$participant == i,]
-    this_pest <- res[(res$participant == i),4:15]
+    this_pest <- res[(res$participant == i),4:14]
     this_simulated_data <- simulate_spacextime_plus_orthoxsem_model(i, this_data, this_pest)
     simulated_data <- rbind(simulated_data, this_simulated_data)
   }
@@ -363,7 +363,7 @@ simulate_dataset_all_x <- function(data, res){
   participants <- unique(data$participant)
   for (i in participants){
     this_data <- data[data$participant == i,]
-    this_pest <- res[(res$participant == i),4:15]
+    this_pest <- res[(res$participant == i),4:14]
     this_simulated_data <- simulate_all_x_model(i, this_data, this_pest)
     simulated_data <- rbind(simulated_data, this_simulated_data)
   }
@@ -403,11 +403,11 @@ fit_ortho_all <- function(){
                  .combine = rbind) %dopar% {
                    optim <- fit_ortho(participants[i])
                    pest <- optim$bestmem
-                   this_fit <- c(participants[i], optim$bestval, optim$aic, pest[1:11])
+                   this_fit <- c(participants[i], optim$bestval, optim$aic, pest[1:10])
                    return(this_fit)
                  }
   colnames(res) <- c('participant','nLL','aic','prec1','prec2','gamma', 'kappa', 
-                     'lambda_b', 'lambda_f', 'beta', 'zeta', 'rho', 'chi', 'iota')
+                     'lambda_b', 'lambda_f', 'beta', 'zeta', 'rho', 'chi')
   ortho <- as.data.frame(res)
   write.csv(ortho, paste(toString(Sys.Date()), '_exp2_ortho_pest.csv', sep =""))
   sim_ortho <- simulate_dataset_ortho(data, ortho)
@@ -465,11 +465,11 @@ fit_space_x_time_plus_ortho_x_sem_all <- function(){
                  .combine = rbind) %dopar% {
                    optim <- fit_space_x_time_plus_ortho_x_sem(participants[i])
                    pest <- optim$bestmem
-                   this_fit <- c(participants[i], optim$bestval, optim$aic, pest[1:12])
+                   this_fit <- c(participants[i], optim$bestval, optim$aic, pest[1:11])
                    return(this_fit)
                  }
   colnames(res) <- c('participant','nLL','aic','prec1','prec2','gamma', 'kappa', 
-                     'lambda_b', 'lambda_f', 'beta', 'zeta', 'rho', 'chi', 'psi', 'iota')
+                     'lambda_b', 'lambda_f', 'beta', 'zeta', 'rho', 'chi', 'psi')
   add <- as.data.frame(res)
   write.csv(add, paste(toString(Sys.Date()), '_exp2_add_pest.csv', sep =""))
   sim_SxTpOxSe <- simulate_dataset_space_x_time_plus_ortho_x_sem(data, res)
@@ -486,11 +486,11 @@ fit_all_x_all <- function(){
                  .combine = rbind) %dopar% {
                    optim <- fit_all_x(participants[i])
                    pest <- optim$bestmem
-                   this_fit <- c(participants[i], optim$bestval, optim$aic, pest[1:12])
+                   this_fit <- c(participants[i], optim$bestval, optim$aic, pest[1:11])
                    return(this_fit)
                  }
   colnames(res) <- c('participant','nLL','aic','prec1','prec2','gamma', 'kappa', 
-                     'lambda_b', 'lambda_f', 'beta', 'zeta', 'rho', 'chi', 'psi', 'iota')
+                     'lambda_b', 'lambda_f', 'beta', 'zeta', 'rho', 'chi', 'psi')
   multi <- as.data.frame(res)
   write.csv(multi, paste(toString(Sys.Date()), '_exp2_multi_pest.csv', sep =""))
   sim_multi <- simulate_dataset_all_x(data, res)

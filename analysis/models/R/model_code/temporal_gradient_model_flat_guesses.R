@@ -27,11 +27,11 @@ temporal_model <- function(params, data){
   beta <- params[7]
   
   #Ensure precision of memory > precision of intrusions
-  if(prec1 < prec2){
-    print("Precision of Intrusion > Precision of Memory")
-    nLL <- 1e7
-    return(nLL)
-  }
+  # if(prec1 < prec2){
+  #   print("Precision of Intrusion > Precision of Memory")
+  #   nLL <- 1e7
+  #   return(nLL)
+  # }
 
   
   # Function to compute angular difference
