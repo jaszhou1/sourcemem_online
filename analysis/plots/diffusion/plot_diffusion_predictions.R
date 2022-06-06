@@ -26,10 +26,10 @@ intrusion$model <- 'Intrusion + Guess'
 # intrusion_eta$model <- 'Intrusion + Guess (Different Eta)'
 
 temporal <- read.csv('sim_temporal.csv', header = FALSE)
-temporal$model <- 'Temporal Gradient'
+temporal$model <- 'Temporal'
 
 spatiotemporal <- read.csv('sim_spatiotemporal.csv', header = FALSE)
-spatiotemporal$model <- 'Spatiotemporal Gradient'
+spatiotemporal$model <- 'Spatiotemporal'
 
 model_predictions <- rbind(pure_guess, pure_intrusion, intrusion, temporal, spatiotemporal)
 colnames(model_predictions) <- c('error', 'time', 'participant', 'model')
@@ -75,7 +75,7 @@ color_wheel <- c('#00468BFF',
                  '#0099B4FF',
                  '#925E9FFF')
 
-line_types <- c('solid', 'longdash', 'dotted', 'longdash', 'solid')
+line_types <- c('solid', 'longdash', 'dotted', 'dashed', 'dotdash')
 MODEL.LTY <- list(
   "Pure Guess"= line_types[1],
   "Pure Intrusion"= line_types[2],
@@ -91,8 +91,8 @@ MODEL.COL <- list(
   "Pure Intrusion"= color_wheel[2],
   "Intrusion + Guess"= color_wheel[3],
   #"Intrusion + Guess (Different Eta)" = color_wheel[4],
-  "Temporal Gradient" = color_wheel[4],
-  "Spatiotemporal Gradient" = color_wheel[5]
+  "Temporal" = color_wheel[4],
+  "Spatiotemporal" = color_wheel[5]
 )
 
 ## Compute variables required for chart layout.
@@ -133,7 +133,7 @@ plot_response_error <- function(model_list, filename){
   
   for(model.type in MODEL.TYPES[model_list]) {
     model.data <- response_error_predictions[response_error_predictions$model == model.type, ]
-    points(model.data$value, model.data$prob, type="l", lty= MODEL.LTY[[model.type]], lwd = 6, col=MODEL.COL[[model.type]])
+    points(model.data$value, model.data$prob, type="l", lty= MODEL.LTY[[model.type]], lwd = 5, col=MODEL.COL[[model.type]])
   }
   
   axis(side=1, at=c(-pi, 0, pi), labels=c(expression(-pi), "0", expression(pi)), cex.axis= AXIS.CEX)
@@ -230,25 +230,33 @@ plot_qq <- function(data, model, filename){
     this_qq <- all_qq_points(rt_quantiles, error_quantiles, this_model, i)
     model_qq <- rbind(model_qq, this_qq)
   }
-  
+  model_qq$model_f <- factor(model_qq$model, c('Pure Guess', 'Pure Intrusion', 'Intrusion + Guess',
+                                         'Temporal', 'Spatiotemporal'))
   # Plot (ggplot)
   plot <- ggplot() +
     geom_point(data=data_qq, size = 3, aes(x= theta, y = rt, shape = factor(rt_q))) +
-    geom_segment(data = data_qq, linetype = "solid", size = 1, alpha = 0.4, 
+    geom_segment(data = data_qq, linetype = "solid", size = 1, alpha = 0.5, 
                  aes(x = theta, xend = theta, y = rt_lower, yend = rt_upper, group = rt_q)) +
-    geom_point(data=model_qq, size = 3, alpha = 0.5, aes(x= theta, y = rt, shape = factor(rt_q), color = model)) +
-    geom_line(data = model_qq, linetype="dashed", alpha = 0.5, size = 1, aes(x = theta, y = rt,
-                                   color = model, group = interaction(model, rt_q))) +
-    scale_color_manual(values=c('#42B540FF',
-                                '#00468BFF',
+    geom_point(data=model_qq, size = 3, alpha = 1, aes(x= theta, y = rt, shape = factor(rt_q), color = model_f)) +
+    geom_line(data = model_qq, alpha = 0.5, size = 1.5, aes(x = theta, y = rt, linetype= model_f,
+                                   color = model_f, group = interaction(model_f, rt_q))) +
+    scale_linetype_manual(values=c('solid', 
+                                   'longdash', 
+                                   'dotted', 
+                                   'dashed', 
+                                   'dotdash')) + 
+    scale_color_manual(values=c('#00468BFF',
+                                '#009E73',
                                 '#ED0000FF',
-                                '#925E9FFF',
-                                '#0099B4FF')) +
+                                '#0099B4FF',
+                                '#925E9FFF')) +
     scale_x_continuous(name = 'Absolute Error (rad)', breaks = c(0, pi), limits = c(0, pi),
                        labels = c(0, expression(pi))) +
     scale_y_continuous(name = 'Response Time (s)', breaks = c(0.5, 1.0, 1.5, 2.0)) +
     guides(size = "none",
-           color= guide_legend(title="Model"),
+           linetype = "none",
+           color= "none",
+           #color= guide_legend(title="Model"),
            shape= guide_legend(title="Response Time Quantile")) +
     theme(
       axis.text.x = element_text(color="black", size = 14),
@@ -262,6 +270,7 @@ plot_qq <- function(data, model, filename){
       panel.background = element_blank(),
       legend.key = element_rect(colour = "transparent", fill = "white"),
       legend.text=element_text(size= 14),
+      #legend.position = 'bottom',
       axis.line = element_line(colour = "black")
     )
   

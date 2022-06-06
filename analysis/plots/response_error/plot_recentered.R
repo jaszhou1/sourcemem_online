@@ -15,6 +15,11 @@ color_wheel <- c('#00468BFF',
 
 data <- recentered_all[recentered_all$model == 'data',]
 model_predictions <- recentered_all[recentered_all$model != 'data',]
+
+#Keep names consistent
+model_predictions[model_predictions$model == 'Temporal Gradient', 'model'] <- 'Temporal'
+model_predictions[model_predictions$model == 'Spatiotemporal Gradient', 'model'] <- 'Spatiotemporal'
+
 models <- unique(model_predictions$model)
 ## Compute variables required for chart layout.
 MODEL.TYPES <- unique(as.character(model_predictions$model))
@@ -22,8 +27,8 @@ MODEL.COL <- list(
   "Pure Guess"= color_wheel[1],
   "Pure Intrusion"= color_wheel[2],
   "Intrusion + Guess"= color_wheel[3],
-  "Temporal Gradient" = color_wheel[4],
-  "Spatiotemporal Gradient" = color_wheel[5]
+  "Temporal" = color_wheel[4],
+  "Spatiotemporal" = color_wheel[5]
 )
 
 line_types <- c('solid', 'longdash', 'dotted', 'dashed', 'dotdash')
@@ -34,6 +39,7 @@ MODEL.LTY <- list(
   "Temporal" = line_types[4],
   "Spatiotemporal" = line_types[5] 
 )
+
 
 AXIS.CEX <- 2
 AXIS.LABEL.CEX <- 2.2
@@ -92,7 +98,7 @@ plot_recentered <- function(model_list, this_recentered_predictions, filename){
   
   for(model.type in MODEL.TYPES[model_list]) {
     model.data <- this_recentered_predictions[this_recentered_predictions$model == model.type, ]
-    points(model.data$value, model.data$prob, type="l", lty= MODEL.LTY[[model.type]], lwd = 6, col=MODEL.COL[[model.type]])
+    points(model.data$value, model.data$prob, type="l", lty= MODEL.LTY[[model.type]], lwd = 5, col=MODEL.COL[[model.type]])
   }
   
   axis(side=1, at=c(-pi, 0, pi), labels=c(expression(-pi), "0", expression(pi)), cex.axis= AXIS.CEX)
@@ -137,12 +143,12 @@ plot_asymm_recenter <- function(model_list, this_asymm_predictions, filename){
   if(filename == "") {
     X11() # Write to the screen
   } else {
-    png(file=filename, width=17 , height=8.3, units = "in", pointsize = 12, res = 300)
+    png(file=filename, width=12 , height=8.3, units = "in", pointsize = 14, res = 300)
   }
   
   # Set up panels
   par(mfrow=c(2,3))
-  par(mar=c(0.1, 1.5, 0.5, 0.1),
+  par(mar=c(0.1, 4, 0.5, 0.1),
       oma=c(6, 4, 3, 4),
       xaxs="i")
   
@@ -173,7 +179,7 @@ plot_asymm_recenter <- function(model_list, this_asymm_predictions, filename){
         points(model.data$value, model.data$prob, type="l", lty=MODEL.LTY[[model.type]], lwd = 4, col=MODEL.COL[[model.type]])
       }
       ## Plot the participant number and data type
-      mtext(paste0("Lag", panel_labs[panel_idx]), side=3, cex= 1.5, line=-2, adj=0.1)
+      mtext(paste0("Lag", panel_labs[panel_idx]), side=3, cex= 1.7, line=-2, adj=0.1)
       
       ## Plot the x axes (for the bottom row only)
       if(panel_idx %in% c(4, 5, 6)) {
@@ -193,7 +199,7 @@ plot_asymm_recenter <- function(model_list, this_asymm_predictions, filename){
   # Outer Margin axis labels
   
   mtext(paste("Density"), side=2, cex=AXIS.CEX, cex.lab = AXIS.LABEL.CEX, outer=T, line=2)
-  mtext(paste("Response Error (rad)"), side=1, cex=AXIS.CEX, cex.lab = AXIS.LABEL.CEX, outer=T, line=4)
+  mtext(paste("Response Offset (rad)"), side=1, cex=AXIS.CEX, cex.lab = AXIS.LABEL.CEX, outer=T, line=4)
   ## Add in legend - dont need in multi panel
   # par(fig = c(0, 1, 0, 1), oma = c(0, 0, 0, 0), mar = c(0, 0, 0, 0), new = TRUE)
   # plot(0, 0, type = 'l', bty = 'n', xaxt = 'n', yaxt = 'n')

@@ -12,7 +12,7 @@ data <- data[data$block!= 0,]
 # Exclude invalid RTs
 data <- data[data$valid_RT==TRUE,]
 
-setwd("~/git/sourcemem_online/analysis/models/MATLAB/experiment_2")
+setwd("~/git/sourcemem_online/analysis/models/MATLAB/experiment_2/old")
 
 pure_guess <- read.csv('sim_pure_guess.csv', header = FALSE)
 pure_guess$model <- 'Pure Guess'
@@ -35,38 +35,36 @@ orthographic$model <- 'Orthographic'
 semantic <- read.csv('sim_semantic.csv', header = FALSE)
 semantic$model <- 'Semantic'
 
-add <- read.csv('sim_add.csv', header = FALSE)
-add$model <- 'Four Factor (Additive)'
+# add <- read.csv('sim_add.csv', header = FALSE)
+# add$model <- 'Four Factor (Additive)'
 
 multi <- read.csv('sim_multi.csv', header = FALSE)
-multi$model <- "Four Factor (Multiplicative)"
+multi$model <- "Four Factor"
 
 # spatiotemporal_no_eta <- read.csv('sim_spatiotemporal_no_eta.csv', header = FALSE)
 # spatiotemporal_no_eta$model <- "Spatiotemporal (no eta)"
 
 
 model_predictions <- rbind(pure_guess, pure_intrusion, intrusion, temporal, spatiotemporal,
-                           orthographic, semantic, add, multi)
+                           orthographic, semantic, multi)
 colnames(model_predictions) <- c('error', 'time', 'participant', 'model')
 
 MODEL.TYPES <- unique(model_predictions$model)
 
 #temporarily exclude p5
-data <- data[data$participant != 5,]
-model_predictions <- model_predictions[model_predictions$participant != 5,]
+# data <- data[data$participant != 5,]
+# model_predictions <- model_predictions[model_predictions$participant != 5,]
 
 
 # Assign models to colours
-
 color_wheel <- c('#00468BFF',
-                 '#ED0000FF', 
-                 '#42B540FF',
+                 '#009E73',
+                 '#ED0000FF',
                  '#0099B4FF',
                  '#925E9FFF',
-                 '#FDAF91FF',
-                 '#AD002AFF',
-                 '#8F7700FF',
-                 '#80796BFF')
+                 '#009E73',
+                 '#D55E00',
+                 '#CC79A7')
 
 MODEL.COL <- list(
   "Pure Guess"= color_wheel[1],
@@ -76,8 +74,27 @@ MODEL.COL <- list(
   "Spatiotemporal" = color_wheel[5],
   "Orthographic" = color_wheel[6],
   "Semantic" = color_wheel[7],
-  "Four Factor (Additive)" = color_wheel[8],
-  "Four Factor (Multiplicative)" = color_wheel[9]
+  "Four Factor" = color_wheel[8]
+)
+
+line_types <- c('solid', 
+                'longdash', 
+                'dotted', 
+                'dashed', 
+                'dotdash', 
+                'twodash', 
+                'longdash', 
+                'dotted')
+
+MODEL.LTY <- list(
+  "Pure Guess"= line_types[1],
+  "Pure Intrusion"= line_types[2],
+  "Intrusion + Guess"= line_types[3],
+  "Temporal" = line_types[4],
+  "Spatiotemporal" = line_types[5],
+  "Orthographic" = line_types[6],
+  "Semantic" = line_types[7],
+  "Four Factor" = line_types[8]
 )
 
 # Functions to get wrapped densities from simulated data
@@ -169,7 +186,7 @@ exp2_plot <- function(model_list, data, model_predictions, filename){
     # Plot model predictions
     for(model.type in MODEL.TYPES[model_list]) {
       model.data <- get_response_error_density(p.model[p.model$model == model.type, ])
-      points(model.data$value, model.data$prob, type="l", lty=2, lwd = 1.5, col=MODEL.COL[[model.type]])
+      points(model.data$value, model.data$prob, type="l", lty= MODEL.LTY[[model.type]], lwd = 2, col=MODEL.COL[[model.type]])
     }
     
     ## Plot the participant number and data type
@@ -201,7 +218,7 @@ exp2_plot <- function(model_list, data, model_predictions, filename){
     
     for(model.type in MODEL.TYPES[model_list]) {
       model.data <- get_response_time_density(p.model[p.model$model == model.type, ])
-      points(model.data$value, model.data$prob, type="l", lty = 2, lwd = 1.5, col=MODEL.COL[[model.type]])
+      points(model.data$value, model.data$prob, type="l", lty= MODEL.LTY[[model.type]], lwd = 2, col=MODEL.COL[[model.type]])
     }
     
     axis(side=1, at=c(0, 7), lwd.ticks=0, labels=FALSE, cex.axis=AXIS.CEX)
@@ -229,7 +246,7 @@ exp2_plot <- function(model_list, data, model_predictions, filename){
   # Plot model predictions
   for(model.type in MODEL.TYPES[model_list]) {
     model.data <- get_response_error_density(model_predictions[model_predictions$model == model.type, ])
-    points(model.data$value, model.data$prob, type="l", lty=2, lwd = 1.5, col=MODEL.COL[[model.type]])
+    points(model.data$value, model.data$prob, type="l", lty= MODEL.LTY[[model.type]], lwd = 2, col=MODEL.COL[[model.type]])
   }
   
   ## Label this plot as the group plot
@@ -259,7 +276,7 @@ exp2_plot <- function(model_list, data, model_predictions, filename){
   
   for(model.type in MODEL.TYPES[model_list]) {
     model.data <- get_response_time_density(model_predictions[model_predictions$model == model.type, ])
-    points(model.data$value, model.data$prob, type="l", lty = 2, lwd = 1.5, col=MODEL.COL[[model.type]])
+    points(model.data$value, model.data$prob, type="l", lty= MODEL.LTY[[model.type]], lwd = 2, col=MODEL.COL[[model.type]], alpha = 0.5)
   }
   # Plot x axis and label
   axis(side=1, cex.axis=AXIS.CEX)
@@ -271,8 +288,10 @@ exp2_plot <- function(model_list, data, model_predictions, filename){
   # Add Legend
   par(fig = c(0, 1, 0, 1), oma = c(0, 0, 0, 0), mar = c(0, 0, 0, 0), new = TRUE)
   plot(0, 0, type = 'l', bty = 'n', xaxt = 'n', yaxt = 'n')
-  legend('topright',legend= MODEL.TYPES[model_list],
-         col=color_wheel[model_list], lty=1, lwd = 3, xpd = TRUE, horiz = TRUE, cex = 1.5, seg.len=1, bty = 'n')
+  legend("top", legend= MODEL.TYPES[model_list],
+         col=color_wheel[model_list], lty=line_types[model_list], 
+         lwd = 3, bty = "n",cex=AXIS.LABEL.CEX, 
+         seg.len=5, title="Models")
   
   ## If we're writing to a file (i.e. a PDF), close the device.
   if(filename != "") {
@@ -286,6 +305,7 @@ Q_SYMBOLS <- c(25, 23, 24, 22)
 # Joint Q-Q Plot
 source('~/git/sourcemem_online/analysis/plots/diffusion/qxq.R')
 source('~/git/sourcemem_online/analysis/plots/diffusion/RT_confidence_interval.R')
+
 plot_individual_qq <- function(model_list, data, model, filename, confidence){
   if(missing(confidence)){
     confidence <- FALSE
@@ -303,22 +323,42 @@ plot_individual_qq <- function(model_list, data, model, filename, confidence){
     model_qq <- rbind(model_qq, this_qq)
   }
   
+  model_qq$model_f <- factor(model_qq$model, c('Pure Guess', 'Pure Intrusion', 'Intrusion + Guess',
+                                               'Temporal', 'Spatiotemporal', 'Orthographic', 'Semantic',
+                                               'Four Factor'))
+  
   # Plot (ggplot) - add switch here for if we want RT confidence plotted or not
   if(confidence == TRUE){
     plot <- ggplot() +
       geom_point(data = data_qq, size = 3, aes(x= theta, y = rt, shape = factor(rt_q))) +
       geom_segment(data = data_qq, linetype = "solid", size = 1, alpha = 0.4, 
                    aes(x = theta, xend = theta, y = rt_lower, yend = rt_upper, group = rt_q)) +
-      geom_point(data = model_qq, size = 3, alpha = 0.7, aes(x= theta, y = rt, shape = factor(rt_q), color = model)) +
-      geom_line(data = model_qq, linetype="dashed", alpha = 0.5, size = 1, aes(x = theta, y = rt,
-                                                                               color = model, group = interaction(model, rt_q))) +
+      geom_point(data=model_qq, size = 3, alpha = 1, aes(x= theta, y = rt, shape = factor(rt_q), color = model_f)) +
+      geom_line(data = model_qq, alpha = 0.5, size = 1.5, aes(x = theta, y = rt, linetype= model_f,
+                                                              color = model_f, group = interaction(model_f, rt_q))) +
+      scale_linetype_manual(values=c(#'solid', 
+                                     #'longdash', 
+                                     #'dotted', 
+                                     'dashed', 
+                                     'dotdash', 
+                                     'twodash', 
+                                     'longdash')) + 
+                                     #'dotted' + 
+      scale_color_manual(values=c(#'#00468BFF',
+                                  #'#009E73',
+                                  #'#ED0000FF',
+                                  '#0099B4FF',
+                                  '#925E9FFF',
+                                  '#009E73',
+                                  '#D55E00')) +
+                                  #'#CC79A7' +
       scale_x_continuous(name = 'Absolute Error (rads)', breaks = c(0, pi), limits = c(0, pi),
                          labels = c(0, expression(pi))) +
       scale_y_continuous(name = 'Response Time (s)', breaks = c(0.5, 1.0, 1.5, 2.0)) +
       # Use the same colour mapping as other plot
-      scale_color_manual(values= unlist(MODEL.COL[model_list], use.names = TRUE)) +
       guides(size = "none",
-             color= guide_legend(title="Model"),
+             color= "none",
+             linetype = "none",
              shape= guide_legend(title="Response Time Quantile")) +
       theme(
         axis.text.x = element_text(color="black", size = 14),
@@ -347,7 +387,8 @@ plot_individual_qq <- function(model_list, data, model, filename, confidence){
       # Use the same colour mapping as other plot
       scale_color_manual(values= unlist(MODEL.COL[model_list], use.names = FALSE)) +
       guides(size = "none",
-             color= guide_legend(title="Model"),
+             linetype = "none",
+             color= "none",
              shape= guide_legend(title="Response Time Quantile")) +
       theme(
         axis.text.x = element_text(color="black", size = 14),
@@ -378,10 +419,10 @@ individual_qq <- function(confidence){
   }
   for (i in unique(data$participant)){
     filename = sprintf('exp2_p_%i_qxq2.png', i)
-    plot_individual_qq(c(3:7),data[data$participant == i,], model_predictions[model_predictions$participant == i,], filename, confidence)
+    plot_individual_qq(c(4:7),data[data$participant == i,], model_predictions[model_predictions$participant == i,], filename, confidence)
   }
   filename = sprintf('exp2_group_qxq.png')
-  plot_individual_qq(c(3:7),data, model_predictions, filename, confidence)
+  plot_individual_qq(c(4:7),data, model_predictions, filename, confidence)
 }
 
 # Plot RT distributions for each error quantile

@@ -1,6 +1,6 @@
 # Load in best fits of the models
 load("~/git/sourcemem_online/analysis/models/R/experiment_2/output/exp_2_sim_data_updated.RData")
-
+library(ggplot2)
 # Rename models and concatenate simulated data
 #sim_no_intrusion$model <- 'Pure Guess'
 sim_flat_intrusion$model <- 'Intrusion + Guess'
@@ -8,15 +8,15 @@ sim_temporal$model <- 'Temporal'
 sim_SxT$model <- 'Spatiotemporal'
 sim_ortho$model <- 'Orthographic'
 sim_semantic$model <- 'Semantic'
-sim_SxTpOxSe$model <- 'Four Factor (Additive)'
-sim_all_x$model <- 'Four Factor (Multiplicative)'
-sim_SxT_recog$model <- 'Unrecognised = Guesses'
+# sim_SxTpOxSe$model <- 'Four Factor (Additive)'
+sim_all_x$model <- 'Four Factor'
+#sim_SxT_recog$model <- 'Unrecognised = Guesses'
 
 model_predictions <- rbind(sim_flat_intrusion, sim_temporal,
-                           sim_SxT, sim_ortho, sim_semantic, sim_SxTpOxSe, 
-                           sim_all_x, sim_SxT_recog)
+                           sim_SxT, sim_ortho, sim_semantic, 
+                           sim_all_x)
 models <- unique(model_predictions$model)
-
+MODEL.TYPES <- models 
 # Load in data
 data <- read.csv("~/git/sourcemem_online/analysis/models/R/data/experiment_2.csv")
 if(min(data$present_trial == 0)){
@@ -44,16 +44,38 @@ X.RESP.HI <- pi + 0.01
 Y.RESP.LOW <- 0.0
 Y.RESP.HI <- 2.5
 
-color_wheel <- c(#'#00468BFF',
-  #'#ED0000FF', no pure intrusion, maybe need to add?
-  '#42B540FF',
-  '#0099B4FF',
-  '#925E9FFF',
-  '#FDAF91FF',
-  '#AD002AFF',
-  '#8F7700FF',
-  '#80796BFF',
-  '#ED0000FF') #Find new colour for the recognition model maybe
+# Assign models to colours
+color_wheel <- c('#ED0000FF',
+                 '#0099B4FF',
+                 '#925E9FFF',
+                 '#009E73',
+                 '#D55E00',
+                 '#CC79A7')
+
+MODEL.COL <- list(
+  "Intrusion + Guess"= color_wheel[1],
+  "Temporal" = color_wheel[2],
+  "Spatiotemporal" = color_wheel[3],
+  "Orthographic" = color_wheel[4],
+  "Semantic" = color_wheel[5],
+  "Four Factor" = color_wheel[6]
+)
+
+line_types <- c('dotted', 
+                'dashed', 
+                'dotdash', 
+                'twodash', 
+                'longdash', 
+                'dotted')
+
+MODEL.LTY <- list(
+  "Intrusion + Guess"= line_types[1],
+  "Temporal" = line_types[2],
+  "Spatiotemporal" = line_types[3],
+  "Orthographic" = line_types[4],
+  "Semantic" = line_types[5],
+  "Four Factor" = line_types[6]
+)
 
 get_response_error_density <- function(model){
   preds <- density(as.numeric(model$simulated_error), from = -pi, to = pi, cut = FALSE, kernel = "gaussian")
@@ -88,28 +110,13 @@ for(i in 1:length(models)){
 }
 colnames(group_response_error_predictions ) <- c("value", "prob", "model", "participant")
 
-# Assign models to colours
-MODEL.TYPES <- unique(as.character(response_error_predictions$model))
-MODEL.COL <- list(
-  #"Pure Guess"= color_wheel[1],
-  #"Pure Intrusion"= color_wheel[2],
-  "Intrusion + Guess"= color_wheel[1],
-  "Temporal" = color_wheel[2],
-  "Spatiotemporal" = color_wheel[3],
-  "Orthographic" = color_wheel[4],
-  "Semantic" = color_wheel[5],
-  "Four Factor (Additive)" = color_wheel[6],
-  "Four Factor (Multiplicative)" = color_wheel[7],
-  "Unrecognised = Guesses" = color_wheel[8]
-)
-
 individual_response_error_plot <- function(model_list, data, filename){
   ## Opens a drawing device (either X11 for testing or a
   ## PDF for saving).
   if(filename == "") {
     X11() # Write to the screen
   } else {
-    png(file=filename, width=10.7, height=8.3, units = "in", pointsize = 12, res = 300)
+    png(file=filename, width=10.7, height=8.3, units = "in", pointsize = 14, res = 300)
     #pdf(file=filename, width=8.3, height=10.7)
   }
   ## Compute variables required for chart layout.
@@ -151,7 +158,7 @@ individual_response_error_plot <- function(model_list, data, filename){
     
     for(model.type in MODEL.TYPES[model_list]) {
       model.data <- p.model[p.model$model == model.type, ]
-      points(model.data$value, model.data$prob, type="l", lty=2, lwd = 2.5, col=MODEL.COL[[model.type]])
+      points(model.data$value, model.data$prob, type="l", lty= MODEL.LTY[[model.type]], lwd = 2, col=MODEL.COL[[model.type]])
     }
     
     ## Plot the participant number and data type
@@ -206,7 +213,7 @@ individual_combined_plot <- function(model_list, data, model_predictions, recent
   ## Set up the global presentation parameters for the plot.
   par(mfrow=c(NUM.ROWS, NUM.COLS))
   par(mar=c(0.5, 0.5, 0, 0.5),
-      oma=c(4, 3.5, 3.5, 3.5))
+      oma=c(5, 3.5, 3.5, 3.5))
   
   ## Iterate through each participant...
   for(p.idx in 1:NUM.PARTICIPANTS) {
@@ -234,7 +241,7 @@ individual_combined_plot <- function(model_list, data, model_predictions, recent
     
     for(model.type in MODEL.TYPES[model_list]) {
       model.data <- p.model[p.model$model == model.type, ]
-      points(model.data$value, model.data$prob, type="l", lty=2, lwd = 2.5, col=MODEL.COL[[model.type]])
+      points(model.data$value, model.data$prob, type="l", lty= MODEL.LTY[[model.type]], lwd = 2, col=MODEL.COL[[model.type]])
     }
     
     ## Plot the participant number and data type
@@ -261,7 +268,7 @@ individual_combined_plot <- function(model_list, data, model_predictions, recent
                 ylim=c(Y.RESP.LOW, 0.25))
     
     ## Compute and plot the empirical histograms for response error.
-    resp.hist <- hist(p.recenter.data$error,
+    resp.hist <- hist(p.recenter.data$offset,
                       breaks=NUM.BINS, freq=FALSE,
                       plot=FALSE)
     for(b in 2:length(resp.hist$breaks)) {
@@ -273,7 +280,7 @@ individual_combined_plot <- function(model_list, data, model_predictions, recent
     
     for(model.type in MODEL.TYPES[model_list]) {
       model.data <- p.recenter.model[p.recenter.model$model == model.type, ]
-      points(model.data$value, model.data$prob, type="l", lty=2, lwd = 2, col=MODEL.COL[[model.type]])
+      points(model.data$value, model.data$prob, type="l", lty= MODEL.LTY[[model.type]], lwd = 2, col=MODEL.COL[[model.type]])
     }
     
     ## Plot the x axes (for the last two participants only)
@@ -312,7 +319,7 @@ individual_combined_plot <- function(model_list, data, model_predictions, recent
   
   for(model.type in MODEL.TYPES[model_list]) {
     model.data <- p.model[p.model$model == model.type, ]
-    points(model.data$value, model.data$prob, type="l", lty=2, lwd = 2.5, col=MODEL.COL[[model.type]])
+    points(model.data$value, model.data$prob, type="l", lty= MODEL.LTY[[model.type]], lwd = 2, col=MODEL.COL[[model.type]])
   }
   axis(side=1, at=c(-pi, 0, pi), labels=c(expression(-pi), "0", expression(pi)), cex.axis=AXIS.CEX)
   ## Plot the participant number and data type
@@ -326,7 +333,7 @@ individual_combined_plot <- function(model_list, data, model_predictions, recent
               ylim=c(Y.RESP.LOW, 0.25))
   
   ## Compute and plot the empirical histograms for response error.
-  resp.hist <- hist(p.recenter.data$error,
+  resp.hist <- hist(p.recenter.data$offset,
                     breaks=NUM.BINS, freq=FALSE,
                     plot=FALSE)
   for(b in 2:length(resp.hist$breaks)) {
@@ -338,7 +345,7 @@ individual_combined_plot <- function(model_list, data, model_predictions, recent
   
   for(model.type in MODEL.TYPES[model_list]) {
     model.data <- p.recenter.model[p.recenter.model$model == model.type, ]
-    points(model.data$value, model.data$prob, type="l", lty=2, lwd = 2, col=MODEL.COL[[model.type]])
+    points(model.data$value, model.data$prob, type="l", lty= MODEL.LTY[[model.type]], lwd = 2, col=MODEL.COL[[model.type]])
   }
   
   axis(side=1, at=c(-pi, 0, pi), labels=c(expression(-pi), "0", expression(pi)), cex.axis=AXIS.CEX)
@@ -352,10 +359,13 @@ individual_combined_plot <- function(model_list, data, model_predictions, recent
   mtext("Error density", side=2, line=2, outer=TRUE, cex=AXIS.LABEL.CEX)
   mtext("Recentered density", side=4, line=2, outer=TRUE, cex=AXIS.LABEL.CEX)
   
-  par(fig = c(0, 1, 0, 1), oma = c(0, 0, 0, 0), mar = c(0, 0, 0, 0), new = TRUE)
+  par(fig = c(0, 1, 0, 1), oma = c(0, 0, 20, 0), mar = c(0, 0, 20, 0), new = TRUE)
   plot(0, 0, type = 'l', bty = 'n', xaxt = 'n', yaxt = 'n')
-  legend('topright',legend= MODEL.TYPES[model_list],
-         col=color_wheel[model_list], lty=1, lwd = 3, xpd = TRUE, horiz = TRUE, cex = 1.5, seg.len=1, bty = 'n')
+  legend("bottom", horiz=T, inset=c(0,0), xpd = TRUE,
+         legend= MODEL.TYPES[model_list],
+         col=color_wheel[model_list], lty=line_types[model_list], 
+         lwd = 3, bty = "n",cex=AXIS.LABEL.CEX, 
+         seg.len=5)
   
   ## If we're writing to a file (i.e. a PDF), close the device.
   if(filename != "") {
@@ -363,30 +373,30 @@ individual_combined_plot <- function(model_list, data, model_predictions, recent
   }
 }
 # Load in recentered data
-load("~/git/sourcemem_online/analysis/models/R/experiment_2/output/2022-02-18_recentered_exp2_updated.RData")
-colnames(recentered_all) <- c('error', 'direction', 'participant', 
-                              'orthographic','semantic','model', 'filter')
-recenter_data <- recentered_all[recentered_all$model == 'data',]
-recenter_model <- recentered_all[recentered_all$model != 'data',]
+load("~/git/sourcemem_online/analysis/models/R/experiment_2/output/2022-04-25_recentered_exp2_v2.RData")
+recenter_data <- recentered_all[recentered_all$type == 'data',]
+recenter_model <- recentered_all[recentered_all$type != 'data',]
+
+recenter_model[recenter_model$type == 'Four Factor (Multiplicative)', 'type'] <- 'Four Factor'
 
 ## Recentered plot
 # Get densities from recentered points
 get_recenter_density <- function(model){
-  preds <- density(as.numeric(model$error), from = -pi, to = pi, cut = FALSE, kernel = "epanechnikov", adjust = 1)
+  preds <- density(as.numeric(model$offset), from = -pi, to = pi, cut = FALSE, kernel = "epanechnikov", adjust = 1)
   preds$y[1:75] <- mean(preds$y[51:100])
   preds$y[(length(preds$y)-75):length(preds$y)] <- mean(preds$y[(length(preds$y)-100):(length(preds$y)-50)])
   this_predictions <- data.frame(matrix(ncol = 3, nrow = 512))
   this_predictions[1] <- preds$x
   this_predictions[2] <- preds$y
-  this_predictions[3] <- model$model[1]
+  this_predictions[3] <- model$type[1]
   this_predictions[4] <- model$participant[1]
   return(this_predictions)
 }
 models <- unique(recenter_model$model)
 individual_recentered <- data.frame(matrix(ncol = 4, nrow = 0))
 for(i in participants){
-  for(j in 1:length(models)){
-    this_model <- recenter_model[(recenter_model$participant == i) & (recenter_model$model == models[j]),]
+  for(j in MODEL.TYPES){
+    this_model <- recenter_model[(recenter_model$participant == i) & (recenter_model$type == j),]
     this_predictions <- get_recenter_density(this_model)
     individual_recentered <- rbind(individual_recentered , this_predictions)
   }
@@ -394,8 +404,8 @@ for(i in participants){
 colnames(individual_recentered) <- c("value", "prob", "model", "participant")
 
 group_recentered <- data.frame(matrix(ncol = 4, nrow = 0))
-for(j in 1:length(models)){
-  this_model <- recenter_model[recenter_model$model == models[j],]
+for(j in MODEL.TYPES){
+  this_model <- recenter_model[recenter_model$type == j,]
   this_predictions <- get_recenter_density(this_model)
   this_predictions[4] <- 'Average'
   group_recentered <- rbind(group_recentered, this_predictions)
@@ -437,7 +447,7 @@ plot_recentered <- function(model_list, this_recentered_predictions, data, filen
   mtext(paste("Density"), side=2, cex=AXIS.CEX, cex.lab = AXIS.LABEL.CEX, line=2.5)
   
   ## Add in legend
-  legend("topright", legend= MODEL.TYPES[model_list],
+  legend("top", legend= MODEL.TYPES[model_list],
          col=color_wheel[model_list], lty=2, lwd = 2, bty = "n",cex=AXIS.CEX, title="Models")
   
   # Close the plotting device
