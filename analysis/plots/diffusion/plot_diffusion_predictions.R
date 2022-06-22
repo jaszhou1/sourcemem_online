@@ -209,7 +209,9 @@ plot_response_time <- function(model_list, filename){
          col=color_wheel[model_list], lty=line_types[model_list], lwd = 5, bty = "n",cex=AXIS.CEX, title="Models")
   
   # Close the plotting device
-  dev.off()
+  if(filename != "") {
+    dev.off()
+  }
 }
 
 rt_quantiles <- c(0.1, 0.5, 0.9)
@@ -321,3 +323,53 @@ individual_qq <- function(){
 #        col=color_wheel, lty=2, lwd = 2, bty = "n",cex=0.5, title="Models", title.adj= 0.5, xpd = TRUE, horiz = TRUE)
 # dev.off()
 
+## Plot individual RT predictions, trying to figure out whats going on with the bimodal RT prediction in Pure Guess
+# Plot Response Time
+plot_individual_response_time <- function(model_list){
+  # Model_list only takes a single number in this function
+  participants <- unique(model_predictions$participant)
+  for(i in participants){
+    
+    this_model <- model_predictions[(model_predictions$model == models[[model_list]]) &
+                                      (model_predictions$participant == i),]
+    this_response_time_predictions <- get_response_time_density(this_model)
+    colnames(this_response_time_predictions) <- c("value", "prob", "model")
+    
+    filename = sprintf('RT_participant_%i.png', i)
+    png(file=filename, width=10.7, height=8.3, units = "in", pointsize = 12, res = 300)
+    
+    plot.new()
+    plot.window(xlim=c(0, 7),
+                ylim=c(0, 1.7))
+    
+    ## Compute and plot the empirical histograms for response error.
+    this_data <- data[data$participant == i,]
+    resp.hist <- hist(this_data$source_RT/1000,
+                      breaks=NUM.BINS, freq=FALSE,
+                      plot=FALSE)
+    for(b in 2:length(resp.hist$breaks)) {
+      lo.break <- resp.hist$breaks[b-1]
+      hi.break <- resp.hist$breaks[b]
+      bar.height <- resp.hist$density[b-1]
+      rect(lo.break, 0.0, hi.break, bar.height, border=NA, col="grey70")
+    }
+    
+    
+    for(model.type in MODEL.TYPES[model_list]) {
+      model.data <- this_response_time_predictions[this_response_time_predictions$model == model.type, ]
+      points(model.data$value, model.data$prob, type="l", lty= MODEL.LTY[[model.type]], lwd = 6, col=MODEL.COL[[model.type]])
+    }
+    
+    axis(side=1, at=c(0, 2, 4, 6, 7), labels= c("0", "2", "4", "6", "7"), cex.axis=AXIS.CEX)
+    mtext(paste("Response Time (s)"), side=1, cex=AXIS.CEX, cex.lab = AXIS.LABEL.CEX, line=2.5)
+    axis(side=2, at=c(0.0, 0.5, 1.0, 1.5), cex.axis=AXIS.CEX)
+    #mtext(paste("Density"), side=2, cex=AXIS.CEX, cex.lab = AXIS.LABEL.CEX, line=2.5)
+    
+    ## Add in legend
+    legend("topright", legend= MODEL.TYPES[model_list],
+           col=color_wheel[model_list], lty=line_types[model_list], lwd = 5, bty = "n",cex=AXIS.CEX, title="Models")
+    
+    # Close the plotting device
+      dev.off()
+  }
+}
