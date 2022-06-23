@@ -46,8 +46,8 @@ AXIS.LABEL.CEX <- 2.2
 NUM.BINS <- 50
 X.RESP.LOW <- -pi - 0.01
 X.RESP.HI <- pi + 0.01
-Y.RESP.LOW <- 0.0
-Y.RESP.HI <- 0.25
+Y.RESP.LOW <- 0.10
+Y.RESP.HI <- 0.22
 
 #  Function to transform data into (wrapped) density 
 
@@ -103,7 +103,7 @@ plot_recentered <- function(model_list, this_recentered_predictions, filename){
   
   axis(side=1, at=c(-pi, 0, pi), labels=c(expression(-pi), "0", expression(pi)), cex.axis= AXIS.CEX)
   mtext(paste("Response Offset (rad)"), side=1, cex= AXIS.CEX, cex.lab = AXIS.LABEL.CEX, line=2.5)
-  axis(side=4, at=c(0, 0.1, 0.2, 0.3), cex.axis= AXIS.CEX)
+  axis(side=4, at=c(0.1, 0.2), cex.axis= AXIS.CEX)
   #mtext(paste("Density"), side=2, cex=AXIS.CEX, cex.lab = AXIS.LABEL.CEX, line=2.5)
   
   ## Add in legend
@@ -176,7 +176,7 @@ plot_asymm_recenter <- function(model_list, this_asymm_predictions, filename){
       
       for(model.type in MODEL.TYPES[model_list]) {
         model.data <- this_panel_model[this_panel_model$model == model.type, ]
-        points(model.data$value, model.data$prob, type="l", lty=MODEL.LTY[[model.type]], lwd = 4, col=MODEL.COL[[model.type]])
+        points(model.data$value, model.data$prob, type="l", lty=MODEL.LTY[[model.type]], lwd = 5, col=MODEL.COL[[model.type]])
       }
       ## Plot the participant number and data type
       mtext(paste0("Lag", panel_labs[panel_idx]), side=3, cex= 1.7, line=-2, adj=0.1)
@@ -191,7 +191,7 @@ plot_asymm_recenter <- function(model_list, this_asymm_predictions, filename){
       
       ## Plot the y axes (for the participants in the first col)
       if(panel_idx %in% c(1,4)) {
-        axis(side=2, at=c(0, 0.2), cex.axis= AXIS.CEX)
+        axis(side=2, at=c(0.1, 0.2), cex.axis= AXIS.CEX)
       }
       panel_idx <- panel_idx + 1
     }

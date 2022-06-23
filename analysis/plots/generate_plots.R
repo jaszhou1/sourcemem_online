@@ -30,8 +30,8 @@ plot_asymm_recenter(c(3,4,5), asymm_predictions, '6c.png')
 ## Diffusion Models
 source('~/git/sourcemem_online/analysis/plots/diffusion/plot_diffusion_predictions.R')
 setwd("~/git/sourcemem_online/analysis/plots/output")
-plot_response_error(c(1,2,3,4,5), '10a.png')
-plot_response_time(c(1,2,3,4,5), '10b.png')
+plot_response_error(c(1,2,3,4,5), '10a_v2.png')
+plot_response_time(c(1,2,3,4,5), '10b_v2.png')
 
 
 # Experiment 2

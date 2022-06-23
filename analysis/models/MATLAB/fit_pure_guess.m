@@ -4,13 +4,13 @@ function [ll, aic, P, penalty] = fit_pure_guess(data)
 %          1    2    3  4   5   6   7   8   9 
 setopt;
 
-v1 = normrnd(6,0.1);
+v1 = normrnd(5,0.1);
 v2 = 0;
 eta = normrnd(0.1, 0.1);
-a1 = normrnd(4,0.5);
-a2 = normrnd(1.4,0.5);
-beta = normrnd(0.6,0.1);
-Ter = normrnd(-.05,0.02);
+a1 = normrnd(2,0.5);
+a2 = normrnd(2,0.5);
+beta = normrnd(0.3,0.1);
+Ter = normrnd(0.15, 0.05);
 st = 0;
 
 P = [v1, v2, eta, a1, a2, beta, Ter,st];

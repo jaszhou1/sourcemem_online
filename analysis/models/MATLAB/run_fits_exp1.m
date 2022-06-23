@@ -4,19 +4,18 @@
 
 % Read in the data
 % data = read_sourcemem_data();
-load('exp1_data_v2.mat')
+%load('exp1_data_v2.mat')
 n_participants = length(data);
 n_runs = 5;
 num_workers = maxNumCompThreads/2 - 1; % Maximum number of workers
 
-%% Threshold Model
+%% Pure Guess Model
 % Load old fits, these are fine but are missing the ortho/sem models
-load('2022_01_19_06_Experiment1_diffusion.mat')
+load('2022_04_03_03_Experiment1_diffusion.mat')
 
 % overwrite old data with new data, which is the same but with additional
 % columns for the orthographic and semantic similarity of words
 load('exp1_data_v2.mat')
-
 % COMMENTING OUT PRE-RUN MODELS
 
 pure_guess = cell(n_participants,4);
@@ -40,7 +39,7 @@ parfor (i = 1:n_participants, num_workers)
         end
     end
 end
-% filename = [datestr(now,'yyyy_mm_dd_HH'),'_Experiment1_diffusion_temp'];
+ filename = [datestr(now,'yyyy_mm_dd_HH'),'_Experiment1_diffusion'];
 % save(filename)
 % 
 % % Simulate data, concatenate participants, and save simulated dataset
@@ -49,50 +48,50 @@ for i = 1:n_participants
     % Add zeros to estimated parameters to make it play nice with
     % simulation of more complex model.
     P = pure_guess{i,3};
-    this_pest = [P(1), P(2), 0, 0, P(3), 0, P(4), P(5), 0, P(6), P(7), P(8)];
+    this_pest = [P(1), P(2), P(3), P(4), P(5), P(6), P(7), P(8)];
 
-    this_simulated_data = simulate_three_component(data{i}, this_pest);
+    this_simulated_data = simulate_pure_guess(data{i}, this_pest);
     % Label this dataset with participant number
     this_simulated_data(:,3) = i; 
     simulated_pure_guess = vertcat(simulated_pure_guess, this_simulated_data);
 end
-% save(filename)
-
-%% Pure Intrusion Model
-
-pure_intrusion = cell(n_participants,4);
-
-parfor (i = 1:n_participants, num_workers)
-    % Initial log likelihood value
-    ll = 1e7;
-    % Run each participant nrun times
-    this_fit = cell(1,4);
-    for j = 1:n_runs
-        this_participant_data = data{i};
-        [ll_new, aic, pest, pest_penalty] = fit_pure_intrusion_model(this_participant_data);
-        % If this ll is better than the last one, replace it in the saved
-        % structure
-        if (ll_new < ll)
-            ll = ll_new;
-            this_fit{1} = ll_new;
-            this_fit{2} = aic;
-            this_fit{3} = pest;
-            this_fit{4} = pest_penalty;
-            pure_intrusion(i,:) = this_fit;
-        end
-    end
-end
-
-% % Simulate data, concatenate participants, and save simulated dataset
-% simulated_pure_intrusion = [];
-% for i = 1:n_participants
-%     this_simulated_data = simulate_pure_intrusion(data{i}, pure_intrusion{i,3});
-%     % Label this dataset with participant number
-%     this_simulated_data(:,3) = i; 
-%     simulated_pure_intrusion = vertcat(simulated_pure_intrusion, this_simulated_data);
-% end
-
 save(filename)
+
+% %% Pure Intrusion Model
+% 
+% pure_intrusion = cell(n_participants,4);
+% 
+% parfor (i = 1:n_participants, num_workers)
+%     % Initial log likelihood value
+%     ll = 1e7;
+%     % Run each participant nrun times
+%     this_fit = cell(1,4);
+%     for j = 1:n_runs
+%         this_participant_data = data{i};
+%         [ll_new, aic, pest, pest_penalty] = fit_pure_intrusion_model(this_participant_data);
+%         % If this ll is better than the last one, replace it in the saved
+%         % structure
+%         if (ll_new < ll)
+%             ll = ll_new;
+%             this_fit{1} = ll_new;
+%             this_fit{2} = aic;
+%             this_fit{3} = pest;
+%             this_fit{4} = pest_penalty;
+%             pure_intrusion(i,:) = this_fit;
+%         end
+%     end
+% end
+% 
+% % % Simulate data, concatenate participants, and save simulated dataset
+% % simulated_pure_intrusion = [];
+% % for i = 1:n_participants
+% %     this_simulated_data = simulate_pure_intrusion(data{i}, pure_intrusion{i,3});
+% %     % Label this dataset with participant number
+% %     this_simulated_data(:,3) = i; 
+% %     simulated_pure_intrusion = vertcat(simulated_pure_intrusion, this_simulated_data);
+% % end
+% 
+% save(filename)
 % %% Three-Component Model
 % % i.e. Memory + Guess + Flat Intrusions
 % 
@@ -129,28 +128,28 @@ save(filename)
 % end
 % save(filename)
 %% Same, but with eta
-flat_intrusion_eta = cell(n_participants,4);
-
-parfor (i = 1:n_participants, num_workers)
-    % Initial log likelihood value
-    ll = 1e7;
-    % Run each participant nrun times
-    this_fit = cell(1,4);
-    for j = 1:n_runs
-        this_participant_data = data{i};
-        [ll_new, aic, pest, pest_penalty] = fit_three_component_model_eta(this_participant_data);
-        % If this ll is better than the last one, replace it in the saved
-        % structure
-        if (ll_new < ll)
-            ll = ll_new;
-            this_fit{1} = ll_new;
-            this_fit{2} = aic;
-            this_fit{3} = pest;
-            this_fit{4} = pest_penalty;
-            flat_intrusion_eta(i,:) = this_fit;
-        end
-    end
-end
+% flat_intrusion_eta = cell(n_participants,4);
+% 
+% parfor (i = 1:n_participants, num_workers)
+%     % Initial log likelihood value
+%     ll = 1e7;
+%     % Run each participant nrun times
+%     this_fit = cell(1,4);
+%     for j = 1:n_runs
+%         this_participant_data = data{i};
+%         [ll_new, aic, pest, pest_penalty] = fit_three_component_model_eta(this_participant_data);
+%         % If this ll is better than the last one, replace it in the saved
+%         % structure
+%         if (ll_new < ll)
+%             ll = ll_new;
+%             this_fit{1} = ll_new;
+%             this_fit{2} = aic;
+%             this_fit{3} = pest;
+%             this_fit{4} = pest_penalty;
+%             flat_intrusion_eta(i,:) = this_fit;
+%         end
+%     end
+% end
 
 % % Simulate data, concatenate participants, and save simulated dataset
 % simulated_flat_intrusion_eta = [];
@@ -162,221 +161,221 @@ end
 % end
 save(filename)
 %% Temporal Gradient Model
-temporal = cell(n_participants,4);
-
-parfor (i = 1:n_participants, num_workers)
-    % Initial log likelihood value
-    ll = 1e7;
-    % Run each participant nrun times
-    this_fit = cell(1,4);
-    for j = 1:n_runs
-        this_participant_data = data{i};
-        [ll_new, aic, pest, pest_penalty] = fit_temporal_model(this_participant_data);
-        % If this ll is better than the last one, replace it in the saved
-        % structure
-        if (ll_new < ll)
-            ll = ll_new;
-            this_fit{1} = ll_new;
-            this_fit{2} = aic;
-            this_fit{3} = pest;
-            this_fit{4} = pest_penalty;
-            temporal(i,:) = this_fit;
-        end
-    end
-end
-
-% % Simulate data, concatenate participants, and save simulated dataset
-% simulated_temporal_flat_guess = [];
-% for i = 1:n_participants
-%     this_simulated_data = simulate_intrusion_gradient_model(data{i}, temporal{i,3});
-%     % Label this dataset with participant number
-%     this_simulated_data(:,3) = i; 
-%     simulated_temporal_flat_guess = vertcat(simulated_temporal_flat_guess, this_simulated_data);
+% temporal = cell(n_participants,4);
+% 
+% parfor (i = 1:n_participants, num_workers)
+%     % Initial log likelihood value
+%     ll = 1e7;
+%     % Run each participant nrun times
+%     this_fit = cell(1,4);
+%     for j = 1:n_runs
+%         this_participant_data = data{i};
+%         [ll_new, aic, pest, pest_penalty] = fit_temporal_model(this_participant_data);
+%         % If this ll is better than the last one, replace it in the saved
+%         % structure
+%         if (ll_new < ll)
+%             ll = ll_new;
+%             this_fit{1} = ll_new;
+%             this_fit{2} = aic;
+%             this_fit{3} = pest;
+%             this_fit{4} = pest_penalty;
+%             temporal(i,:) = this_fit;
+%         end
+%     end
 % end
-save(filename)
+% 
+% % % Simulate data, concatenate participants, and save simulated dataset
+% % simulated_temporal_flat_guess = [];
+% % for i = 1:n_participants
+% %     this_simulated_data = simulate_intrusion_gradient_model(data{i}, temporal{i,3});
+% %     % Label this dataset with participant number
+% %     this_simulated_data(:,3) = i; 
+% %     simulated_temporal_flat_guess = vertcat(simulated_temporal_flat_guess, this_simulated_data);
+% % end
+% save(filename)
 %% Spatiotemporal Model
-spatiotemporal = cell(n_participants,4);
-
-parfor (i = 1:n_participants, num_workers)
-    % Initial log likelihood value
-    ll = 1e7;
-    % Run each participant nrun times
-    this_fit = cell(1,4);
-    for j = 1:n_runs
-        this_participant_data = data{i};
-        [ll_new, aic, pest, pest_penalty] = fit_spatiotemporal_model(this_participant_data);
-        % If this ll is better than the last one, replace it in the saved
-        % structure
-        if (ll_new < ll)
-            ll = ll_new;
-            this_fit{1} = ll_new;
-            this_fit{2} = aic;
-            this_fit{3} = pest;
-            this_fit{4} = pest_penalty;
-            spatiotemporal(i,:) = this_fit;
-        end
-    end
-end
-
-filename = [datestr(now,'yyyy_mm_dd_HH'),'_temp'];
-save(filename)
-
-% % Simulate data, concatenate participants, and save simulated dataset
-% simulated_spatiotemporal = [];
-% for i = 1:n_participants
-%     this_simulated_data = simulate_intrusion_gradient_model(data{i}, spatiotemporal{i,3});
-%     % Label this dataset with participant number
-%     this_simulated_data(:,3) = i; 
-%     simulated_spatiotemporal = vertcat(simulated_spatiotemporal, this_simulated_data);
+% spatiotemporal = cell(n_participants,4);
+% 
+% parfor (i = 1:n_participants, num_workers)
+%     % Initial log likelihood value
+%     ll = 1e7;
+%     % Run each participant nrun times
+%     this_fit = cell(1,4);
+%     for j = 1:n_runs
+%         this_participant_data = data{i};
+%         [ll_new, aic, pest, pest_penalty] = fit_spatiotemporal_model(this_participant_data);
+%         % If this ll is better than the last one, replace it in the saved
+%         % structure
+%         if (ll_new < ll)
+%             ll = ll_new;
+%             this_fit{1} = ll_new;
+%             this_fit{2} = aic;
+%             this_fit{3} = pest;
+%             this_fit{4} = pest_penalty;
+%             spatiotemporal(i,:) = this_fit;
+%         end
+%     end
 % end
+% 
+% filename = [datestr(now,'yyyy_mm_dd_HH'),'_temp'];
+% save(filename)
+% 
+% % % Simulate data, concatenate participants, and save simulated dataset
+% % simulated_spatiotemporal = [];
+% % for i = 1:n_participants
+% %     this_simulated_data = simulate_intrusion_gradient_model(data{i}, spatiotemporal{i,3});
+% %     % Label this dataset with participant number
+% %     this_simulated_data(:,3) = i; 
+% %     simulated_spatiotemporal = vertcat(simulated_spatiotemporal, this_simulated_data);
+% % end
 
 %% Spatiotemporal * Orthography Model
-ortho = cell(n_participants,4);
-
-parfor (i = 1:n_participants, num_workers)
-    % Initial log likelihood value
-    ll = 1e7;
-    % Run each participant nrun times
-    this_fit = cell(1,4);
-    for j = 1:n_runs
-        this_participant_data = data{i};
-        [ll_new, aic, pest, pest_penalty] = fit_ortho_model(this_participant_data);
-        % If this ll is better than the last one, replace it in the saved
-        % structure
-        if (ll_new < ll)
-            ll = ll_new;
-            this_fit{1} = ll_new;
-            this_fit{2} = aic;
-            this_fit{3} = pest;
-            this_fit{4} = pest_penalty;
-            ortho(i,:) = this_fit;
-        end
-    end
-end
-
-filename = [datestr(now,'yyyy_mm_dd_HH'),'_temp'];
-save(filename)
-
-% Simulate data, concatenate participants, and save simulated dataset
-simulated_ortho = [];
-for i = 1:n_participants
-    this_simulated_data = simulate_intrusion_gradient_model(data{i}, ortho{i,3});
-    % Label this dataset with participant number
-    this_simulated_data(:,3) = i; 
-    simulated_ortho = vertcat(simulated_ortho, this_simulated_data);
-end
+% ortho = cell(n_participants,4);
+% 
+% parfor (i = 1:n_participants, num_workers)
+%     % Initial log likelihood value
+%     ll = 1e7;
+%     % Run each participant nrun times
+%     this_fit = cell(1,4);
+%     for j = 1:n_runs
+%         this_participant_data = data{i};
+%         [ll_new, aic, pest, pest_penalty] = fit_ortho_model(this_participant_data);
+%         % If this ll is better than the last one, replace it in the saved
+%         % structure
+%         if (ll_new < ll)
+%             ll = ll_new;
+%             this_fit{1} = ll_new;
+%             this_fit{2} = aic;
+%             this_fit{3} = pest;
+%             this_fit{4} = pest_penalty;
+%             ortho(i,:) = this_fit;
+%         end
+%     end
+% end
+% 
+% filename = [datestr(now,'yyyy_mm_dd_HH'),'_temp'];
+% save(filename)
+% 
+% % Simulate data, concatenate participants, and save simulated dataset
+% simulated_ortho = [];
+% for i = 1:n_participants
+%     this_simulated_data = simulate_intrusion_gradient_model(data{i}, ortho{i,3});
+%     % Label this dataset with participant number
+%     this_simulated_data(:,3) = i; 
+%     simulated_ortho = vertcat(simulated_ortho, this_simulated_data);
+% end
 
 %% Spatiotemporal * Semantic Model
-semantic = cell(n_participants,4);
-
-parfor (i = 1:n_participants, num_workers)
-    % Initial log likelihood value
-    ll = 1e7;
-    % Run each participant nrun times
-    this_fit = cell(1,4);
-    for j = 1:n_runs
-        this_participant_data = data{i};
-        [ll_new, aic, pest, pest_penalty] = fit_sem_model(this_participant_data);
-        % If this ll is better than the last one, replace it in the saved
-        % structure
-        if (ll_new < ll)
-            ll = ll_new;
-            this_fit{1} = ll_new;
-            this_fit{2} = aic;
-            this_fit{3} = pest;
-            this_fit{4} = pest_penalty;
-            semantic(i,:) = this_fit;
-        end
-    end
-end
-
-filename = [datestr(now,'yyyy_mm_dd_HH'),'_temp'];
-save(filename)
-
-% Simulate data, concatenate participants, and save simulated dataset
-simulated_semantic = [];
-for i = 1:n_participants
-    this_simulated_data = simulate_intrusion_gradient_model(data{i}, semantic{i,3});
-    % Label this dataset with participant number
-    this_simulated_data(:,3) = i; 
-    simulated_semantic = vertcat(simulated_semantic, this_simulated_data);
-end
+% semantic = cell(n_participants,4);
+% 
+% parfor (i = 1:n_participants, num_workers)
+%     % Initial log likelihood value
+%     ll = 1e7;
+%     % Run each participant nrun times
+%     this_fit = cell(1,4);
+%     for j = 1:n_runs
+%         this_participant_data = data{i};
+%         [ll_new, aic, pest, pest_penalty] = fit_sem_model(this_participant_data);
+%         % If this ll is better than the last one, replace it in the saved
+%         % structure
+%         if (ll_new < ll)
+%             ll = ll_new;
+%             this_fit{1} = ll_new;
+%             this_fit{2} = aic;
+%             this_fit{3} = pest;
+%             this_fit{4} = pest_penalty;
+%             semantic(i,:) = this_fit;
+%         end
+%     end
+% end
+% 
+% filename = [datestr(now,'yyyy_mm_dd_HH'),'_temp'];
+% save(filename)
+% 
+% % Simulate data, concatenate participants, and save simulated dataset
+% simulated_semantic = [];
+% for i = 1:n_participants
+%     this_simulated_data = simulate_intrusion_gradient_model(data{i}, semantic{i,3});
+%     % Label this dataset with participant number
+%     this_simulated_data(:,3) = i; 
+%     simulated_semantic = vertcat(simulated_semantic, this_simulated_data);
+% end
 
 %% Spatiotemporal * ortho * Semantic Model
-multi = cell(n_participants,4);
-
-parfor (i = 1:n_participants, num_workers)
-    % Initial log likelihood value
-    ll = 1e7;
-    % Run each participant nrun times
-    this_fit = cell(1,4);
-    for j = 1:n_runs
-        this_participant_data = data{i};
-        [ll_new, aic, pest, pest_penalty] = fit_orthosem_model(this_participant_data);
-        % If this ll is better than the last one, replace it in the saved
-        % structure
-        if (ll_new < ll)
-            ll = ll_new;
-            this_fit{1} = ll_new;
-            this_fit{2} = aic;
-            this_fit{3} = pest;
-            this_fit{4} = pest_penalty;
-            multi(i,:) = this_fit;
-        end
-    end
-end
-
-filename = [datestr(now,'yyyy_mm_dd_HH'),'_temp'];
-save(filename)
-
-% Simulate data, concatenate participants, and save simulated dataset
-simulated_multi = [];
-for i = 1:n_participants
-    this_simulated_data = simulate_intrusion_gradient_model(data{i}, multi{i,3});
-    % Label this dataset with participant number
-    this_simulated_data(:,3) = i; 
-    simulated_multi = vertcat(simulated_multi, this_simulated_data);
-end
+% multi = cell(n_participants,4);
+% 
+% parfor (i = 1:n_participants, num_workers)
+%     % Initial log likelihood value
+%     ll = 1e7;
+%     % Run each participant nrun times
+%     this_fit = cell(1,4);
+%     for j = 1:n_runs
+%         this_participant_data = data{i};
+%         [ll_new, aic, pest, pest_penalty] = fit_orthosem_model(this_participant_data);
+%         % If this ll is better than the last one, replace it in the saved
+%         % structure
+%         if (ll_new < ll)
+%             ll = ll_new;
+%             this_fit{1} = ll_new;
+%             this_fit{2} = aic;
+%             this_fit{3} = pest;
+%             this_fit{4} = pest_penalty;
+%             multi(i,:) = this_fit;
+%         end
+%     end
+% end
+% 
+% filename = [datestr(now,'yyyy_mm_dd_HH'),'_temp'];
+% save(filename)
+% 
+% % Simulate data, concatenate participants, and save simulated dataset
+% simulated_multi = [];
+% for i = 1:n_participants
+%     this_simulated_data = simulate_intrusion_gradient_model(data{i}, multi{i,3});
+%     % Label this dataset with participant number
+%     this_simulated_data(:,3) = i; 
+%     simulated_multi = vertcat(simulated_multi, this_simulated_data);
+% end
 
 %% Spatiotemporal + ortho * Semantic Model
-add = cell(n_participants,4);
-
-parfor (i = 1:n_participants, num_workers)
-    % Initial log likelihood value
-    ll = 1e7;
-    % Run each participant nrun times
-    this_fit = cell(1,4);
-    for j = 1:n_runs
-        this_participant_data = data{i};
-        [ll_new, aic, pest, pest_penalty] = fit_orthosem_additive_model(this_participant_data);
-        % If this ll is better than the last one, replace it in the saved
-        % structure
-        if (ll_new < ll)
-            ll = ll_new;
-            this_fit{1} = ll_new;
-            this_fit{2} = aic;
-            this_fit{3} = pest;
-            this_fit{4} = pest_penalty;
-            add(i,:) = this_fit;
-        end
-    end
-end
-
-filename = [datestr(now,'yyyy_mm_dd_HH'),'_temp'];
-save(filename)
-
-% Simulate data, concatenate participants, and save simulated dataset
-simulated_add = [];
-for i = 1:n_participants
-    this_simulated_data = simulate_orthosem_additive(data{i}, add{i,3});
-    % Label this dataset with participant number
-    this_simulated_data(:,3) = i; 
-    simulated_add = vertcat(simulated_add, this_simulated_data);
-end
-
-% Save workspace
-filename = [datestr(now,'yyyy_mm_dd_HH'),'_Experiment1_diffusion'];
-save(filename)
+% add = cell(n_participants,4);
+% 
+% parfor (i = 1:n_participants, num_workers)
+%     % Initial log likelihood value
+%     ll = 1e7;
+%     % Run each participant nrun times
+%     this_fit = cell(1,4);
+%     for j = 1:n_runs
+%         this_participant_data = data{i};
+%         [ll_new, aic, pest, pest_penalty] = fit_orthosem_additive_model(this_participant_data);
+%         % If this ll is better than the last one, replace it in the saved
+%         % structure
+%         if (ll_new < ll)
+%             ll = ll_new;
+%             this_fit{1} = ll_new;
+%             this_fit{2} = aic;
+%             this_fit{3} = pest;
+%             this_fit{4} = pest_penalty;
+%             add(i,:) = this_fit;
+%         end
+%     end
+% end
+% 
+% filename = [datestr(now,'yyyy_mm_dd_HH'),'_temp'];
+% save(filename)
+% 
+% % Simulate data, concatenate participants, and save simulated dataset
+% simulated_add = [];
+% for i = 1:n_participants
+%     this_simulated_data = simulate_orthosem_additive(data{i}, add{i,3});
+%     % Label this dataset with participant number
+%     this_simulated_data(:,3) = i; 
+%     simulated_add = vertcat(simulated_add, this_simulated_data);
+% end
+% 
+% % Save workspace
+% filename = [datestr(now,'yyyy_mm_dd_HH'),'_Experiment1_diffusion'];
+% save(filename)
 
 % Output fit statistics and parameter estimates to .csv
 filename = [datestr(now,'yyyy_mm_dd_HH'),'_pest_pure_guess.csv'];
