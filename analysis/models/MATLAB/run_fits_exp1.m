@@ -4,7 +4,7 @@
 
 % Read in the data
 % data = read_sourcemem_data();
-%load('exp1_data_v2.mat')
+load('exp1_data_v2.mat')
 n_participants = length(data);
 n_runs = 5;
 num_workers = maxNumCompThreads/2 - 1; % Maximum number of workers
@@ -15,7 +15,7 @@ load('2022_04_03_03_Experiment1_diffusion.mat')
 
 % overwrite old data with new data, which is the same but with additional
 % columns for the orthographic and semantic similarity of words
-load('exp1_data_v2.mat')
+%load('exp1_data_v2.mat')
 % COMMENTING OUT PRE-RUN MODELS
 
 pure_guess = cell(n_participants,4);
