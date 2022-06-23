@@ -25,6 +25,7 @@ data <- data[data$block != 0,]
 
 # Exclude invalid RTs
 data <- data[data$valid_RT==TRUE,]
+data <- data[data$recog_rating > 3,]
 
 # Function to compute angular difference
 

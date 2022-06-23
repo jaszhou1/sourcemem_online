@@ -58,9 +58,11 @@ data$recog_band <- ifelse(data$recog_rating >= 0 & data$recog_rating <= 3, 'Unre
                           )
 )
 
+# Condition data on successful recognition (defined as rating >3)
+data <- data[data$recog_rating > 3,]
+
 seq_data <- data[data$is_sequential == TRUE,]
 sim_data <- data[data$is_sequential == FALSE,]
-
 
 ################################################################################
 ## Fitting Functions

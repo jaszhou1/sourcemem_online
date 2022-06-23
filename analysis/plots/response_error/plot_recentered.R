@@ -46,17 +46,19 @@ AXIS.LABEL.CEX <- 2.2
 NUM.BINS <- 50
 X.RESP.LOW <- -pi - 0.01
 X.RESP.HI <- pi + 0.01
-Y.RESP.LOW <- 0.10
-Y.RESP.HI <- 0.22
+Y.RESP.LOW <- 0.1
+Y.RESP.HI <- 0.21
 
 #  Function to transform data into (wrapped) density 
 
 get_response_error_density <- function(model){
   preds <- density(as.numeric(model$error), from = -pi, to = pi, cut = FALSE, kernel = "gaussian", adjust = 1.5)
   # To counteract the smoothing to zero beyond the domain -pi, pi, replace the last 50 y co-ords 
-  # with the mean of the preceeding 50
-  preds$y[1:75] <- mean(preds$y[51:100])
-  preds$y[(length(preds$y)-75):length(preds$y)] <- mean(preds$y[(length(preds$y)-100):(length(preds$y)-50)])
+  # with the mean of the preceeding 50, smooth it out after
+  # preds$y[1:125] <- mean(c(preds$y[51:100], preds$y[(length(preds$y)-100):(length(preds$y)-50)]))
+  # preds$y[(length(preds$y)-125):length(preds$y)] <-  mean(c(preds$y[51:100], preds$y[(length(preds$y)-100):(length(preds$y)-50)]))
+  preds$y[1:125] <- preds$y[126]
+  preds$y[(length(preds$y)-125):length(preds$y)] <- preds$y[length(preds$y)-126]
   this_predictions <- data.frame(matrix(ncol = 3, nrow = 512))
   this_predictions[1] <- preds$x
   this_predictions[2] <- preds$y
@@ -83,7 +85,7 @@ plot_recentered <- function(model_list, this_recentered_predictions, filename){
   }
   plot.new()
   plot.window(xlim=c(X.RESP.LOW, X.RESP.HI),
-              ylim=c(Y.RESP.LOW, Y.RESP.HI))
+              ylim=c(0.15, Y.RESP.HI))
   
   ## Compute and plot the empirical histograms for response error.
   resp.hist <- hist(data$error,
@@ -103,7 +105,7 @@ plot_recentered <- function(model_list, this_recentered_predictions, filename){
   
   axis(side=1, at=c(-pi, 0, pi), labels=c(expression(-pi), "0", expression(pi)), cex.axis= AXIS.CEX)
   mtext(paste("Response Offset (rad)"), side=1, cex= AXIS.CEX, cex.lab = AXIS.LABEL.CEX, line=2.5)
-  axis(side=4, at=c(0.1, 0.2), cex.axis= AXIS.CEX)
+  axis(side=4, at=c(0.15, 0.2), cex.axis= AXIS.CEX)
   #mtext(paste("Density"), side=2, cex=AXIS.CEX, cex.lab = AXIS.LABEL.CEX, line=2.5)
   
   ## Add in legend

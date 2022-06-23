@@ -85,4 +85,3 @@ condition_plot <- ggplot(data, aes(response_error)) + geom_histogram(aes(y=..den
                        labels = c("-\u03c0", "0", "\u03c0")) +
     xlab('Response Error') + ylab('Density')
 
-# ===================== Modelling ===========================
