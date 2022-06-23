@@ -4,7 +4,7 @@
 
 % Read in the data
 % data = read_sourcemem_data();
-load('exp2_data_cutoff.mat')
+load('exp2_data.mat')
 n_participants = length(data);
 n_runs = 3;
 num_workers = maxNumCompThreads/2 - 1; % Maximum number of workers

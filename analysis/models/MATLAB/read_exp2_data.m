@@ -10,13 +10,16 @@ function [data] = read_exp2_data()
 % % J1 is all the numbers, J2 is all the strings, and J3 is the full array
 % % MATLAB doesnt like having strings and numbers together
 
-[J1, J2, J3] = xlsread("experiment_1.csv");
+[J1, J2, J3] = xlsread("experiment_2.csv");
 
 % First, exclude the practice blocks
 all_data = J1(J1(:,10) ~= 0,:);
 
 % Then, exclude trials with invalid RTs
 all_data = all_data(all_data(:,9) ~= 0,:);
+
+% Finally, exclude all trials that were not recognised
+all_data = all_data(all_data(:,3) > 3,:);
 
 % Get a list of participants
 participants = unique(all_data(:,40));
@@ -29,7 +32,7 @@ all_data(:,8) = all_data(:,8)/1000;
 % [response error, response time, response angle, target angle,intrusion angle 1 ... intrusion angle 9]
 for i = 1:length(participants)
     this_participant_data = all_data(all_data(:,40) == i,:);
-    this_participant_cell = zeros(length(this_participant_data), 50);
+    this_participant_cell = zeros(size(this_participant_data,1), 50);
     this_participant_cell(:,1) = this_participant_data(:,7); % Response Error
     this_participant_cell(:,2) = this_participant_data(:,8); % response time
     this_participant_cell(:,3) = this_participant_data(:,6); % response angle
