@@ -150,7 +150,7 @@ exp2_plot <- function(model_list, data, model_predictions, filename){
   Y.RESP.HI <- 2
   
   X.RT.LOW <- 0.0
-  X.RT.HI <- 4
+  X.RT.HI <- 7
   Y.RT.LOW <- 0.0
   Y.RT.HI <- 3
   

@@ -179,7 +179,7 @@ plot_response_time <- function(model_list, filename){
   }
 
   plot.new()
-  plot.window(xlim=c(0, 7),
+  plot.window(xlim=c(0, 4),
               ylim=c(0, 1.7))
   
   ## Compute and plot the empirical histograms for response error.
@@ -199,7 +199,7 @@ plot_response_time <- function(model_list, filename){
     points(model.data$value, model.data$prob, type="l", lty= MODEL.LTY[[model.type]], lwd = 6, col=MODEL.COL[[model.type]])
   }
   
-  axis(side=1, at=c(0, 2, 4, 6, 7), labels= c("0", "2", "4", "6", "7"), cex.axis=AXIS.CEX)
+  axis(side=1, at=c(0, 1, 2, 3, 4), labels= c("0", "1", "2", "3", "4"), cex.axis=AXIS.CEX)
   mtext(paste("Response Time (s)"), side=1, cex=AXIS.CEX, cex.lab = AXIS.LABEL.CEX, line=2.5)
   axis(side=2, at=c(0.0, 0.5, 1.0, 1.5), cex.axis=AXIS.CEX)
   #mtext(paste("Density"), side=2, cex=AXIS.CEX, cex.lab = AXIS.LABEL.CEX, line=2.5)
@@ -330,7 +330,7 @@ plot_individual_response_time <- function(model_list){
   participants <- unique(model_predictions$participant)
   for(i in participants){
     
-    this_model <- model_predictions[(model_predictions$model == models[[model_list]]) &
+    this_model <- model_predictions[(model_predictions$model == models[model_list]) &
                                       (model_predictions$participant == i),]
     this_response_time_predictions <- get_response_time_density(this_model)
     colnames(this_response_time_predictions) <- c("value", "prob", "model")

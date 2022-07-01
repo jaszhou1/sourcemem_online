@@ -1,4 +1,8 @@
-
+# Individual AIC for Exp 1
+setwd("~/git/sourcemem_online/analysis/models/R/experiment_1/output")
+exp1 <- read.csv('Exp1_AIC.csv', fileEncoding="UTF-8-BOM")
+setwd("~/git/sourcemem_online/analysis/models/MATLAB/experiment_1/output")
+exp1_diff <- read.csv('Exp1_AIC.csv', fileEncoding="UTF-8-BOM")
 AIC_weight <- function(AIC, filename){
   ncol <- ncol(AIC)
   for(i in 1:nrow(AIC)){
@@ -18,16 +22,6 @@ AIC_weight <- function(AIC, filename){
   # AIC <- AIC[idx]
   # 
   # Stack raw AIC and AIC weights
-  AIC <- rbind(AIC, AIC_weight)
-  
-  write.csv(AIC, file = filename)
+  AIC <- cbind(AIC, AIC_weight)
+  write.csv(AIC, filename)
 }
-
-# setwd("~/git/sourcemem_online/analysis/models/R/experiment_1/output")
-# exp1 <- read.csv('Exp1_AIC.csv')
-
-# setwd("~/git/sourcemem_online/analysis/models/R/experiment_2/output")
-# exp2 <- read.csv('Exp2_AIC_trimmed.csv')
-# 
-# setwd("~/git/sourcemem_online/analysis/models/MATLAB/experiment_2")
-# exp2_diff <- read.csv("~/git/sourcemem_online/analysis/models/MATLAB/experiment_2/AIC.csv", fileEncoding="UTF-8-BOM")
