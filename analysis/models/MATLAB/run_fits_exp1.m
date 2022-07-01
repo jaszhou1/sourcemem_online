@@ -194,15 +194,11 @@ end
 spatiotemporal = cell(n_participants,4);
 
 parfor (i = 1:n_participants, num_workers)
-    Initial log likelihood value
     ll = 1e7;
-    Run each participant nrun times
     this_fit = cell(1,4);
     for j = 1:n_runs
         this_participant_data = data{i};
         [ll_new, aic, pest, pest_penalty] = fit_spatiotemporal_model(this_participant_data);
-        If this ll is better than the last one, replace it in the saved
-        structure
         if (ll_new < ll)
             ll = ll_new;
             this_fit{1} = ll_new;
