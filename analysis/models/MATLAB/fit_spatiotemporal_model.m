@@ -28,11 +28,9 @@ st = 0;
 iota = 0;
 
 P = [v1_targ, v2_targ, v1_int, v2_int, eta_targ, eta_int,  a_targ, a_guess,...
-    gamma, beta, kappa, lambda_b, lambda_f, zeta, rho, chi, psi, Ter, st, ...
-    iota];
+    gamma, beta, kappa, lambda_b, lambda_f, zeta, rho, chi, psi, Ter, st];
 Sel = [1,        0,     1,       0,       1,        1,        1,       1,...
-    1,    1,     1,      1,        1,      1,    1,   0,  0,  1,   0, ...
-    0];   
+    1,    1,     1,      1,        1,      1,    1,   0,  0,  1,   0];   
 
 pest = fminsearch(@intrusion_gradient_model, P(Sel==1), options, P(Sel==0), Sel, data, badix);
 P(Sel==1) = pest;
