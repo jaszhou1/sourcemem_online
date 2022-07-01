@@ -4,20 +4,30 @@ function [ll, aic, P, penalty] = fit_pure_guess(data)
 %          1    2    3  4   5   6   7   8   9 
 setopt;
 
-v1 = normrnd(5,0.1);
-v2 = 0;
-eta = normrnd(0.1, 0.1);
-a1 = normrnd(2,0.5);
-a2 = normrnd(2,0.5);
-beta = normrnd(0.3,0.1);
-Ter = normrnd(0.15, 0.05);
+% Default value for badix
+if nargin < 2
+    badix = 5;
+end
+
+v1_targ = normrnd(4, 2);
+v2_targ = 0;
+v1_int = 0;
+v2_int = 0;
+eta_targ = normrnd(0.5, 0.4);
+eta_int = 0;
+a_targ = normrnd(2, 0.4);
+% a_int = normrnd(1.5, 0.4);
+a_guess = normrnd(1, 0.4);
+gamma = 0;
+beta = abs(normrnd(0.5, 0.1));
+Ter = normrnd(0.2, 0.05);
 st = 0;
 
-P = [v1, v2, eta, a1, a2, beta, Ter,st];
-Sel = [1,0,1,1,1,1,1,0];  
 
+P = [v1_targ, v2_targ, v1_int, v2_int, eta_targ, eta_int,  a_targ, a_guess, gamma, beta, Ter, st];
+Sel = [1,        0,     0,       0,       1,        0,       1,       1,      0,    1,   1,   0];  
 
-pest = fminsearch(@pure_guess_model, P(Sel==1), options, P(Sel==0), Sel, data);
+pest = fminsearch(@three_component_model, P(Sel==1), options, P(Sel==0), Sel, data, badix);
 P(Sel==1) = pest;
-[ll,aic,P, penalty] = pure_guess_model(P(Sel==1), P(Sel==0), Sel, data); 
+[ll, aic, P, penalty] = three_component_model(P(Sel==1), P(Sel==0), Sel, data, badix);
 end
