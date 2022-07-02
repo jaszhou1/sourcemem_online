@@ -67,8 +67,8 @@ parfor (i = 1:n_participants, num_workers)
     for j = 1:n_runs
         this_participant_data = data{i};
         [ll_new, aic, pest, pest_penalty] = fit_pure_intrusion_model(this_participant_data);
-        If this ll is better than the last one, replace it in the saved
-        structure
+        % If this ll is better than the last one, replace it in the saved
+        % structure
         if (ll_new < ll)
             ll = ll_new;
             this_fit{1} = ll_new;
