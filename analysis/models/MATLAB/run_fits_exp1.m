@@ -43,15 +43,16 @@ end
  
 % save(filename)
 % 
-% % Simulate data, concatenate participants, and save simulated dataset
-% simulated_pure_guess = [];
-% for i = 1:n_participants
-%     P = pure_guess{i,3};
-%     this_simulated_data = simulate_three_component(data{i}, this_pest);
-%     % Label this dataset with participant number
-%     this_simulated_data(:,3) = i; 
-%     simulated_pure_guess = vertcat(simulated_pure_guess, this_simulated_data);
-% end
+% Simulate data, concatenate participants, and save simulated dataset
+simulated_pure_guess = [];
+for i = 1:n_participants
+    P = pure_guess{i,3};
+    this_pest = [P(1), P(2), 0, 0, P(3), 0, P(4), P(5), 0, P(6), P(7), P(8)];
+    this_simulated_data = simulate_three_component(data{i}, this_pest);
+    % Label this dataset with participant number
+    this_simulated_data(:,3) = i; 
+    simulated_pure_guess = vertcat(simulated_pure_guess, this_simulated_data);
+end
 % save(filename)
 
 %% Pure Intrusion Model
@@ -59,9 +60,9 @@ end
 pure_intrusion = cell(n_participants,4);
 
 parfor (i = 1:n_participants, num_workers)
-    Initial log likelihood value
+%     Initial log likelihood value
     ll = 1e7;
-    Run each participant nrun times
+%     Run each participant nrun times
     this_fit = cell(1,4);
     for j = 1:n_runs
         this_participant_data = data{i};
@@ -80,13 +81,14 @@ parfor (i = 1:n_participants, num_workers)
 end
 
 % Simulate data, concatenate participants, and save simulated dataset
-% simulated_pure_intrusion = [];
-% for i = 1:n_participants
-%     this_simulated_data = simulate_three_component(data{i}, pure_intrusion{i,3});
-%     % Label this dataset with participant number
-%     this_simulated_data(:,3) = i; 
-%     simulated_pure_intrusion = vertcat(simulated_pure_intrusion, this_simulated_data);
-% end
+simulated_pure_intrusion = [];
+for i = 1:n_participants
+    this_simulated_data = simulate_three_component(data{i}, pure_intrusion{i,3});
+    % Label this dataset with participant number
+    this_simulated_data(:,3) = i; 
+    simulated_pure_intrusion = vertcat(simulated_pure_intrusion, this_simulated_data);
+end
+
 % % 
 % % save(filename)
 %% Three-Component Model
@@ -149,13 +151,13 @@ parfor (i = 1:n_participants, num_workers)
 end
 
 % % Simulate data, concatenate participants, and save simulated dataset
-% simulated_flat_intrusion_eta = [];
-% for i = 1:n_participants
-%     this_simulated_data = simulate_three_component(data{i}, flat_intrusion_eta{i,3});
-%     % Label this dataset with participant number
-%     this_simulated_data(:,3) = i; 
-%     simulated_flat_intrusion_eta = vertcat(simulated_flat_intrusion_eta, this_simulated_data);
-% end
+simulated_flat_intrusion_eta = [];
+for i = 1:n_participants
+    this_simulated_data = simulate_three_component(data{i}, flat_intrusion_eta{i,3});
+    % Label this dataset with participant number
+    this_simulated_data(:,3) = i; 
+    simulated_flat_intrusion_eta = vertcat(simulated_flat_intrusion_eta, this_simulated_data);
+end
 save(filename)
 %% Temporal Gradient Model
 temporal = cell(n_participants,4);
@@ -182,14 +184,14 @@ parfor (i = 1:n_participants, num_workers)
 end
 
 % % Simulate data, concatenate participants, and save simulated dataset
-% simulated_temporal_flat_guess = [];
-% for i = 1:n_participants
-%     this_simulated_data = simulate_intrusion_gradient_model(data{i}, temporal{i,3});
-%     % Label this dataset with participant number
-%     this_simulated_data(:,3) = i; 
-%     simulated_temporal_flat_guess = vertcat(simulated_temporal_flat_guess, this_simulated_data);
-% end
-% % save(filename)
+simulated_temporal_flat_guess = [];
+for i = 1:n_participants
+    this_simulated_data = simulate_intrusion_gradient_model(data{i}, temporal{i,3}(1:19));
+    % Label this dataset with participant number
+    this_simulated_data(:,3) = i; 
+    simulated_temporal_flat_guess = vertcat(simulated_temporal_flat_guess, this_simulated_data);
+end
+% save(filename)
 %% Spatiotemporal Model
 spatiotemporal = cell(n_participants,4);
 
@@ -214,13 +216,13 @@ filename = [datestr(now,'yyyy_mm_dd_HH'),'_temp'];
 save(filename)
 
 % % Simulate data, concatenate participants, and save simulated dataset
-% simulated_spatiotemporal = [];
-% for i = 1:n_participants
-%     this_simulated_data = simulate_intrusion_gradient_model(data{i}, spatiotemporal{i,3});
-%     % Label this dataset with participant number
-%     this_simulated_data(:,3) = i; 
-%     simulated_spatiotemporal = vertcat(simulated_spatiotemporal, this_simulated_data);
-% end
+simulated_spatiotemporal = [];
+for i = 1:n_participants
+    this_simulated_data = simulate_intrusion_gradient_model(data{i}, spatiotemporal{i,3}(1:19));
+    % Label this dataset with participant number
+    this_simulated_data(:,3) = i; 
+    simulated_spatiotemporal = vertcat(simulated_spatiotemporal, this_simulated_data);
+end
 
 %% Spatiotemporal * Orthography Model
 % ortho = cell(n_participants,4);

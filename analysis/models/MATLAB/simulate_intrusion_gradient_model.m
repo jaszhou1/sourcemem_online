@@ -5,7 +5,7 @@ name = 'SIMULATE_ORTHOSEM: ';
 errmg1 = 'Incorrect number of parameters, exiting...';
 %%
 % Number of trials to simulate (should be the same as the actual dataset)
-n_trials = length(data);
+n_trials = size(data,1);
 
 % Default number of simulations
 n_sims = 50; % The number of times to simulate each trial
@@ -58,7 +58,7 @@ eta1_int = eta_int;
 eta2_int = eta_int;
 
 % Arguments for the simulation function
-tmax = 5.1;
+tmax = 30;
 nt = 301;
 h = tmax / nt;
 % Each trial must be simulated one by one, as there is a unique

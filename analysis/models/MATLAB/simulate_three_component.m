@@ -44,7 +44,7 @@ eta1_int = eta_int;
 eta2_int = eta_int;
 
 % Arguments for the simulation function
-tmax = 5.1;
+tmax = 7;
 nt = 301;
 h = tmax / nt;
 % Each trial must be simulated one by one, as there is a unique
