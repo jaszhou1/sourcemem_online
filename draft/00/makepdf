@@ -1,3 +1,0 @@
-#!/bin/sh
-
-pdflatex sourcemem-online -halt-on-error -interaction=batchmode > /dev/null && pdflatex sourcemem-online -halt-on-error -interaction=batchmode > /dev/null && biber sourcemem-online && pdflatex sourcemem-online -halt-on-error -interaction=batchmode > /dev/null && pdflatex sourcemem-online -halt-on-error -interaction=batchmode > /dev/null
