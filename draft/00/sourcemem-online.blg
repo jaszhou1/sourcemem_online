@@ -1,0 +1,8 @@
+[0] Config.pm:302> INFO - This is Biber 2.9
+[0] Config.pm:305> INFO - Logfile is 'sourcemem-online.blg'
+[55] biber-MSWIN64:313> INFO - === 
+[160] Biber.pm:371> INFO - Reading 'sourcemem-online.bcf'
+[502] Utils.pm:185> ERROR - Error: Found biblatex control file version 3.7, expected version 3.4.
+This means that your biber (2.9) and biblatex (3.14) versions are incompatible.
+See compat matrix in biblatex or biber PDF documentation.
+[502] Biber.pm:114> INFO - ERRORS: 1
