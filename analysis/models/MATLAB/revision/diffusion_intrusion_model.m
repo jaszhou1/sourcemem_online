@@ -21,7 +21,7 @@ nw = 50; % Number of angular steps on the circle.
 w = 2 * pi / nw; % size of the angular step
 % Noise in the drift rate (infinitesimal standard deviation)
 kmax = 50; %Maximum number of eigenvalues in dhamana
-num_intrusions = 7;
+num_intrusions = 9;
 
 %% Parameters
 
@@ -133,8 +133,8 @@ P_guess = [0, 0, 0, 0, sigma, a_guess];
 % Raw temporal similarity values from the lags -9 to 9, skipping 0 (in a
 % list of 10, normalise by dividing by 10)
 
-backwards_similarity = (1-kappa)*exp(-lambda_b*(abs((-num_intrusions:-1)/10)));
-forwards_similarity = kappa*exp(-lambda_f*((abs(1:num_intrusions)/10)));
+backwards_similarity = (1-tau)*exp(-lambda_b*(abs((-num_intrusions:-1)/10)));
+forwards_similarity = tau*exp(-lambda_f*((abs(1:num_intrusions)/10)));
 
 % Concatenate, and normalise
 temporal_similarity_values = [backwards_similarity, forwards_similarity]';
@@ -159,7 +159,7 @@ orthographic_distances = 1- Data(:, 33:41);
 orthographic_similarities = shepard(orthographic_distances, iota);
 
 % Semantic similarity
-semantic_similarities = Data(:, 42:50);
+semantic_similarities = shepard(Data(:, 42:50), upsilon);
 
 % Normalise all components
 temporal_similarities = temporal_similarities./(max(temporal_similarities(:)));
@@ -185,7 +185,7 @@ if any(all_weights(:) < 0)
     aic = 0;
     penalty = 1e7;
     pest_penalty(1,:) = P;
-    [name, errmg4], return;
+    [name, errmg3], return;
 end
 
 %% Intrusion processes

@@ -26,7 +26,7 @@ for i = participants
     
     % Model
     this_pest = num2cell(model{i,3});
-    this_line = {i, model_name, model{i,2},...
+    this_line = {i, model_name, model{i,1}, model{i,2},...
         this_pest{:}};
     this_line = cellfun(@num2str,this_line,'un',0);
     this_line = strjoin(this_line, ', ');

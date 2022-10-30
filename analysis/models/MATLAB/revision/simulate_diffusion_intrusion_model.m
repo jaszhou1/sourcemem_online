@@ -88,7 +88,7 @@ orthographic_distances = 1- Data(:, 33:41);
 orthographic_similarities = shepard(orthographic_distances, iota);
 
 % Semantic similarity
-semantic_similarities = Data(:, 42:50);
+semantic_similarities = shepard(Data(:, 42:50), upsilon);
 
 % Normalise all components
 temporal_similarities = temporal_similarities./(max(temporal_similarities(:)));
@@ -117,7 +117,7 @@ this_cond_data = zeros(n_trials*n_sims, 49);
 idx = 1;
 
 for i = 1:n_trials
-    this_intrusions = Data(i, 6:12);
+    this_intrusions = Data(i, 5:13);
     this_weights = weights(i, :);
     for j = 1:n_sims
         % Determine if this trial is an intrusion, memory, or guess
