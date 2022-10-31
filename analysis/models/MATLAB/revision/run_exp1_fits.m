@@ -1,14 +1,13 @@
 %% Fit the circular diffusion model to source memory data
 % This version of the model frees eta1 and eta2 as separate parameters
 % Read in data
-load('exp2_data.mat')
+load('exp1_data.mat')
 
 n_participants = length(data);
 n_runs = 5;
 num_workers = maxNumCompThreads/2; % Maximum number of workers
 
-
-filename = 'exp2_fits.mat';
+filename = 'exp1_fits.mat';
 
 %% Pure Guess Model
 % No intrusions,
@@ -295,8 +294,8 @@ function [sim_data] = simulate_model(model, model_name, header_line)
         this_sim = simulate_intrusion_model(data(i,:), model{i,3}, i);
         sim_data = vertcat(sim_data, this_sim);
     end
-    csvwrite(strcat('exp2_sim_', model_name, '.csv'), sim_data)
+    csvwrite(strcat('exp1_sim_', model_name, '.csv'), sim_data)
 
-    filename = ['exp2_',datestr(now,'yyyy_mm_dd_HH'),'_pest_', model_name, '.csv'];
+    filename = ['exp1_',datestr(now,'yyyy_mm_dd_HH'),'_pest_', model_name, '.csv'];
     param_to_csv(filename, 1:n_participants, model, model_name, header_line);
 end
