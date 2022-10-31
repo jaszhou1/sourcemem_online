@@ -203,8 +203,8 @@ P_intrusion = [v1_int, v2_int, eta1_int, eta2_int, sigma, a_int];
 %to the target location
 
 % Empty structure to put likelihood of each data point
-like = zeros(length(Data),1);
-for i = 1:length(Data)
+like = zeros(size(Data,1),1);
+for i = 1:size(Data,1)
     % Get the serial position of this trial
     this_trial_pos = Data(i, 32);
     
