@@ -83,10 +83,13 @@ colnames(temporal_similarity_fitted) <- c('lag', 'Model', 'value')
 
 
 
-ggplot(data = temporal_similarity_fitted, aes(x = lag, y = value, lty = model, shape = model, color = model)) +  
-  geom_point(size = 3.5) + geom_line(lwd = 1.2, alpha = 0.5) + 
+ggplot(data = temporal_similarity_fitted, aes(x = lag, y = value, lty = Model, shape = Model, color = Model)) +  
+  geom_point(size = 3.5) + geom_line(lwd = 1.2, alpha = 0.8) + 
   scale_x_continuous(name = 'Lag of Intruding Item', breaks = c(-9, -5, -1, 1, 5, 9)) +
   scale_y_continuous(name = 'Intrusion Probability') +
+  scale_color_manual(values=c('#0099B4FF',
+                              '#925E9FFF')) +
+  scale_linetype_manual(values=c("longdash", "twodash")) +
   theme(
     axis.text.x = element_text(color="black", size = 18),
     axis.text.y = element_text(color="black", size = 18),
@@ -99,5 +102,10 @@ ggplot(data = temporal_similarity_fitted, aes(x = lag, y = value, lty = model, s
     panel.background = element_blank(),
     legend.key = element_rect(colour = "transparent", fill = "white"),
     legend.text=element_text(size= 18),
-    axis.line = element_line(colour = "black")
+    legend.title=element_text(size= 18),
+    axis.line = element_line(colour = "black"),
+    legend.position="none"
   )
+
+setwd("~/git/sourcemem_online/analysis/plots/output")
+ggsave('fitted_temporal.png', plot = last_plot(), width = 30, height = 10, units = "cm")
