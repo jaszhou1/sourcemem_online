@@ -27,7 +27,7 @@ parfor (i = 1:n_participants, num_workers)
         if (ll_new < ll)
             % Double fit, call fminsearch again, but use the best parameter
             % estimates as starting points
-            [ll_new, aic, pest, pest_penalty] = fit_pure_guess_model(this_participant_data, pest);
+            [ll_new, aic, pest, pest_penalty] = fit_pure_guess_model(this_participant_data, pest, 5);
             ll = ll_new;
             this_fit{1} = ll;
             this_fit{2} = aic;
@@ -86,7 +86,7 @@ parfor (i = 1:n_participants, num_workers)
         if (ll_new < ll)
             % Double fit, call fminsearch again, but use the best parameter
             % estimates as starting points
-            [ll_new, aic, pest, pest_penalty] = fit_flat_intrusion_model(this_participant_data, pest);
+%             [ll_new, aic, pest, pest_penalty] = fit_flat_intrusion_model(this_participant_data, pest);
             ll = ll_new;
             this_fit{1} = ll;
             this_fit{2} = aic;
@@ -142,7 +142,7 @@ parfor (i = 1:n_participants, num_workers)
         if (ll_new < ll)
             % Double fit, call fminsearch again, but use the best parameter
             % estimates as starting points
-            [ll_new, aic, pest, pest_penalty] = fit_spatiotemporal_model(this_participant_data, pest);
+            [ll_new, aic, pest, pest_penalty] = fit_spatiotemporal_model(this_participant_data, pest, 5);
             ll = ll_new;
             this_fit{1} = ll;
             this_fit{2} = aic;
@@ -170,7 +170,7 @@ parfor (i = 1:n_participants, num_workers)
         if (ll_new < ll)
             % Double fit, call fminsearch again, but use the best parameter
             % estimates as starting points
-            [ll_new, aic, pest, pest_penalty] = fit_ortho_model(this_participant_data, pest);
+            [ll_new, aic, pest, pest_penalty] = fit_ortho_model(this_participant_data, pest, 5);
             ll = ll_new;
             this_fit{1} = ll;
             this_fit{2} = aic;
@@ -198,7 +198,7 @@ parfor (i = 1:n_participants, num_workers)
         if (ll_new < ll)
             % Double fit, call fminsearch again, but use the best parameter
             % estimates as starting points
-            [ll_new, aic, pest, pest_penalty] = fit_sem_model(this_participant_data, pest);
+            [ll_new, aic, pest, pest_penalty] = fit_sem_model(this_participant_data, pest, 5);
             ll = ll_new;
             this_fit{1} = ll;
             this_fit{2} = aic;
@@ -226,7 +226,7 @@ parfor (i = 1:n_participants, num_workers)
         if (ll_new < ll)
             % Double fit, call fminsearch again, but use the best parameter
             % estimates as starting points
-            [ll_new, aic, pest, pest_penalty] = fit_4F_model(this_participant_data, pest);
+            [ll_new, aic, pest, pest_penalty] = fit_4F_model(this_participant_data, pest, 5);
             ll = ll_new;
             this_fit{1} = ll;
             this_fit{2} = aic;
@@ -256,7 +256,7 @@ parfor (i = 1:n_participants, num_workers)
         if (ll_new < ll)
             % Double fit, call fminsearch again, but use the best parameter
             % estimates as starting points
-            [ll_new, aic, pest, pest_penalty] = fit_pure_orthosem_model(this_participant_data, pest);
+            [ll_new, aic, pest, pest_penalty] = fit_pure_orthosem_model(this_participant_data, pest, 5);
             ll = ll_new;
             this_fit{1} = ll;
             this_fit{2} = aic;
@@ -275,21 +275,22 @@ save(filename)
 % on the appropriate value (usually 0) instead of missing a column. More
 % convenient to have this consistency 
 header_line = 'participant, model_name, ll, AIC, v1t_1, v2t_1,  v1i_1,  v2i_1,       eta1_t, eta2_t, eta1_i, eta2_i,     at,  ag,    beta,    gamma,      tau,  l_b,   l_f,       zeta,  rho,     chi,        psi1,       iota,  upsilon,       Ter,    st';
-sim_pure_guess = simulate_model(pure_guess, 'Pure Guess', header_line);
-sim_pure_intrusion = simulate_model(pure_intrusion, 'Pure Intrusion', header_line);
-sim_flat_intrusion = simulate_model(flat_intrusion, 'Flat Intrusion', header_line);
-sim_temporal = simulate_model(temporal, 'Temporal', header_line);
-sim_spatiotemporal = simulate_model(spatiotemporal, 'Spatiotemporal', header_line);
-sim_ortho = simulate_model(ortho, 'Spatiotemporal-Orthographic', header_line);
-sim_sem = simulate_model(sem, 'Spatiotemporal-Semantic', header_line);
-sim_four_factor = simulate_model(four_factor, 'Four Factor', header_line);
-sim_pure_orthosem = simulate_model(pure_orthosem, 'Orthographic-Semantic', header_line);
+sim_pure_guess = simulate_model(pure_guess, 'Pure Guess', header_line, data);
+sim_pure_intrusion = simulate_model(pure_intrusion, 'Pure Intrusion', header_line, data);
+sim_flat_intrusion = simulate_model(flat_intrusion, 'Flat Intrusion', header_line, data);
+sim_temporal = simulate_model(temporal, 'Temporal', header_line, data);
+sim_spatiotemporal = simulate_model(spatiotemporal, 'Spatiotemporal', header_line, data);
+sim_ortho = simulate_model(ortho, 'Spatiotemporal-Orthographic', header_line, data);
+sim_sem = simulate_model(sem, 'Spatiotemporal-Semantic', header_line, data);
+sim_four_factor = simulate_model(four_factor, 'Four Factor', header_line, data);
+sim_pure_orthosem = simulate_model(pure_orthosem, 'Orthographic-Semantic', header_line, data);
 
 %% Simulation function
 % Function that takes in a fitted model structure, and generates some
 % output, a .csv with simulated observations for plotting in R, and also
 % the parameter estimates and AIC fit stats, in a separate .csv file
-function [sim_data] = simulate_model(model, model_name, header_line)
+function [sim_data] = simulate_model(model, model_name, header_line, data)
+    n_participants = length(data);
     sim_data = [];
     for i = 1:n_participants
         this_sim = simulate_intrusion_model(data(i,:), model{i,3}, i);
