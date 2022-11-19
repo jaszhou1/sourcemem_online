@@ -276,14 +276,13 @@ save(filename)
 % convenient to have this consistency 
 header_line = 'participant, model_name, ll, AIC, v1t_1, v2t_1,  v1i_1,  v2i_1,       eta1_t, eta2_t, eta1_i, eta2_i,     at,  ag,    beta,    gamma,      tau,  l_b,   l_f,       zeta,  rho,     chi,        psi1,       iota,  upsilon,       Ter,    st';
 sim_pure_guess = simulate_model(pure_guess, 'Pure Guess', header_line, data);
-sim_pure_intrusion = simulate_model(pure_intrusion, 'Pure Intrusion', header_line, data);
-sim_flat_intrusion = simulate_model(flat_intrusion, 'Flat Intrusion', header_line, data);
+sim_pure_intrusion = simulate_model(pure_int, 'Pure Intrusion', header_line, data);
+sim_flat_intrusion = simulate_model(flat_int, 'Flat Intrusion', header_line, data);
 sim_temporal = simulate_model(temporal, 'Temporal', header_line, data);
 sim_spatiotemporal = simulate_model(spatiotemporal, 'Spatiotemporal', header_line, data);
 sim_ortho = simulate_model(ortho, 'Spatiotemporal-Orthographic', header_line, data);
 sim_sem = simulate_model(sem, 'Spatiotemporal-Semantic', header_line, data);
 sim_four_factor = simulate_model(four_factor, 'Four Factor', header_line, data);
-sim_pure_orthosem = simulate_model(pure_orthosem, 'Orthographic-Semantic', header_line, data);
 
 %% Simulation function
 % Function that takes in a fitted model structure, and generates some
@@ -293,7 +292,7 @@ function [sim_data] = simulate_model(model, model_name, header_line, data)
     n_participants = length(data);
     sim_data = [];
     for i = 1:n_participants
-        this_sim = simulate_intrusion_model(data(i,:), model{i,3}, i);
+        this_sim = simulate_diffusion_intrusion_model(data{i,:}, model{i,3}, i);
         sim_data = vertcat(sim_data, this_sim);
     end
     csvwrite(strcat('exp2_sim_', model_name, '.csv'), sim_data)

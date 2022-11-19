@@ -12,10 +12,10 @@ h = tmax / nt;
 n_sims = 1; % The number of times to simulate each trial
 
 % Number of intrusions
-num_intrusions = 7;
+num_intrusions = 9;
 
 % Expected number of parameters
-n_params = 37;
+n_params = 23;
 % Check the length of the parameter vector
 if length(pest) ~= n_params
     [name, errmg1], length(pest), return;
