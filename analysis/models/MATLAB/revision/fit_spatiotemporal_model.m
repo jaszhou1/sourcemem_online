@@ -17,7 +17,7 @@ if nargin < 2
     v1i = normrnd(1.5, 0.05);
     v2i = 0;
 
-    eta1_t = normrnd(0.5, 0.1);
+    eta1_t = normrnd(0.9, 0.1);
     eta2_t = normrnd(0.1, 0.05);
     eta1_i = normrnd(0.5, 0.1);
     eta2_i = normrnd(0.1, 0.05);

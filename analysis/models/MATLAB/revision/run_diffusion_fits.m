@@ -4,69 +4,69 @@
 load('exp2_data.mat')
 
 n_participants = length(data);
-n_runs = 5;
+n_runs = 2;
 num_workers = maxNumCompThreads/2; % Maximum number of workers
 
 
 filename = 'exp2_fits.mat';
 
-%% Pure Guess Model
-% No intrusions,
-pure_guess = cell(n_participants,4);
-
-parfor (i = 1:n_participants, num_workers)
-    % Initial log likelihood value, very large.
-    ll = 1e7;
-    % Run each participant nrun times
-    this_fit = cell(1,4);
-    for j = 1:n_runs
-        this_participant_data = data{i};
-        [ll_new, aic, pest, pest_penalty] = fit_pure_guess_model(this_participant_data);
-        % If this ll is better than the last one, replace it in the saved
-        % structure
-        if (ll_new < ll)
-            % Double fit, call fminsearch again, but use the best parameter
-            % estimates as starting points
-            [ll_new, aic, pest, pest_penalty] = fit_pure_guess_model(this_participant_data, pest, 5);
-            ll = ll_new;
-            this_fit{1} = ll;
-            this_fit{2} = aic;
-            this_fit{3} = pest;
-            this_fit{4} = pest_penalty;
-            pure_guess(i,:) = this_fit;
-        end
-    end
-end
-
-%% Pure Intrusion Model
-% Two component mixture model, memory + intrusions
-% No guesses, target variability and prob of intrusion is the only
-% mechanism for errors in this model
-pure_int = cell(n_participants,4);
-
-parfor (i = 1:n_participants, num_workers)
-    % Initial log likelihood value, very large.
-    ll = 1e7;
-    % Run each participant nrun times
-    this_fit = cell(1,4);
-    for j = 1:n_runs
-        this_participant_data = data{i};
-        [ll_new, aic, pest, pest_penalty] = fit_pure_intrusion_model(this_participant_data);
-        % If this ll is better than the last one, replace it in the saved
-        % structure
-        if (ll_new < ll)
-            % Double fit, call fminsearch again, but use the best parameter
-            % estimates as starting points
-            [ll_new, aic, pest, pest_penalty] = fit_pure_intrusion_model(this_participant_data, pest);
-            ll = ll_new;
-            this_fit{1} = ll;
-            this_fit{2} = aic;
-            this_fit{3} = pest;
-            this_fit{4} = pest_penalty;
-            pure_int(i,:) = this_fit;
-        end
-    end
-end
+% %% Pure Guess Model
+% % No intrusions,
+% pure_guess = cell(n_participants,4);
+% 
+% parfor (i = 1:n_participants, num_workers)
+%     % Initial log likelihood value, very large.
+%     ll = 1e7;
+%     % Run each participant nrun times
+%     this_fit = cell(1,4);
+%     for j = 1:n_runs
+%         this_participant_data = data{i};
+%         [ll_new, aic, pest, pest_penalty] = fit_pure_guess_model(this_participant_data);
+%         % If this ll is better than the last one, replace it in the saved
+%         % structure
+%         if (ll_new < ll)
+%             % Double fit, call fminsearch again, but use the best parameter
+%             % estimates as starting points
+%             [ll_new, aic, pest, pest_penalty] = fit_pure_guess_model(this_participant_data, pest, 5);
+%             ll = ll_new;
+%             this_fit{1} = ll;
+%             this_fit{2} = aic;
+%             this_fit{3} = pest;
+%             this_fit{4} = pest_penalty;
+%             pure_guess(i,:) = this_fit;
+%         end
+%     end
+% end
+% 
+% %% Pure Intrusion Model
+% % Two component mixture model, memory + intrusions
+% % No guesses, target variability and prob of intrusion is the only
+% % mechanism for errors in this model
+% pure_int = cell(n_participants,4);
+% 
+% parfor (i = 1:n_participants, num_workers)
+%     % Initial log likelihood value, very large.
+%     ll = 1e7;
+%     % Run each participant nrun times
+%     this_fit = cell(1,4);
+%     for j = 1:n_runs
+%         this_participant_data = data{i};
+%         [ll_new, aic, pest, pest_penalty] = fit_pure_intrusion_model(this_participant_data);
+%         % If this ll is better than the last one, replace it in the saved
+%         % structure
+%         if (ll_new < ll)
+%             % Double fit, call fminsearch again, but use the best parameter
+%             % estimates as starting points
+%             [ll_new, aic, pest, pest_penalty] = fit_pure_intrusion_model(this_participant_data, pest);
+%             ll = ll_new;
+%             this_fit{1} = ll;
+%             this_fit{2} = aic;
+%             this_fit{3} = pest;
+%             this_fit{4} = pest_penalty;
+%             pure_int(i,:) = this_fit;
+%         end
+%     end
+% end
 
 %% Flat Intrusion Model
 % Base three component mixture model, memory + guess + intrusions
