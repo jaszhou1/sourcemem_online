@@ -12,33 +12,64 @@ data <- data[data$block!= 0,]
 # Exclude invalid RTs
 data <- data[data$valid_RT==TRUE,]
 
-setwd("~/git/sourcemem_online/analysis/models/MATLAB/experiment_2/old")
 
-pure_guess <- read.csv('sim_pure_guess.csv', header = FALSE)
+# setwd("~/git/sourcemem_online/analysis/models/MATLAB/experiment_2/old")
+# 
+# pure_guess <- read.csv('sim_pure_guess.csv', header = FALSE)
+# pure_guess$model <- 'Pure Guess'
+# 
+# pure_intrusion <- read.csv('sim_pure_intrusion.csv', header = FALSE)
+# pure_intrusion$model <- 'Pure Intrusion'
+# 
+# intrusion <- read.csv('sim_flat.csv', header = FALSE)
+# intrusion$model <- 'Intrusion + Guess'
+# 
+# temporal <- read.csv('sim_temporal.csv', header = FALSE)
+# temporal$model <- 'Temporal'
+# 
+# spatiotemporal <- read.csv('sim_spatiotemporal.csv', header = FALSE)
+# spatiotemporal$model <- 'Spatiotemporal'
+# 
+# orthographic <- read.csv('sim_ortho.csv', header = FALSE)
+# orthographic$model <- 'Orthographic'
+# 
+# semantic <- read.csv('sim_semantic.csv', header = FALSE)
+# semantic$model <- 'Semantic'
+# 
+# # add <- read.csv('sim_add.csv', header = FALSE)
+# # add$model <- 'Four Factor (Additive)'
+# 
+# multi <- read.csv('sim_multi.csv', header = FALSE)
+# multi$model <- "Four Factor"
+
+
+setwd("~/git/sourcemem_online/analysis/models/MATLAB/revision")
+
+pure_guess <- read.csv('exp2_sim_Pure Guess.csv', header = FALSE)
 pure_guess$model <- 'Pure Guess'
 
-pure_intrusion <- read.csv('sim_pure_intrusion.csv', header = FALSE)
+pure_intrusion <- read.csv('exp2_sim_Pure Intrusion.csv', header = FALSE)
 pure_intrusion$model <- 'Pure Intrusion'
 
-intrusion <- read.csv('sim_flat.csv', header = FALSE)
+intrusion <- read.csv('exp2_sim_Flat Intrusion.csv', header = FALSE)
 intrusion$model <- 'Intrusion + Guess'
 
-temporal <- read.csv('sim_temporal.csv', header = FALSE)
+temporal <- read.csv('exp2_sim_Temporal.csv', header = FALSE)
 temporal$model <- 'Temporal'
 
-spatiotemporal <- read.csv('sim_spatiotemporal.csv', header = FALSE)
+spatiotemporal <- read.csv('exp2_sim_Spatiotemporal.csv', header = FALSE)
 spatiotemporal$model <- 'Spatiotemporal'
 
-orthographic <- read.csv('sim_ortho.csv', header = FALSE)
+orthographic <- read.csv('exp2_sim_Spatiotemporal-Orthographic.csv', header = FALSE)
 orthographic$model <- 'Orthographic'
 
-semantic <- read.csv('sim_semantic.csv', header = FALSE)
+semantic <- read.csv('exp2_sim_Spatiotemporal-Semantic.csv', header = FALSE)
 semantic$model <- 'Semantic'
 
 # add <- read.csv('sim_add.csv', header = FALSE)
 # add$model <- 'Four Factor (Additive)'
 
-multi <- read.csv('sim_multi.csv', header = FALSE)
+multi <- read.csv('exp2_sim_Four Factor.csv', header = FALSE)
 multi$model <- "Four Factor"
 
 # spatiotemporal_no_eta <- read.csv('sim_spatiotemporal_no_eta.csv', header = FALSE)
@@ -47,6 +78,9 @@ multi$model <- "Four Factor"
 
 model_predictions <- rbind(pure_guess, pure_intrusion, intrusion, temporal, spatiotemporal,
                            orthographic, semantic, multi)
+
+# Add this line to remove the unnecesarry columns (intrusions etc.). The newer sim files (post-revision) have more info than this script needs
+model_predictions <- model_predictions[,-c(3:50)]
 colnames(model_predictions) <- c('error', 'time', 'participant', 'model')
 
 MODEL.TYPES <- unique(model_predictions$model)
